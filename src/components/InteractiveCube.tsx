@@ -146,7 +146,7 @@ const LightBeam = forwardRef<THREE.Group, { origin: [number, number, number]; co
       </points>
     </group>
   );
-}
+});
 
 /* ── Glow Node ─────────────────────────────────────── */
 function GlowNode({
