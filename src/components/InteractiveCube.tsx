@@ -149,10 +149,13 @@ const LightBeam = forwardRef<THREE.Group, { origin: [number, number, number]; co
 });
 
 /* ── Glow Node ─────────────────────────────────────── */
-function GlowNode({
-  position, color, label, index, onNodeClick, hoveredNode, setHoveredNode, isPaused, isActive,
-}: {
+const GlowNode = forwardRef<THREE.Group, {
   position: [number, number, number]; color: string; label: string; index: number;
+  onNodeClick: (index: number) => void; hoveredNode: number | null;
+  setHoveredNode: (i: number | null) => void; isPaused: boolean; isActive: boolean;
+}>(function GlowNode({
+  position, color, label, index, onNodeClick, hoveredNode, setHoveredNode, isPaused, isActive,
+}, ref) {
   onNodeClick: (index: number) => void; hoveredNode: number | null;
   setHoveredNode: (i: number | null) => void; isPaused: boolean; isActive: boolean;
 }) {
