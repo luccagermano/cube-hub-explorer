@@ -1,4 +1,4 @@
-import { useRef, useState, useMemo, useCallback, useEffect } from "react";
+import React, { useRef, useState, useMemo, useCallback, useEffect, forwardRef } from "react";
 import { Canvas, useFrame, useThree, useLoader } from "@react-three/fiber";
 import { Text, Float, useGLTF } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
