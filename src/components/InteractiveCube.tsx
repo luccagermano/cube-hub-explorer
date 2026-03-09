@@ -1,97 +1,81 @@
 import { useRef, useState, useMemo, useCallback } from "react";
-import { Canvas, useFrame, useThree, ThreeEvent } from "@react-three/fiber";
+import { Canvas, useFrame, useThree, useLoader } from "@react-three/fiber";
 import { Text, Float } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import * as THREE from "three";
+import mascotTexture from "@/assets/ddc-mascot.jpeg";
+
+const DDC_RED = "#c4364a";
+const DDC_RED_DARK = "#8b2535";
 
 export const HUB_DATA = [
   {
-    name: "AI Research",
-    color: "#00d4ff",
-    description: "Pioneering next-gen neural architectures, autonomous systems, and machine consciousness at the frontier of artificial intelligence.",
-    technologies: ["Deep Learning", "LLMs", "Computer Vision", "Reinforcement Learning"],
+    name: "AI & Automation",
+    color: DDC_RED,
+    description: "Driving intelligent automation and AI-powered solutions that transform how businesses operate and innovate at scale.",
+    technologies: ["Machine Learning", "NLP", "RPA", "Predictive Analytics"],
   },
   {
-    name: "Robotics",
-    color: "#8b5cf6",
-    description: "Creating autonomous machines for space exploration, deep-sea research, and industrial automation with human-level dexterity.",
-    technologies: ["Autonomous Systems", "Haptic Feedback", "Swarm Intelligence", "Exoskeletons"],
+    name: "Data Intelligence",
+    color: "#e85d6f",
+    description: "Harnessing the power of data to deliver actionable insights, advanced analytics, and real-time decision frameworks.",
+    technologies: ["Big Data", "Data Lakes", "BI Dashboards", "ETL Pipelines"],
   },
   {
-    name: "Quantum Computing",
-    color: "#06b6d4",
-    description: "Pushing the boundaries of computational physics, building stable qubits that will reshape cryptography and molecular simulation.",
-    technologies: ["Superconducting Qubits", "Error Correction", "Quantum ML", "Post-Quantum Crypto"],
+    name: "Digital Transformation",
+    color: DDC_RED,
+    description: "End-to-end digital transformation strategies that modernize legacy systems and unlock new business capabilities.",
+    technologies: ["Microservices", "API-First", "DevOps", "Agile Delivery"],
   },
   {
-    name: "Space Technology",
-    color: "#f43f5e",
-    description: "Developing next-generation propulsion systems, orbital habitats, and interplanetary communication networks for humanity's expansion.",
-    technologies: ["Ion Propulsion", "Space Mining", "Orbital Stations", "Deep Space Comms"],
+    name: "Cloud Infrastructure",
+    color: "#a83242",
+    description: "Building resilient, scalable cloud architectures that power mission-critical enterprise applications globally.",
+    technologies: ["AWS", "Azure", "Kubernetes", "Serverless"],
   },
   {
-    name: "Advanced Materials",
-    color: "#10b981",
-    description: "Engineering metamaterials, programmable matter, and self-healing composites that redefine what's physically possible.",
-    technologies: ["Graphene Synthesis", "Smart Polymers", "Nano-fabrication", "4D Printing"],
+    name: "Product Engineering",
+    color: "#e85d6f",
+    description: "Crafting world-class digital products from concept to launch with cutting-edge engineering and design thinking.",
+    technologies: ["React", "Mobile Apps", "UX Design", "CI/CD"],
   },
   {
-    name: "Bioengineering",
-    color: "#f59e0b",
-    description: "Merging synthetic biology with computational design to engineer solutions for longevity, disease, and sustainable ecosystems.",
-    technologies: ["Gene Editing", "Synthetic Organs", "Bioinformatics", "Microbiome Engineering"],
+    name: "Innovation Lab",
+    color: DDC_RED,
+    description: "Our experimental playground — prototyping breakthrough ideas in emerging tech and pushing the boundaries of possibility.",
+    technologies: ["AR/VR", "Blockchain", "IoT", "Edge Computing"],
   },
   {
-    name: "Neural Interfaces",
-    color: "#ec4899",
-    description: "Building direct brain-computer links that expand human cognition, enabling thought-driven control of digital systems.",
-    technologies: ["BCI Implants", "Neural Decoding", "Thought-to-Text", "Sensory Augmentation"],
+    name: "R&D",
+    color: "#a83242",
+    description: "Deep research into next-generation technologies, from quantum-resistant security to neuromorphic computing paradigms.",
+    technologies: ["Quantum Computing", "Neural Nets", "Materials Science", "Robotics"],
   },
   {
-    name: "Future Labs",
-    color: "#6366f1",
-    description: "Our experimental playground — incubating moonshot ideas from zero-point energy to digital consciousness and reality engineering.",
-    technologies: ["Fusion Energy", "Digital Twins", "AGI Research", "Reality Simulation"],
+    name: "Strategic Consulting",
+    color: "#e85d6f",
+    description: "Advisory services that bridge technology and business strategy, guiding enterprises through complex digital landscapes.",
+    technologies: ["Tech Strategy", "Change Management", "M&A Advisory", "Digital Roadmaps"],
   },
 ];
 
-// Cube vertex positions (8 corners of a cube)
 const VERTEX_POSITIONS: [number, number, number][] = [
-  [1, 1, 1],
-  [-1, 1, 1],
-  [1, -1, 1],
-  [-1, -1, 1],
-  [1, 1, -1],
-  [-1, 1, -1],
-  [1, -1, -1],
-  [-1, -1, -1],
+  [1, 1, 1], [-1, 1, 1], [1, -1, 1], [-1, -1, 1],
+  [1, 1, -1], [-1, 1, -1], [1, -1, -1], [-1, -1, -1],
 ];
 
-// Cube edges as pairs of vertex indices
 const EDGES: [number, number][] = [
-  [0, 1], [2, 3], [4, 5], [6, 7], // horizontal pairs
-  [0, 2], [1, 3], [4, 6], [5, 7], // vertical pairs  
-  [0, 4], [1, 5], [2, 6], [3, 7], // depth pairs
+  [0, 1], [2, 3], [4, 5], [6, 7],
+  [0, 2], [1, 3], [4, 6], [5, 7],
+  [0, 4], [1, 5], [2, 6], [3, 7],
 ];
 
 function GlowNode({
-  position,
-  color,
-  label,
-  index,
-  onNodeClick,
-  hoveredNode,
-  setHoveredNode,
-  isPaused,
+  position, color, label, index, onNodeClick, hoveredNode, setHoveredNode, isPaused,
 }: {
-  position: [number, number, number];
-  color: string;
-  label: string;
-  index: number;
-  onNodeClick: (index: number) => void;
-  hoveredNode: number | null;
-  setHoveredNode: (i: number | null) => void;
-  isPaused: boolean;
+  position: [number, number, number]; color: string; label: string; index: number;
+  onNodeClick: (index: number) => void; hoveredNode: number | null;
+  setHoveredNode: (i: number | null) => void; isPaused: boolean;
 }) {
   const meshRef = useRef<THREE.Mesh>(null);
   const isHovered = hoveredNode === index;
@@ -107,7 +91,6 @@ function GlowNode({
 
   return (
     <group position={position}>
-      {/* Core sphere */}
       <mesh
         ref={meshRef}
         onClick={(e) => { e.stopPropagation(); onNodeClick(index); }}
@@ -122,27 +105,19 @@ function GlowNode({
           toneMapped={false}
         />
       </mesh>
-
-      {/* Outer glow sphere */}
       <mesh scale={isHovered ? 0.25 : 0.15}>
         <sphereGeometry args={[1, 16, 16]} />
-        <meshBasicMaterial
-          color={color}
-          transparent
-          opacity={isHovered ? 0.2 : 0.08}
-        />
+        <meshBasicMaterial color={color} transparent opacity={isHovered ? 0.2 : 0.08} />
       </mesh>
-
-      {/* Label */}
       {isHovered && (
         <Text
           position={[0, 0.3, 0]}
-          fontSize={0.12}
+          fontSize={0.1}
           color={color}
           anchorX="center"
           anchorY="bottom"
           font="https://fonts.gstatic.com/s/orbitron/v31/yMJMMIlzdpvBhQQL_SC3X9yhF25-T1nyGy6BoWgz.woff2"
-          outlineWidth={0.005}
+          outlineWidth={0.004}
           outlineColor="#000000"
         >
           {label}
@@ -156,17 +131,15 @@ function CubeEdge({ start, end }: { start: [number, number, number]; end: [numbe
   const lineObj = useMemo(() => {
     const points = [new THREE.Vector3(...start), new THREE.Vector3(...end)];
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
-    const material = new THREE.LineBasicMaterial({ color: "#1a3a4a", transparent: true, opacity: 0.4 });
+    const material = new THREE.LineBasicMaterial({ color: "#3a1a1a", transparent: true, opacity: 0.5 });
     return new THREE.Line(geometry, material);
   }, [start, end]);
-
   return <primitive object={lineObj} />;
 }
 
 function Particles() {
-  const count = 300;
+  const count = 250;
   const mesh = useRef<THREE.Points>(null);
-
   const [positions, velocities] = useMemo(() => {
     const pos = new Float32Array(count * 3);
     const vel = new Float32Array(count * 3);
@@ -189,7 +162,6 @@ function Particles() {
       arr[i * 3] += velocities[i * 3];
       arr[i * 3 + 1] += velocities[i * 3 + 1];
       arr[i * 3 + 2] += velocities[i * 3 + 2];
-      // Wrap around
       for (let j = 0; j < 3; j++) {
         if (Math.abs(arr[i * 3 + j]) > 10) arr[i * 3 + j] *= -0.9;
       }
@@ -200,30 +172,34 @@ function Particles() {
   return (
     <points ref={mesh}>
       <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          args={[positions, 3]}
-          count={count}
-        />
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} count={count} />
       </bufferGeometry>
-      <pointsMaterial
-        size={0.02}
-        color="#00d4ff"
-        transparent
-        opacity={0.4}
-        sizeAttenuation
-      />
+      <pointsMaterial size={0.02} color={DDC_RED} transparent opacity={0.35} sizeAttenuation />
     </points>
   );
 }
 
-function InteractiveCubeScene({
-  onNodeClick,
-  isPaused,
-}: {
-  onNodeClick: (index: number) => void;
-  isPaused: boolean;
-}) {
+function TexturedCube() {
+  const texture = useLoader(THREE.TextureLoader, mascotTexture);
+  return (
+    <mesh>
+      <boxGeometry args={[2.2, 2.2, 2.2]} />
+      <meshPhysicalMaterial
+        map={texture}
+        metalness={0.7}
+        roughness={0.2}
+        transparent
+        opacity={0.85}
+        envMapIntensity={1.5}
+        side={THREE.DoubleSide}
+        emissive="#1a0505"
+        emissiveIntensity={0.3}
+      />
+    </mesh>
+  );
+}
+
+function InteractiveCubeScene({ onNodeClick, isPaused }: { onNodeClick: (index: number) => void; isPaused: boolean }) {
   const groupRef = useRef<THREE.Group>(null);
   const targetRotation = useRef({ x: 0, y: 0 });
   const idleTime = useRef(0);
@@ -232,24 +208,15 @@ function InteractiveCubeScene({
 
   useFrame((state, delta) => {
     if (!groupRef.current) return;
-
     const { x, y } = state.pointer;
     const moved = Math.abs(x - lastPointer.current.x) + Math.abs(y - lastPointer.current.y) > 0.001;
     lastPointer.current = { x, y };
-
-    if (moved) {
-      idleTime.current = 0;
-    } else {
-      idleTime.current += delta;
-    }
+    if (moved) { idleTime.current = 0; } else { idleTime.current += delta; }
 
     if (!isPaused) {
-      // Mouse-driven rotation
       const mouseInfluence = Math.max(0, 1 - idleTime.current * 0.5);
       targetRotation.current.y = x * Math.PI * 0.5 * mouseInfluence;
       targetRotation.current.x = -y * Math.PI * 0.35 * mouseInfluence;
-
-      // Idle rotation
       if (idleTime.current > 1) {
         const idleFactor = Math.min((idleTime.current - 1) * 0.3, 1);
         targetRotation.current.y += Math.sin(state.clock.elapsedTime * 0.3) * 0.3 * idleFactor;
@@ -257,7 +224,6 @@ function InteractiveCubeScene({
       }
     }
 
-    // Elastic spring interpolation
     const springFactor = isPaused ? 0.03 : 0.05;
     groupRef.current.rotation.y += (targetRotation.current.y - groupRef.current.rotation.y) * springFactor;
     groupRef.current.rotation.x += (targetRotation.current.x - groupRef.current.rotation.x) * springFactor;
@@ -270,73 +236,38 @@ function InteractiveCubeScene({
 
   return (
     <group ref={groupRef}>
-      {/* Edges */}
       {EDGES.map(([a, b], i) => (
-        <CubeEdge
-          key={i}
-          start={scaledVertices[a]}
-          end={scaledVertices[b]}
-        />
+        <CubeEdge key={i} start={scaledVertices[a]} end={scaledVertices[b]} />
       ))}
 
-      {/* Semi-transparent faces */}
-      <mesh>
-        <boxGeometry args={[2.2, 2.2, 2.2]} />
-        <meshPhysicalMaterial
-          color="#050a15"
-          metalness={0.95}
-          roughness={0.1}
-          transparent
-          opacity={0.15}
-          envMapIntensity={2}
-          side={THREE.DoubleSide}
-        />
-      </mesh>
+      <TexturedCube />
 
-      {/* Holographic inner glow */}
+      {/* Inner wireframe */}
       <mesh>
         <boxGeometry args={[1.8, 1.8, 1.8]} />
-        <meshBasicMaterial
-          color="#00d4ff"
-          transparent
-          opacity={0.02}
-          wireframe
-        />
+        <meshBasicMaterial color={DDC_RED} transparent opacity={0.03} wireframe />
       </mesh>
 
-      {/* Vertex nodes */}
       {scaledVertices.map((pos, i) => (
         <GlowNode
-          key={i}
-          position={pos}
-          color={HUB_DATA[i].color}
-          label={HUB_DATA[i].name}
-          index={i}
-          onNodeClick={onNodeClick}
-          hoveredNode={hoveredNode}
-          setHoveredNode={setHoveredNode}
-          isPaused={isPaused}
+          key={i} position={pos} color={HUB_DATA[i].color} label={HUB_DATA[i].name}
+          index={i} onNodeClick={onNodeClick} hoveredNode={hoveredNode}
+          setHoveredNode={setHoveredNode} isPaused={isPaused}
         />
       ))}
     </group>
   );
 }
 
-export default function InteractiveCube({
-  onNodeClick,
-  isPaused,
-}: {
-  onNodeClick: (index: number) => void;
-  isPaused: boolean;
-}) {
+export default function InteractiveCube({ onNodeClick, isPaused }: { onNodeClick: (index: number) => void; isPaused: boolean }) {
   return (
     <div className="w-full h-full cursor-pointer">
       <Canvas camera={{ position: [0, 0, 5], fov: 50 }} dpr={[1, 2]}>
-        <ambientLight intensity={0.15} />
-        <pointLight position={[5, 5, 5]} intensity={0.8} color="#00d4ff" />
-        <pointLight position={[-5, -3, 5]} intensity={0.5} color="#8b5cf6" />
-        <pointLight position={[0, 5, -5]} intensity={0.3} color="#f43f5e" />
-        <pointLight position={[0, -5, 5]} intensity={0.2} color="#10b981" />
+        <ambientLight intensity={0.2} />
+        <pointLight position={[5, 5, 5]} intensity={0.8} color={DDC_RED} />
+        <pointLight position={[-5, -3, 5]} intensity={0.5} color="#e85d6f" />
+        <pointLight position={[0, 5, -5]} intensity={0.3} color="#a83242" />
+        <pointLight position={[0, -5, 5]} intensity={0.2} color="#ffffff" />
 
         <Particles />
 
@@ -345,12 +276,7 @@ export default function InteractiveCube({
         </Float>
 
         <EffectComposer>
-          <Bloom
-            luminanceThreshold={0.2}
-            luminanceSmoothing={0.9}
-            intensity={1.2}
-            mipmapBlur
-          />
+          <Bloom luminanceThreshold={0.2} luminanceSmoothing={0.9} intensity={1.0} mipmapBlur />
         </EffectComposer>
       </Canvas>
     </div>

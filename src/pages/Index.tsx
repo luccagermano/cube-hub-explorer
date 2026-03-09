@@ -2,21 +2,20 @@ import { useState, useCallback } from "react";
 import InteractiveCube, { HUB_DATA } from "@/components/InteractiveCube";
 import HubPanel from "@/components/HubPanel";
 import { motion } from "framer-motion";
+import ddcLogo from "@/assets/ddc-logo.png";
 
 const Index = () => {
   const [selectedHub, setSelectedHub] = useState<number | null>(null);
-
   const handleNodeClick = useCallback((index: number) => {
     setSelectedHub((prev) => (prev === index ? null : index));
   }, []);
-
   const handleClose = useCallback(() => setSelectedHub(null), []);
 
   return (
     <div className="relative w-screen h-screen bg-background overflow-hidden font-body select-none">
-      {/* Background grid */}
+      {/* Subtle grid */}
       <div
-        className="absolute inset-0 opacity-[0.02]"
+        className="absolute inset-0 opacity-[0.015]"
         style={{
           backgroundImage: `linear-gradient(hsl(var(--primary)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary)) 1px, transparent 1px)`,
           backgroundSize: "80px 80px",
@@ -24,9 +23,8 @@ const Index = () => {
       />
 
       {/* Radial glows */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_hsl(190_100%_50%_/_0.05)_0%,_transparent_60%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_hsl(260_80%_60%_/_0.03)_0%,_transparent_50%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_hsl(320_80%_55%_/_0.03)_0%,_transparent_50%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_hsl(350_65%_52%_/_0.06)_0%,_transparent_60%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_hsl(0_0%_20%_/_0.04)_0%,_transparent_50%)]" />
 
       {/* Navbar */}
       <motion.nav
@@ -36,16 +34,11 @@ const Index = () => {
         className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-8 py-5"
       >
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg border border-primary/30 flex items-center justify-center bg-primary/5">
-            <div className="w-3 h-3 rounded-sm bg-primary/80" />
-          </div>
-          <span className="font-display text-lg font-bold tracking-[0.15em] text-foreground">
-            NEXUS
-          </span>
+          <img src={ddcLogo} alt=".ddc logo" className="h-8 w-auto" />
         </div>
 
         <div className="hidden md:flex items-center gap-8">
-          {["About", "Divisions", "Careers", "Contact"].map((item) => (
+          {["About", "Services", "Careers", "Contact"].map((item) => (
             <span
               key={item}
               className="text-xs font-display tracking-[0.2em] uppercase text-muted-foreground hover:text-primary transition-colors cursor-pointer"
@@ -58,32 +51,29 @@ const Index = () => {
         <div className="w-20" />
       </motion.nav>
 
-      {/* Title overlay */}
+      {/* Title */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, delay: 0.3 }}
         className="absolute top-[12%] left-1/2 -translate-x-1/2 text-center z-10 pointer-events-none"
       >
-        <h1 className="font-display text-5xl md:text-7xl font-black tracking-[0.25em] text-primary text-glow-cyan">
-          NEXUS
+        <h1 className="font-display text-5xl md:text-7xl font-black tracking-[0.25em] text-primary text-glow-red">
+          .ddc
         </h1>
         <p className="text-muted-foreground text-xs md:text-sm mt-3 tracking-[0.4em] font-display uppercase">
-          Innovation Hub Network
+          Exploring the Future of Technology
         </p>
       </motion.div>
 
-      {/* 3D Cube - full screen */}
+      {/* 3D Cube */}
       <motion.div
         initial={{ opacity: 0, scale: 0.7 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 1.2, delay: 0.5, ease: "easeOut" }}
         className="absolute inset-0"
       >
-        <InteractiveCube
-          onNodeClick={handleNodeClick}
-          isPaused={selectedHub !== null}
-        />
+        <InteractiveCube onNodeClick={handleNodeClick} isPaused={selectedHub !== null} />
       </motion.div>
 
       {/* Tagline */}
@@ -128,11 +118,7 @@ const Index = () => {
         ))}
       </motion.div>
 
-      {/* Hub Panel */}
-      <HubPanel
-        hub={selectedHub !== null ? HUB_DATA[selectedHub] : null}
-        onClose={handleClose}
-      />
+      <HubPanel hub={selectedHub !== null ? HUB_DATA[selectedHub] : null} onClose={handleClose} />
     </div>
   );
 };
