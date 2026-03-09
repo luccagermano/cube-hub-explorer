@@ -205,7 +205,7 @@ const GlowNode = forwardRef<THREE.Group, {
           color={color}
           anchorX="center"
           anchorY="bottom"
-          font="https://fonts.gstatic.com/s/orbitron/v31/yMJMMIlzdpvBhQQL_SC3X9yhF25-T1nyGy6BoWgz.woff2"
+          font="/fonts/Orbitron.ttf"
           outlineWidth={0.004}
           outlineColor="#000000"
         >
