@@ -1,4 +1,4 @@
-import { useRef, useState, useMemo, useCallback, useEffect } from "react";
+import React, { useRef, useState, useMemo, useCallback, useEffect, forwardRef } from "react";
 import { Canvas, useFrame, useThree, useLoader } from "@react-three/fiber";
 import { Text, Float, useGLTF } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
@@ -70,7 +70,7 @@ const EDGES: [number, number][] = [
 ];
 
 /* ── Light Beam Effect ─────────────────────────────────────── */
-function LightBeam({ origin, color, active }: { origin: [number, number, number]; color: string; active: boolean }) {
+const LightBeam = forwardRef<THREE.Group, { origin: [number, number, number]; color: string; active: boolean }>(function LightBeam({ origin, color, active }, ref) {
   const beamRef = useRef<THREE.Mesh>(null);
   const glowRef = useRef<THREE.PointLight>(null);
   const progress = useRef(0);
@@ -120,7 +120,7 @@ function LightBeam({ origin, color, active }: { origin: [number, number, number]
   if (progress.current <= 0 && !active) return null;
 
   return (
-    <group>
+    <group ref={ref}>
       {/* Beam cylinder */}
       <mesh ref={beamRef} position={origin}>
         <cylinderGeometry args={[1, 0.3, 1, 8]} />
@@ -146,16 +146,16 @@ function LightBeam({ origin, color, active }: { origin: [number, number, number]
       </points>
     </group>
   );
-}
+});
 
 /* ── Glow Node ─────────────────────────────────────── */
-function GlowNode({
-  position, color, label, index, onNodeClick, hoveredNode, setHoveredNode, isPaused, isActive,
-}: {
+const GlowNode = forwardRef<THREE.Group, {
   position: [number, number, number]; color: string; label: string; index: number;
   onNodeClick: (index: number) => void; hoveredNode: number | null;
   setHoveredNode: (i: number | null) => void; isPaused: boolean; isActive: boolean;
-}) {
+}>(function GlowNode({
+  position, color, label, index, onNodeClick, hoveredNode, setHoveredNode, isPaused, isActive,
+}, ref) {
   const meshRef = useRef<THREE.Mesh>(null);
   const isHovered = hoveredNode === index;
   const baseScale = isPaused ? 0.08 : 0.06;
@@ -214,10 +214,10 @@ function GlowNode({
       )}
     </group>
   );
-}
+});
 
 /* ── Cube Edge ─────────────────────────────────────── */
-function CubeEdge({ start, end }: { start: [number, number, number]; end: [number, number, number] }) {
+const CubeEdge = forwardRef<THREE.Group, { start: [number, number, number]; end: [number, number, number] }>(function CubeEdge({ start, end }, ref) {
   const lineObj = useMemo(() => {
     const points = [new THREE.Vector3(...start), new THREE.Vector3(...end)];
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
@@ -225,7 +225,7 @@ function CubeEdge({ start, end }: { start: [number, number, number]; end: [numbe
     return new THREE.Line(geometry, material);
   }, [start, end]);
   return <primitive object={lineObj} />;
-}
+});
 
 /* ── Particles ─────────────────────────────────────── */
 function Particles() {
