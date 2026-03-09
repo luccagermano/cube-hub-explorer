@@ -156,9 +156,6 @@ const GlowNode = forwardRef<THREE.Group, {
 }>(function GlowNode({
   position, color, label, index, onNodeClick, hoveredNode, setHoveredNode, isPaused, isActive,
 }, ref) {
-  onNodeClick: (index: number) => void; hoveredNode: number | null;
-  setHoveredNode: (i: number | null) => void; isPaused: boolean; isActive: boolean;
-}) {
   const meshRef = useRef<THREE.Mesh>(null);
   const isHovered = hoveredNode === index;
   const baseScale = isPaused ? 0.08 : 0.06;
