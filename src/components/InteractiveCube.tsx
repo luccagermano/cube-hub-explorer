@@ -250,7 +250,7 @@ function InteractiveCubeScene({ onNodeClick, isPaused }: { onNodeClick: (index: 
         <CubeEdge key={i} start={scaledVertices[a]} end={scaledVertices[b]} />
       ))}
 
-      <TexturedCube />
+      <GLBModel />
 
       {/* Inner wireframe */}
       <mesh>
