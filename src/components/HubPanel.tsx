@@ -18,7 +18,6 @@ export default function HubPanel({ hub, onClose }: HubPanelProps) {
     <AnimatePresence>
       {hub && (
         <>
-          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -26,8 +25,6 @@ export default function HubPanel({ hub, onClose }: HubPanelProps) {
             className="fixed inset-0 z-30"
             onClick={onClose}
           />
-
-          {/* Panel */}
           <motion.div
             initial={{ opacity: 0, x: 60, scale: 0.95 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
@@ -38,27 +35,16 @@ export default function HubPanel({ hub, onClose }: HubPanelProps) {
             <div
               className="glass-panel rounded-2xl p-8 relative overflow-hidden"
               style={{
-                boxShadow: `0 0 60px ${hub.color}22, 0 0 120px ${hub.color}08, 0 20px 60px hsl(220 20% 4% / 0.8)`,
+                boxShadow: `0 0 60px ${hub.color}22, 0 0 120px ${hub.color}08, 0 20px 60px hsl(0 0% 4% / 0.8)`,
                 borderColor: `${hub.color}25`,
               }}
             >
-              {/* Top accent line */}
               <div
                 className="absolute top-0 left-0 right-0 h-[2px]"
-                style={{
-                  background: `linear-gradient(90deg, transparent, ${hub.color}, transparent)`,
-                }}
+                style={{ background: `linear-gradient(90deg, transparent, ${hub.color}, transparent)` }}
               />
-
-              {/* Corner accents */}
-              <div
-                className="absolute top-0 left-0 w-6 h-6 border-l-2 border-t-2 rounded-tl-2xl"
-                style={{ borderColor: `${hub.color}50` }}
-              />
-              <div
-                className="absolute top-0 right-0 w-6 h-6 border-r-2 border-t-2 rounded-tr-2xl"
-                style={{ borderColor: `${hub.color}50` }}
-              />
+              <div className="absolute top-0 left-0 w-6 h-6 border-l-2 border-t-2 rounded-tl-2xl" style={{ borderColor: `${hub.color}50` }} />
+              <div className="absolute top-0 right-0 w-6 h-6 border-r-2 border-t-2 rounded-tr-2xl" style={{ borderColor: `${hub.color}50` }} />
 
               <button
                 onClick={onClose}
@@ -67,26 +53,16 @@ export default function HubPanel({ hub, onClose }: HubPanelProps) {
                 <X size={18} />
               </button>
 
-              {/* Status indicator */}
               <div className="flex items-center gap-2 mb-4">
-                <div
-                  className="w-2 h-2 rounded-full animate-pulse"
-                  style={{ backgroundColor: hub.color, boxShadow: `0 0 8px ${hub.color}` }}
-                />
-                <span
-                  className="text-[10px] font-display tracking-[0.3em] uppercase"
-                  style={{ color: `${hub.color}cc` }}
-                >
+                <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: hub.color, boxShadow: `0 0 8px ${hub.color}` }} />
+                <span className="text-[10px] font-display tracking-[0.3em] uppercase" style={{ color: `${hub.color}cc` }}>
                   Active Hub
                 </span>
               </div>
 
               <h2
                 className="font-display text-2xl font-bold tracking-wider mb-4"
-                style={{
-                  color: hub.color,
-                  textShadow: `0 0 20px ${hub.color}40`,
-                }}
+                style={{ color: hub.color, textShadow: `0 0 20px ${hub.color}40` }}
               >
                 {hub.name}
               </h2>
@@ -95,7 +71,6 @@ export default function HubPanel({ hub, onClose }: HubPanelProps) {
                 {hub.description}
               </p>
 
-              {/* Technologies */}
               <div className="mb-6">
                 <span className="text-[10px] font-display tracking-[0.2em] uppercase text-muted-foreground mb-3 block">
                   Key Technologies
@@ -117,7 +92,6 @@ export default function HubPanel({ hub, onClose }: HubPanelProps) {
                 </div>
               </div>
 
-              {/* Explore button */}
               <button
                 className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-display font-semibold tracking-wider transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] group"
                 style={{
@@ -128,10 +102,7 @@ export default function HubPanel({ hub, onClose }: HubPanelProps) {
                 }}
               >
                 EXPLORE HUB
-                <ArrowRight
-                  size={16}
-                  className="transition-transform group-hover:translate-x-1"
-                />
+                <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
               </button>
             </div>
           </motion.div>

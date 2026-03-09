@@ -2,54 +2,51 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* .ddc Design System — Dark + Red accent palette. All colors HSL. */
 
 @layer base {
   :root {
-    --background: 220 20% 4%;
-    --foreground: 210 40% 92%;
+    --background: 0 0% 13%;
+    --foreground: 0 0% 92%;
 
-    --card: 220 18% 8%;
-    --card-foreground: 210 40% 92%;
+    --card: 0 0% 16%;
+    --card-foreground: 0 0% 92%;
 
-    --popover: 220 18% 8%;
-    --popover-foreground: 210 40% 92%;
+    --popover: 0 0% 16%;
+    --popover-foreground: 0 0% 92%;
 
-    --primary: 190 100% 50%;
-    --primary-foreground: 220 20% 4%;
+    --primary: 350 65% 52%;
+    --primary-foreground: 0 0% 98%;
 
-    --secondary: 260 80% 60%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 0 0% 22%;
+    --secondary-foreground: 0 0% 92%;
 
-    --muted: 220 15% 12%;
-    --muted-foreground: 215 15% 55%;
+    --muted: 0 0% 18%;
+    --muted-foreground: 0 0% 50%;
 
-    --accent: 320 80% 55%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 350 65% 52%;
+    --accent-foreground: 0 0% 98%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 220 15% 16%;
-    --input: 220 15% 16%;
-    --ring: 190 100% 50%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 350 65% 52%;
 
     --radius: 0.75rem;
 
-    --sidebar-background: 220 18% 6%;
-    --sidebar-foreground: 210 40% 92%;
-    --sidebar-primary: 190 100% 50%;
-    --sidebar-primary-foreground: 220 20% 4%;
-    --sidebar-accent: 220 15% 12%;
-    --sidebar-accent-foreground: 210 40% 92%;
-    --sidebar-border: 220 15% 16%;
-    --sidebar-ring: 190 100% 50%;
+    --sidebar-background: 0 0% 14%;
+    --sidebar-foreground: 0 0% 92%;
+    --sidebar-primary: 350 65% 52%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 0 0% 18%;
+    --sidebar-accent-foreground: 0 0% 92%;
+    --sidebar-border: 0 0% 20%;
+    --sidebar-ring: 350 65% 52%;
 
-    --glow-cyan: 190 100% 50%;
-    --glow-purple: 260 80% 60%;
-    --glow-pink: 320 80% 55%;
+    --glow-red: 350 65% 52%;
+    --glow-dark: 0 0% 8%;
   }
 }
 
@@ -65,31 +62,19 @@ All colors MUST be HSL.
 }
 
 @layer utilities {
-  .text-glow-cyan {
-    text-shadow: 0 0 20px hsl(var(--glow-cyan) / 0.6), 0 0 40px hsl(var(--glow-cyan) / 0.3);
+  .text-glow-red {
+    text-shadow: 0 0 20px hsl(var(--glow-red) / 0.6), 0 0 40px hsl(var(--glow-red) / 0.3);
   }
-  .text-glow-purple {
-    text-shadow: 0 0 20px hsl(var(--glow-purple) / 0.6), 0 0 40px hsl(var(--glow-purple) / 0.3);
-  }
-  .box-glow-cyan {
-    box-shadow: 0 0 30px hsl(var(--glow-cyan) / 0.3), 0 0 60px hsl(var(--glow-cyan) / 0.1);
+  .box-glow-red {
+    box-shadow: 0 0 30px hsl(var(--glow-red) / 0.3), 0 0 60px hsl(var(--glow-red) / 0.1);
   }
   .glass-panel {
-    background: hsl(220 18% 8% / 0.7);
+    background: hsl(0 0% 12% / 0.8);
     backdrop-filter: blur(24px);
-    border: 1px solid hsl(190 100% 50% / 0.15);
+    border: 1px solid hsl(var(--glow-red) / 0.15);
     box-shadow: 
-      0 0 40px hsl(190 100% 50% / 0.08),
-      0 8px 32px hsl(220 20% 4% / 0.6),
-      inset 0 1px 0 hsl(210 40% 92% / 0.05);
-  }
-  .glass-panel-purple {
-    background: hsl(220 18% 8% / 0.7);
-    backdrop-filter: blur(24px);
-    border: 1px solid hsl(260 80% 60% / 0.15);
-    box-shadow: 
-      0 0 40px hsl(260 80% 60% / 0.08),
-      0 8px 32px hsl(220 20% 4% / 0.6),
-      inset 0 1px 0 hsl(210 40% 92% / 0.05);
+      0 0 40px hsl(var(--glow-red) / 0.06),
+      0 8px 32px hsl(0 0% 4% / 0.6),
+      inset 0 1px 0 hsl(0 0% 92% / 0.04);
   }
 }
