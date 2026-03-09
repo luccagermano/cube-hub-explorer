@@ -273,11 +273,12 @@ export default function InteractiveCube({ onNodeClick, isPaused }: { onNodeClick
   return (
     <div className="w-full h-full cursor-pointer">
       <Canvas camera={{ position: [0, 0, 5], fov: 50 }} dpr={[1, 2]}>
-        <ambientLight intensity={0.2} />
-        <pointLight position={[5, 5, 5]} intensity={0.8} color={DDC_RED} />
-        <pointLight position={[-5, -3, 5]} intensity={0.5} color="#e85d6f" />
-        <pointLight position={[0, 5, -5]} intensity={0.3} color="#a83242" />
-        <pointLight position={[0, -5, 5]} intensity={0.2} color="#ffffff" />
+        <ambientLight intensity={0.5} />
+        <pointLight position={[5, 5, 5]} intensity={1.2} color={DDC_RED} />
+        <pointLight position={[-5, -3, 5]} intensity={0.8} color="#e85d6f" />
+        <pointLight position={[0, 5, -5]} intensity={0.5} color="#a83242" />
+        <pointLight position={[0, -5, 5]} intensity={0.4} color="#ffffff" />
+        <directionalLight position={[0, 3, 5]} intensity={0.6} />
 
         <Particles />
 
