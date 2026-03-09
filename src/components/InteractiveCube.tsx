@@ -225,7 +225,7 @@ const CubeEdge = forwardRef<THREE.Group, { start: [number, number, number]; end:
     return new THREE.Line(geometry, material);
   }, [start, end]);
   return <primitive object={lineObj} />;
-}
+});
 
 /* ── Particles ─────────────────────────────────────── */
 function Particles() {
