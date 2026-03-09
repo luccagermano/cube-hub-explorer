@@ -14,7 +14,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ['Orbitron', 'sans-serif'],
+        display: ['Orbitron', 'Segoe UI', 'Roboto', 'sans-serif'],
         body: ['Space Grotesk', 'sans-serif'],
       },
       colors: {
