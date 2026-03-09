@@ -178,25 +178,36 @@ function Particles() {
   );
 }
 
-function TexturedCube() {
-  const texture = useLoader(THREE.TextureLoader, mascotTexture);
-  return (
-    <mesh>
-      <boxGeometry args={[2.2, 2.2, 2.2]} />
-      <meshPhysicalMaterial
-        map={texture}
-        metalness={0.7}
-        roughness={0.2}
-        transparent
-        opacity={0.85}
-        envMapIntensity={1.5}
-        side={THREE.DoubleSide}
-        emissive="#1a0505"
-        emissiveIntensity={0.3}
-      />
-    </mesh>
-  );
+function GLBModel() {
+  const { scene } = useGLTF("/models/holoseat.glb");
+  const clonedScene = useMemo(() => {
+    const clone = scene.clone(true);
+    clone.traverse((child) => {
+      if ((child as THREE.Mesh).isMesh) {
+        const mesh = child as THREE.Mesh;
+        if (mesh.material) {
+          const mat = (mesh.material as THREE.MeshStandardMaterial).clone();
+          mat.emissive = new THREE.Color("#1a0505");
+          mat.emissiveIntensity = 0.3;
+          mesh.material = mat;
+        }
+      }
+    });
+    // Center and scale
+    const box = new THREE.Box3().setFromObject(clone);
+    const center = box.getCenter(new THREE.Vector3());
+    const size = box.getSize(new THREE.Vector3());
+    const maxDim = Math.max(size.x, size.y, size.z);
+    const scale = 2.2 / maxDim;
+    clone.scale.setScalar(scale);
+    clone.position.sub(center.multiplyScalar(scale));
+    return clone;
+  }, [scene]);
+
+  return <primitive object={clonedScene} />;
 }
+
+useGLTF.preload("/models/holoseat.glb");
 
 function InteractiveCubeScene({ onNodeClick, isPaused }: { onNodeClick: (index: number) => void; isPaused: boolean }) {
   const groupRef = useRef<THREE.Group>(null);
