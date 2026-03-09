@@ -62,20 +62,6 @@ const Index = () => {
         <InteractiveCube onNodeClick={handleNodeClick} isPaused={selectedHub !== null} />
       </motion.div>
 
-      {/* Tagline */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.8 }}
-        className="absolute bottom-[12%] left-1/2 -translate-x-1/2 text-center z-10 pointer-events-none"
-      >
-        <p className="text-muted-foreground text-[10px] md:text-xs tracking-[0.35em] font-display uppercase">
-          Explore the Future
-        </p>
-        <p className="text-muted-foreground/50 text-[9px] mt-2 tracking-[0.2em]">
-          Hover nodes to preview • Click to explore
-        </p>
-      </motion.div>
 
       {/* Hub indicators */}
       <motion.div
