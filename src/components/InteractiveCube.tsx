@@ -1,4 +1,4 @@
-import { useRef, useState, useMemo, useCallback } from "react";
+import { useRef, useState, useMemo, useCallback, useEffect } from "react";
 import { Canvas, useFrame, useThree, useLoader } from "@react-three/fiber";
 import { Text, Float, useGLTF } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
@@ -69,23 +69,113 @@ const EDGES: [number, number][] = [
   [0, 4], [1, 5], [2, 6], [3, 7],
 ];
 
+/* ── Light Beam Effect ─────────────────────────────────────── */
+function LightBeam({ origin, color, active }: { origin: [number, number, number]; color: string; active: boolean }) {
+  const beamRef = useRef<THREE.Mesh>(null);
+  const glowRef = useRef<THREE.PointLight>(null);
+  const progress = useRef(0);
+  const particles = useRef<THREE.Points>(null);
+
+  const particlePositions = useMemo(() => {
+    const count = 30;
+    const pos = new Float32Array(count * 3);
+    for (let i = 0; i < count; i++) {
+      pos[i * 3] = (Math.random() - 0.5) * 0.3;
+      pos[i * 3 + 1] = (Math.random() - 0.5) * 0.3;
+      pos[i * 3 + 2] = (Math.random() - 0.5) * 0.3;
+    }
+    return pos;
+  }, []);
+
+  useFrame((_, delta) => {
+    if (active) {
+      progress.current = Math.min(progress.current + delta * 3, 1);
+    } else {
+      progress.current = Math.max(progress.current - delta * 4, 0);
+    }
+
+    if (beamRef.current) {
+      const mat = beamRef.current.material as THREE.MeshBasicMaterial;
+      mat.opacity = progress.current * 0.6 * Math.max(0, 1 - progress.current * 0.5);
+      beamRef.current.scale.set(
+        0.02 + progress.current * 0.08,
+        0.02 + progress.current * 0.08,
+        progress.current * 4
+      );
+      // Point beam toward camera (z direction)
+      beamRef.current.position.set(origin[0], origin[1], origin[2] + progress.current * 2);
+    }
+
+    if (glowRef.current) {
+      glowRef.current.intensity = progress.current * 8;
+    }
+
+    if (particles.current) {
+      const mat = particles.current.material as THREE.PointsMaterial;
+      mat.opacity = progress.current * 0.8;
+      particles.current.scale.setScalar(1 + progress.current * 2);
+    }
+  });
+
+  if (progress.current <= 0 && !active) return null;
+
+  return (
+    <group>
+      {/* Beam cylinder */}
+      <mesh ref={beamRef} position={origin}>
+        <cylinderGeometry args={[1, 0.3, 1, 8]} />
+        <meshBasicMaterial color={color} transparent opacity={0} toneMapped={false} />
+      </mesh>
+
+      {/* Point light flash */}
+      <pointLight
+        ref={glowRef}
+        position={origin}
+        color={color}
+        intensity={0}
+        distance={5}
+        decay={2}
+      />
+
+      {/* Particle burst */}
+      <points ref={particles} position={origin}>
+        <bufferGeometry>
+          <bufferAttribute attach="attributes-position" args={[particlePositions, 3]} count={30} />
+        </bufferGeometry>
+        <pointsMaterial size={0.04} color={color} transparent opacity={0} toneMapped={false} sizeAttenuation />
+      </points>
+    </group>
+  );
+}
+
+/* ── Glow Node ─────────────────────────────────────── */
 function GlowNode({
-  position, color, label, index, onNodeClick, hoveredNode, setHoveredNode, isPaused,
+  position, color, label, index, onNodeClick, hoveredNode, setHoveredNode, isPaused, isActive,
 }: {
   position: [number, number, number]; color: string; label: string; index: number;
   onNodeClick: (index: number) => void; hoveredNode: number | null;
-  setHoveredNode: (i: number | null) => void; isPaused: boolean;
+  setHoveredNode: (i: number | null) => void; isPaused: boolean; isActive: boolean;
 }) {
   const meshRef = useRef<THREE.Mesh>(null);
   const isHovered = hoveredNode === index;
   const baseScale = isPaused ? 0.08 : 0.06;
-  const targetScale = isHovered ? 0.14 : baseScale;
+  const targetScale = isActive ? 0.16 : isHovered ? 0.14 : baseScale;
   const currentScale = useRef(baseScale);
+  const pulseTime = useRef(0);
 
   useFrame((_, delta) => {
     if (!meshRef.current) return;
     currentScale.current += (targetScale - currentScale.current) * Math.min(delta * 8, 1);
-    meshRef.current.scale.setScalar(currentScale.current);
+
+    // Pulse on active
+    if (isActive) {
+      pulseTime.current += delta * 6;
+      const pulse = 1 + Math.sin(pulseTime.current) * 0.08;
+      meshRef.current.scale.setScalar(currentScale.current * pulse);
+    } else {
+      pulseTime.current = 0;
+      meshRef.current.scale.setScalar(currentScale.current);
+    }
   });
 
   return (
@@ -100,15 +190,15 @@ function GlowNode({
         <meshStandardMaterial
           color={color}
           emissive={color}
-          emissiveIntensity={isHovered ? 4 : 1.5}
+          emissiveIntensity={isActive ? 6 : isHovered ? 4 : 1.5}
           toneMapped={false}
         />
       </mesh>
-      <mesh scale={isHovered ? 0.25 : 0.15}>
+      <mesh scale={isActive ? 0.35 : isHovered ? 0.25 : 0.15}>
         <sphereGeometry args={[1, 16, 16]} />
-        <meshBasicMaterial color={color} transparent opacity={isHovered ? 0.2 : 0.08} />
+        <meshBasicMaterial color={color} transparent opacity={isActive ? 0.35 : isHovered ? 0.2 : 0.08} />
       </mesh>
-      {isHovered && (
+      {(isHovered || isActive) && (
         <Text
           position={[0, 0.3, 0]}
           fontSize={0.1}
@@ -126,6 +216,7 @@ function GlowNode({
   );
 }
 
+/* ── Cube Edge ─────────────────────────────────────── */
 function CubeEdge({ start, end }: { start: [number, number, number]; end: [number, number, number] }) {
   const lineObj = useMemo(() => {
     const points = [new THREE.Vector3(...start), new THREE.Vector3(...end)];
@@ -136,6 +227,7 @@ function CubeEdge({ start, end }: { start: [number, number, number]; end: [numbe
   return <primitive object={lineObj} />;
 }
 
+/* ── Particles ─────────────────────────────────────── */
 function Particles() {
   const count = 250;
   const mesh = useRef<THREE.Points>(null);
@@ -178,6 +270,7 @@ function Particles() {
   );
 }
 
+/* ── GLB Model ─────────────────────────────────────── */
 function GLBModel() {
   const { scene } = useGLTF("/models/holoseat.glb");
   const clonedScene = useMemo(() => {
@@ -193,7 +286,6 @@ function GLBModel() {
         }
       }
     });
-    // Center and scale
     const box = new THREE.Box3().setFromObject(clone);
     const center = box.getCenter(new THREE.Vector3());
     const size = box.getSize(new THREE.Vector3());
@@ -209,12 +301,20 @@ function GLBModel() {
 
 useGLTF.preload("/models/holoseat.glb");
 
-function InteractiveCubeScene({ onNodeClick, isPaused }: { onNodeClick: (index: number) => void; isPaused: boolean }) {
+/* ── Scene ─────────────────────────────────────── */
+function InteractiveCubeScene({
+  onNodeClick, isPaused, activeNode,
+}: {
+  onNodeClick: (index: number, worldX: number) => void;
+  isPaused: boolean;
+  activeNode: number | null;
+}) {
   const groupRef = useRef<THREE.Group>(null);
   const targetRotation = useRef({ x: 0, y: 0 });
   const idleTime = useRef(0);
   const lastPointer = useRef({ x: 0, y: 0 });
   const [hoveredNode, setHoveredNode] = useState<number | null>(null);
+  const cubeScale = useRef(1);
 
   useFrame((state, delta) => {
     if (!groupRef.current) return;
@@ -222,6 +322,11 @@ function InteractiveCubeScene({ onNodeClick, isPaused }: { onNodeClick: (index: 
     const moved = Math.abs(x - lastPointer.current.x) + Math.abs(y - lastPointer.current.y) > 0.001;
     lastPointer.current = { x, y };
     if (moved) { idleTime.current = 0; } else { idleTime.current += delta; }
+
+    // Scale pulse on click
+    const targetCubeScale = isPaused ? 1.03 : 1.0;
+    cubeScale.current += (targetCubeScale - cubeScale.current) * Math.min(delta * 4, 1);
+    groupRef.current.scale.setScalar(cubeScale.current);
 
     if (!isPaused) {
       const mouseInfluence = Math.max(0, 1 - idleTime.current * 0.5);
@@ -234,7 +339,8 @@ function InteractiveCubeScene({ onNodeClick, isPaused }: { onNodeClick: (index: 
       }
     }
 
-    const springFactor = isPaused ? 0.03 : 0.05;
+    // Slower rotation when paused
+    const springFactor = isPaused ? 0.015 : 0.05;
     groupRef.current.rotation.y += (targetRotation.current.y - groupRef.current.rotation.y) * springFactor;
     groupRef.current.rotation.x += (targetRotation.current.x - groupRef.current.rotation.x) * springFactor;
   });
@@ -244,6 +350,12 @@ function InteractiveCubeScene({ onNodeClick, isPaused }: { onNodeClick: (index: 
     []
   );
 
+  const handleNodeClick = useCallback((index: number) => {
+    // Determine world X of the node
+    const worldX = VERTEX_POSITIONS[index][0];
+    onNodeClick(index, worldX);
+  }, [onNodeClick]);
+
   return (
     <group ref={groupRef}>
       {EDGES.map(([a, b], i) => (
@@ -252,7 +364,6 @@ function InteractiveCubeScene({ onNodeClick, isPaused }: { onNodeClick: (index: 
 
       <GLBModel />
 
-      {/* Inner wireframe */}
       <mesh>
         <boxGeometry args={[1.8, 1.8, 1.8]} />
         <meshBasicMaterial color={DDC_RED} transparent opacity={0.03} wireframe />
@@ -261,15 +372,34 @@ function InteractiveCubeScene({ onNodeClick, isPaused }: { onNodeClick: (index: 
       {scaledVertices.map((pos, i) => (
         <GlowNode
           key={i} position={pos} color={HUB_DATA[i].color} label={HUB_DATA[i].name}
-          index={i} onNodeClick={onNodeClick} hoveredNode={hoveredNode}
-          setHoveredNode={setHoveredNode} isPaused={isPaused}
+          index={i} onNodeClick={handleNodeClick} hoveredNode={hoveredNode}
+          setHoveredNode={setHoveredNode} isPaused={isPaused} isActive={activeNode === i}
+        />
+      ))}
+
+      {/* Light beams for active node */}
+      {scaledVertices.map((pos, i) => (
+        <LightBeam
+          key={`beam-${i}`}
+          origin={pos}
+          color={HUB_DATA[i].color}
+          active={activeNode === i}
         />
       ))}
     </group>
   );
 }
 
-export default function InteractiveCube({ onNodeClick, isPaused }: { onNodeClick: (index: number) => void; isPaused: boolean }) {
+/* ── Main Component ─────────────────────────────────────── */
+export default function InteractiveCube({
+  onNodeClick, isPaused, activeNode,
+}: {
+  onNodeClick: (index: number, worldX: number) => void;
+  isPaused: boolean;
+  activeNode: number | null;
+}) {
+  const bloomIntensity = activeNode !== null ? 1.8 : 1.0;
+
   return (
     <div className="w-full h-full cursor-pointer">
       <Canvas camera={{ position: [0, 0, 5], fov: 50 }} dpr={[1, 2]}>
@@ -285,11 +415,11 @@ export default function InteractiveCube({ onNodeClick, isPaused }: { onNodeClick
         <Particles />
 
         <Float speed={0.5} rotationIntensity={0} floatIntensity={0.3}>
-          <InteractiveCubeScene onNodeClick={onNodeClick} isPaused={isPaused} />
+          <InteractiveCubeScene onNodeClick={onNodeClick} isPaused={isPaused} activeNode={activeNode} />
         </Float>
 
         <EffectComposer>
-          <Bloom luminanceThreshold={0.2} luminanceSmoothing={0.9} intensity={1.0} mipmapBlur />
+          <Bloom luminanceThreshold={0.2} luminanceSmoothing={0.9} intensity={bloomIntensity} mipmapBlur />
         </EffectComposer>
       </Canvas>
     </div>

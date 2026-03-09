@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import InteractiveCube, { HUB_DATA } from "@/components/InteractiveCube";
 import HubPanel from "@/components/HubPanel";
 import { motion } from "framer-motion";
@@ -6,10 +6,38 @@ import ddcLogo from "@/assets/ddc-logo.png";
 
 const Index = () => {
   const [selectedHub, setSelectedHub] = useState<number | null>(null);
-  const handleNodeClick = useCallback((index: number) => {
-    setSelectedHub((prev) => (prev === index ? null : index));
+  const [visibleHub, setVisibleHub] = useState<number | null>(null);
+  const [panelSide, setPanelSide] = useState<"left" | "right">("right");
+  const delayTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleNodeClick = useCallback((index: number, worldX: number) => {
+    if (delayTimer.current) clearTimeout(delayTimer.current);
+
+    if (selectedHub === index) {
+      setSelectedHub(null);
+      setVisibleHub(null);
+      return;
+    }
+
+    // Determine side based on node x position
+    setPanelSide(worldX < 0 ? "left" : "right");
+    setSelectedHub(index);
+    // Delay panel appearance for light beam effect
+    setVisibleHub(null);
+    delayTimer.current = setTimeout(() => {
+      setVisibleHub(index);
+    }, 400);
+  }, [selectedHub]);
+
+  const handleClose = useCallback(() => {
+    if (delayTimer.current) clearTimeout(delayTimer.current);
+    setSelectedHub(null);
+    setVisibleHub(null);
   }, []);
-  const handleClose = useCallback(() => setSelectedHub(null), []);
+
+  useEffect(() => {
+    return () => { if (delayTimer.current) clearTimeout(delayTimer.current); };
+  }, []);
 
   return (
     <div className="relative w-screen h-screen bg-background overflow-hidden font-body select-none">
@@ -51,7 +79,6 @@ const Index = () => {
         <div className="w-20" />
       </motion.nav>
 
-
       {/* 3D Cube */}
       <motion.div
         initial={{ opacity: 0, scale: 0.7 }}
@@ -59,9 +86,12 @@ const Index = () => {
         transition={{ duration: 1.2, delay: 0.5, ease: "easeOut" }}
         className="absolute inset-0"
       >
-        <InteractiveCube onNodeClick={handleNodeClick} isPaused={selectedHub !== null} />
+        <InteractiveCube
+          onNodeClick={handleNodeClick}
+          isPaused={selectedHub !== null}
+          activeNode={selectedHub}
+        />
       </motion.div>
-
 
       {/* Hub indicators */}
       <motion.div
@@ -73,7 +103,7 @@ const Index = () => {
         {HUB_DATA.map((hub, i) => (
           <button
             key={hub.name}
-            onClick={() => handleNodeClick(i)}
+            onClick={() => handleNodeClick(i, VERTEX_X[i])}
             className={`group relative transition-all duration-300 ${
               selectedHub === i ? "scale-125" : "opacity-50 hover:opacity-100"
             }`}
@@ -90,9 +120,16 @@ const Index = () => {
         ))}
       </motion.div>
 
-      <HubPanel hub={selectedHub !== null ? HUB_DATA[selectedHub] : null} onClose={handleClose} />
+      <HubPanel
+        hub={visibleHub !== null ? HUB_DATA[visibleHub] : null}
+        onClose={handleClose}
+        side={panelSide}
+      />
     </div>
   );
 };
+
+// Pre-computed vertex X positions for bottom indicator buttons
+const VERTEX_X = [1, -1, 1, -1, 1, -1, 1, -1];
 
 export default Index;
