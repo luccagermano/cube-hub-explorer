@@ -51,20 +51,6 @@ const Index = () => {
         <div className="w-20" />
       </motion.nav>
 
-      {/* Title */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, delay: 0.3 }}
-        className="absolute top-[12%] left-1/2 -translate-x-1/2 text-center z-10 pointer-events-none"
-      >
-        <h1 className="font-display text-5xl md:text-7xl font-black tracking-[0.25em] text-primary text-glow-red">
-          .ddc
-        </h1>
-        <p className="text-muted-foreground text-xs md:text-sm mt-3 tracking-[0.4em] font-display uppercase">
-          Exploring the Future of Technology
-        </p>
-      </motion.div>
 
       {/* 3D Cube */}
       <motion.div
