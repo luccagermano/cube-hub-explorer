@@ -214,7 +214,7 @@ const GlowNode = forwardRef<THREE.Group, {
       )}
     </group>
   );
-}
+});
 
 /* ── Cube Edge ─────────────────────────────────────── */
 const CubeEdge = forwardRef<THREE.Group, { start: [number, number, number]; end: [number, number, number] }>(function CubeEdge({ start, end }, ref) {
