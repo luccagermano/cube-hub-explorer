@@ -120,7 +120,7 @@ const LightBeam = forwardRef<THREE.Group, { origin: [number, number, number]; co
   if (progress.current <= 0 && !active) return null;
 
   return (
-    <group>
+    <group ref={ref}>
       {/* Beam cylinder */}
       <mesh ref={beamRef} position={origin}>
         <cylinderGeometry args={[1, 0.3, 1, 8]} />
