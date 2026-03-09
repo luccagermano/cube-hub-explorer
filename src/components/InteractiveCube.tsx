@@ -70,7 +70,7 @@ const EDGES: [number, number][] = [
 ];
 
 /* ── Light Beam Effect ─────────────────────────────────────── */
-function LightBeam({ origin, color, active }: { origin: [number, number, number]; color: string; active: boolean }) {
+const LightBeam = forwardRef<THREE.Group, { origin: [number, number, number]; color: string; active: boolean }>(function LightBeam({ origin, color, active }, ref) {
   const beamRef = useRef<THREE.Mesh>(null);
   const glowRef = useRef<THREE.PointLight>(null);
   const progress = useRef(0);
