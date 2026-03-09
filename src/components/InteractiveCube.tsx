@@ -1,9 +1,8 @@
 import { useRef, useState, useMemo, useCallback } from "react";
 import { Canvas, useFrame, useThree, useLoader } from "@react-three/fiber";
-import { Text, Float } from "@react-three/drei";
+import { Text, Float, useGLTF } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import * as THREE from "three";
-import mascotTexture from "@/assets/ddc-mascot.jpeg";
 
 const DDC_RED = "#c4364a";
 const DDC_RED_DARK = "#8b2535";
@@ -179,25 +178,36 @@ function Particles() {
   );
 }
 
-function TexturedCube() {
-  const texture = useLoader(THREE.TextureLoader, mascotTexture);
-  return (
-    <mesh>
-      <boxGeometry args={[2.2, 2.2, 2.2]} />
-      <meshPhysicalMaterial
-        map={texture}
-        metalness={0.7}
-        roughness={0.2}
-        transparent
-        opacity={0.85}
-        envMapIntensity={1.5}
-        side={THREE.DoubleSide}
-        emissive="#1a0505"
-        emissiveIntensity={0.3}
-      />
-    </mesh>
-  );
+function GLBModel() {
+  const { scene } = useGLTF("/models/holoseat.glb");
+  const clonedScene = useMemo(() => {
+    const clone = scene.clone(true);
+    clone.traverse((child) => {
+      if ((child as THREE.Mesh).isMesh) {
+        const mesh = child as THREE.Mesh;
+        if (mesh.material) {
+          const mat = (mesh.material as THREE.MeshStandardMaterial).clone();
+          mat.emissive = new THREE.Color("#1a0505");
+          mat.emissiveIntensity = 0.3;
+          mesh.material = mat;
+        }
+      }
+    });
+    // Center and scale
+    const box = new THREE.Box3().setFromObject(clone);
+    const center = box.getCenter(new THREE.Vector3());
+    const size = box.getSize(new THREE.Vector3());
+    const maxDim = Math.max(size.x, size.y, size.z);
+    const scale = 2.2 / maxDim;
+    clone.scale.setScalar(scale);
+    clone.position.sub(center.multiplyScalar(scale));
+    return clone;
+  }, [scene]);
+
+  return <primitive object={clonedScene} />;
 }
+
+useGLTF.preload("/models/holoseat.glb");
 
 function InteractiveCubeScene({ onNodeClick, isPaused }: { onNodeClick: (index: number) => void; isPaused: boolean }) {
   const groupRef = useRef<THREE.Group>(null);
@@ -240,7 +250,7 @@ function InteractiveCubeScene({ onNodeClick, isPaused }: { onNodeClick: (index: 
         <CubeEdge key={i} start={scaledVertices[a]} end={scaledVertices[b]} />
       ))}
 
-      <TexturedCube />
+      <GLBModel />
 
       {/* Inner wireframe */}
       <mesh>
@@ -263,11 +273,12 @@ export default function InteractiveCube({ onNodeClick, isPaused }: { onNodeClick
   return (
     <div className="w-full h-full cursor-pointer">
       <Canvas camera={{ position: [0, 0, 5], fov: 50 }} dpr={[1, 2]}>
-        <ambientLight intensity={0.2} />
-        <pointLight position={[5, 5, 5]} intensity={0.8} color={DDC_RED} />
-        <pointLight position={[-5, -3, 5]} intensity={0.5} color="#e85d6f" />
-        <pointLight position={[0, 5, -5]} intensity={0.3} color="#a83242" />
-        <pointLight position={[0, -5, 5]} intensity={0.2} color="#ffffff" />
+        <ambientLight intensity={0.5} />
+        <pointLight position={[5, 5, 5]} intensity={1.2} color={DDC_RED} />
+        <pointLight position={[-5, -3, 5]} intensity={0.8} color="#e85d6f" />
+        <pointLight position={[0, 5, -5]} intensity={0.5} color="#a83242" />
+        <pointLight position={[0, -5, 5]} intensity={0.4} color="#ffffff" />
+        <directionalLight position={[0, 3, 5]} intensity={0.6} />
 
         <Particles />
 
