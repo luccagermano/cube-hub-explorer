@@ -153,16 +153,14 @@ function GlowNode({
 }
 
 function CubeEdge({ start, end }: { start: [number, number, number]; end: [number, number, number] }) {
-  const geometry = useMemo(() => {
+  const lineObj = useMemo(() => {
     const points = [new THREE.Vector3(...start), new THREE.Vector3(...end)];
-    return new THREE.BufferGeometry().setFromPoints(points);
+    const geometry = new THREE.BufferGeometry().setFromPoints(points);
+    const material = new THREE.LineBasicMaterial({ color: "#1a3a4a", transparent: true, opacity: 0.4 });
+    return new THREE.Line(geometry, material);
   }, [start, end]);
 
-  return (
-    <line geometry={geometry}>
-      <lineBasicMaterial color="#1a3a4a" transparent opacity={0.4} />
-    </line>
-  );
+  return <primitive object={lineObj} />;
 }
 
 function Particles() {
