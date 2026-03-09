@@ -220,7 +220,7 @@ const GlowNode = forwardRef<THREE.Group, {
 }
 
 /* ── Cube Edge ─────────────────────────────────────── */
-function CubeEdge({ start, end }: { start: [number, number, number]; end: [number, number, number] }) {
+const CubeEdge = forwardRef<THREE.Group, { start: [number, number, number]; end: [number, number, number] }>(function CubeEdge({ start, end }, ref) {
   const lineObj = useMemo(() => {
     const points = [new THREE.Vector3(...start), new THREE.Vector3(...end)];
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
