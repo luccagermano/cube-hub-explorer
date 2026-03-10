@@ -5,6 +5,9 @@ import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import * as THREE from "three";
 import { useIsMobile } from "@/hooks/use-mobile";
 
+/* ── Mobile gesture types ── */
+export type GestureState = "idle" | "tapCandidate" | "dragging";
+
 /* ── Resize handler — keeps camera/renderer in sync with viewport ── */
 function ViewportResizeHandler() {
   const { camera, gl, size } = useThree();
@@ -166,15 +169,14 @@ const GlowNode = forwardRef<THREE.Group, {
   position: [number, number, number]; color: string; label: string; index: number;
   onNodeClick: (index: number) => void; hoveredNode: number | null;
   setHoveredNode: (i: number | null) => void; isPaused: boolean; isActive: boolean;
-  isInteractive: boolean; isMobile: boolean;
+  isInteractive: boolean; isMobile: boolean; gestureState: GestureState;
 }>(function GlowNode({
-  position, color, label, index, onNodeClick, hoveredNode, setHoveredNode, isPaused, isActive, isInteractive, isMobile,
+  position, color, label, index, onNodeClick, hoveredNode, setHoveredNode, isPaused, isActive, isInteractive, isMobile, gestureState,
 }, ref) {
   const meshRef = useRef<THREE.Mesh>(null);
   const isHovered = hoveredNode === index;
   const baseScale = isPaused ? 0.08 : 0.06;
   const inactiveScale = 0.04;
-  // On mobile, make interactive nodes larger for easier tapping
   const mobileBoost = isMobile && isInteractive ? 1.6 : 1;
   const targetScale = !isInteractive ? inactiveScale : isActive ? 0.16 * mobileBoost : isHovered ? 0.14 * mobileBoost : baseScale * mobileBoost;
   const currentScale = useRef(baseScale);
@@ -194,18 +196,21 @@ const GlowNode = forwardRef<THREE.Group, {
     }
   });
 
-  // Invisible hit area sphere (larger on mobile)
-  const hitRadius = isMobile && isInteractive ? 2.5 : 1;
+  // Invisible hit area sphere — larger on mobile for easier tapping
+  const hitRadius = isMobile && isInteractive ? 3.0 : 1;
+
+  const handleClick = useCallback((e: any) => {
+    e.stopPropagation();
+    // On mobile, only allow tap if gesture is NOT dragging
+    if (isMobile && gestureState === "dragging") return;
+    onNodeClick(index);
+  }, [isMobile, gestureState, onNodeClick, index]);
 
   return (
     <group position={position}>
-      {/* Invisible enlarged hit target */}
       {isInteractive && (
         <mesh
-          onClick={(e) => {
-            e.stopPropagation();
-            onNodeClick(index);
-          }}
+          onClick={handleClick}
           onPointerOver={() => !isMobile && setHoveredNode(index)}
           onPointerOut={() => !isMobile && setHoveredNode(null)}
         >
@@ -213,7 +218,6 @@ const GlowNode = forwardRef<THREE.Group, {
           <meshBasicMaterial visible={false} />
         </mesh>
       )}
-      {/* Visual sphere */}
       <mesh ref={meshRef}>
         <sphereGeometry args={[1, 24, 24]} />
         <meshStandardMaterial
@@ -365,13 +369,15 @@ useGLTF.preload("/models/holoseat.glb");
 
 /* ── Scene ─────────────────────────────────────── */
 function InteractiveCubeScene({
-  onNodeClick, isPaused, activeNode, isMobile, gyroscope,
+  onNodeClick, isPaused, activeNode, isMobile, gyroscope, gestureState, mobileDragDelta,
 }: {
   onNodeClick: (index: number) => void;
   isPaused: boolean;
   activeNode: number | null;
   isMobile: boolean;
   gyroscope: { x: number; y: number; available: boolean };
+  gestureState: GestureState;
+  mobileDragDelta: React.MutableRefObject<{ x: number; y: number }>;
 }) {
   const groupRef = useRef<THREE.Group>(null);
   const targetRotation = useRef({ x: 0, y: 0 });
@@ -379,6 +385,8 @@ function InteractiveCubeScene({
   const lastPointer = useRef({ x: 0, y: 0 });
   const [hoveredNode, setHoveredNode] = useState<number | null>(null);
   const cubeScale = useRef(1);
+  // Accumulated drag rotation for mobile
+  const dragRotation = useRef({ x: 0, y: 0 });
 
   useFrame((state, delta) => {
     if (!groupRef.current) return;
@@ -389,15 +397,36 @@ function InteractiveCubeScene({
 
     if (!isPaused) {
       if (isMobile) {
-        // Mobile: use gyroscope if available, otherwise gentle idle animation only
-        if (gyroscope.available) {
-          targetRotation.current.y = gyroscope.x * Math.PI * 0.25;
-          targetRotation.current.x = -gyroscope.y * Math.PI * 0.15;
-        } else {
-          // Gentle idle rotation only — no touch drag
-          targetRotation.current.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.2;
-          targetRotation.current.x = Math.cos(state.clock.elapsedTime * 0.2) * 0.1;
+        // Accumulate drag rotation when dragging (reduced sensitivity)
+        if (gestureState === "dragging") {
+          dragRotation.current.y += mobileDragDelta.current.x * 0.002;
+          dragRotation.current.x += mobileDragDelta.current.y * 0.002;
+          // Clamp max rotation
+          dragRotation.current.y = Math.max(-Math.PI * 0.4, Math.min(Math.PI * 0.4, dragRotation.current.y));
+          dragRotation.current.x = Math.max(-Math.PI * 0.25, Math.min(Math.PI * 0.25, dragRotation.current.x));
         }
+        // Reset drag delta each frame
+        mobileDragDelta.current.x = 0;
+        mobileDragDelta.current.y = 0;
+
+        // Base rotation: gyroscope or idle
+        let baseY = 0, baseX = 0;
+        if (gyroscope.available) {
+          baseY = gyroscope.x * Math.PI * 0.25;
+          baseX = -gyroscope.y * Math.PI * 0.15;
+        } else {
+          baseY = Math.sin(state.clock.elapsedTime * 0.3) * 0.2;
+          baseX = Math.cos(state.clock.elapsedTime * 0.2) * 0.1;
+        }
+
+        // Decay drag rotation back toward zero when not dragging
+        if (gestureState !== "dragging") {
+          dragRotation.current.y *= 0.97;
+          dragRotation.current.x *= 0.97;
+        }
+
+        targetRotation.current.y = baseY + dragRotation.current.y;
+        targetRotation.current.x = baseX + dragRotation.current.x;
       } else {
         // Desktop: mouse-based rotation
         const { x, y } = state.pointer;
@@ -448,7 +477,7 @@ function InteractiveCubeScene({
           key={i} position={pos} color={VERTEX_DATA[i].color} label={VERTEX_DATA[i].name}
           index={i} onNodeClick={handleNodeClick} hoveredNode={hoveredNode}
           setHoveredNode={setHoveredNode} isPaused={isPaused} isActive={activeNode === i}
-          isInteractive={VERTEX_DATA[i].active} isMobile={isMobile}
+          isInteractive={VERTEX_DATA[i].active} isMobile={isMobile} gestureState={gestureState}
         />
       ))}
 
@@ -477,6 +506,54 @@ export default function InteractiveCube({
   const bloomIntensity = activeNode !== null ? 1.8 : 1.0;
   const isMobile = useIsMobile();
   const [gyroscope, setGyroscope] = useState({ x: 0, y: 0, available: false });
+
+  /* ── Mobile gesture state machine ── */
+  const TAP_THRESHOLD = 12; // px movement to classify as drag
+  const [gestureState, setGestureState] = useState<GestureState>("idle");
+  const gestureRef = useRef({
+    startX: 0, startY: 0, startTime: 0, lastX: 0, lastY: 0,
+  });
+  const mobileDragDelta = useRef({ x: 0, y: 0 });
+
+  const handlePointerDown = useCallback((e: React.PointerEvent) => {
+    if (!isMobile) return;
+    gestureRef.current.startX = e.clientX;
+    gestureRef.current.startY = e.clientY;
+    gestureRef.current.lastX = e.clientX;
+    gestureRef.current.lastY = e.clientY;
+    gestureRef.current.startTime = Date.now();
+    setGestureState("tapCandidate");
+  }, [isMobile]);
+
+  const handlePointerMove = useCallback((e: React.PointerEvent) => {
+    if (!isMobile) return;
+    const g = gestureRef.current;
+    const dx = e.clientX - g.startX;
+    const dy = e.clientY - g.startY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    if (gestureState === "tapCandidate" && dist > TAP_THRESHOLD) {
+      setGestureState("dragging");
+    }
+
+    if (gestureState === "dragging" || dist > TAP_THRESHOLD) {
+      // Accumulate frame delta for the scene
+      mobileDragDelta.current.x += e.clientX - g.lastX;
+      mobileDragDelta.current.y += e.clientY - g.lastY;
+    }
+    g.lastX = e.clientX;
+    g.lastY = e.clientY;
+  }, [isMobile, gestureState]);
+
+  const handlePointerUp = useCallback(() => {
+    if (!isMobile) return;
+    setGestureState("idle");
+  }, [isMobile]);
+
+  const handlePointerCancel = useCallback(() => {
+    if (!isMobile) return;
+    setGestureState("idle");
+  }, [isMobile]);
 
   // Gyroscope listener — runs only on mobile
   useEffect(() => {
@@ -537,7 +614,6 @@ export default function InteractiveCube({
       const { clientWidth: w, clientHeight: h } = containerRef.current;
       if (w > 0 && h > 0) setDims({ w, h });
     };
-    // Measure immediately + after a frame for safety
     measure();
     const raf = requestAnimationFrame(measure);
     window.addEventListener("resize", measure);
@@ -554,6 +630,10 @@ export default function InteractiveCube({
   return (
     <div
       ref={containerRef}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerCancel}
       style={{
         position: "absolute",
         inset: 0,
@@ -590,6 +670,8 @@ export default function InteractiveCube({
               activeNode={activeNode}
               isMobile={isMobile}
               gyroscope={gyroscope}
+              gestureState={gestureState}
+              mobileDragDelta={mobileDragDelta}
             />
           </Float>
 
