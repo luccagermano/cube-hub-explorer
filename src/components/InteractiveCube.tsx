@@ -458,8 +458,8 @@ export default function InteractiveCube({
   }, [isMobile]);
 
   return (
-    <div className="w-full h-full cursor-pointer" style={isMobile ? { touchAction: "none" } : undefined}>
-      <Canvas camera={{ position: [0, 0, 5], fov: isMobile ? 55 : 50 }} dpr={[1, isMobile ? 1.2 : 1.5]}>
+    <div className="w-full h-full cursor-pointer" style={{ touchAction: isMobile ? "none" : undefined, position: "absolute", inset: 0 }}>
+      <Canvas camera={{ position: [0, 0, 5], fov: isMobile ? 55 : 50 }} dpr={[1, isMobile ? 1.2 : 1.5]} style={{ width: "100%", height: "100%" }} resize={{ scroll: false, debounce: { scroll: 0, resize: 0 } }}>
         <ambientLight intensity={1.2} />
         <directionalLight position={[4, 5, 6]} intensity={3.5} color="#fff5ee" />
         <directionalLight position={[-4, 2, 3]} intensity={1.8} color="#e0e4f0" />
