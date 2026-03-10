@@ -31,6 +31,16 @@ export default function LiquidGlassModal({ hub, onClose }: LiquidGlassModalProps
         <>
 
           {/* Liquid Glass Modal */}
+          {/* Subtle background blur layer */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-39"
+            style={{ backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)" }}
+          />
+
           <motion.div
             initial={{ opacity: 0, scale: 0.92 }}
             animate={{ opacity: 1, scale: 1 }}
