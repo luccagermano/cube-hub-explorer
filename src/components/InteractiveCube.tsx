@@ -5,6 +5,46 @@ import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import * as THREE from "three";
 import { useIsMobile } from "@/hooks/use-mobile";
 
+/* ── Resize handler — keeps camera/renderer in sync with viewport ── */
+function ViewportResizeHandler() {
+  const { camera, gl, size } = useThree();
+
+  useEffect(() => {
+    const handleResize = () => {
+      const w = gl.domElement.clientWidth;
+      const h = gl.domElement.clientHeight;
+      if (w === 0 || h === 0) return;
+      gl.setSize(w, h, false);
+      if (camera instanceof THREE.PerspectiveCamera) {
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+      }
+    };
+
+    // Fix initial sizing after first paint
+    requestAnimationFrame(() => {
+      handleResize();
+    });
+
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("orientationchange", () => {
+      // Delay to let mobile browser settle viewport
+      setTimeout(handleResize, 150);
+      setTimeout(handleResize, 500);
+    });
+    // Also handle visibility change (returning to tab)
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) setTimeout(handleResize, 100);
+    });
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [camera, gl]);
+
+  return null;
+}
+
 const DDC_RED = "#c4364a";
 const DDC_RED_DARK = "#8b2535";
 
@@ -457,33 +497,76 @@ export default function InteractiveCube({
     };
   }, [isMobile]);
 
+  // Track container dimensions for stable Canvas sizing
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [dims, setDims] = useState<{ w: number; h: number } | null>(null);
+
+  useEffect(() => {
+    const measure = () => {
+      if (!containerRef.current) return;
+      const { clientWidth: w, clientHeight: h } = containerRef.current;
+      if (w > 0 && h > 0) setDims({ w, h });
+    };
+    // Measure immediately + after a frame for safety
+    measure();
+    const raf = requestAnimationFrame(measure);
+    window.addEventListener("resize", measure);
+    window.addEventListener("orientationchange", () => {
+      setTimeout(measure, 200);
+      setTimeout(measure, 600);
+    });
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", measure);
+    };
+  }, []);
+
   return (
-    <div className="w-full h-full cursor-pointer" style={{ touchAction: isMobile ? "none" : undefined, position: "absolute", inset: 0 }}>
-      <Canvas camera={{ position: [0, 0, 5], fov: isMobile ? 55 : 50 }} dpr={[1, isMobile ? 1.2 : 1.5]} style={{ width: "100%", height: "100%" }} resize={{ scroll: false, debounce: { scroll: 0, resize: 0 } }}>
-        <ambientLight intensity={1.2} />
-        <directionalLight position={[4, 5, 6]} intensity={3.5} color="#fff5ee" />
-        <directionalLight position={[-4, 2, 3]} intensity={1.8} color="#e0e4f0" />
-        <directionalLight position={[0, -2, -5]} intensity={2.0} color="#ffd4d4" />
-        <pointLight position={[3, 3, 3]} intensity={1.5} color={DDC_RED} distance={12} decay={2} />
-        <pointLight position={[-3, -2, 4]} intensity={1.0} color="#e85d6f" distance={10} decay={2} />
-        <hemisphereLight intensity={0.8} color="#f0f0ff" groundColor="#1a0808" />
+    <div
+      ref={containerRef}
+      style={{
+        position: "absolute",
+        inset: 0,
+        width: "100%",
+        height: "100%",
+        touchAction: isMobile ? "none" : undefined,
+        cursor: "pointer",
+      }}
+    >
+      {dims && (
+        <Canvas
+          camera={{ position: [0, 0, 5], fov: isMobile ? 55 : 50 }}
+          dpr={[1, isMobile ? 1.2 : 1.5]}
+          style={{ width: dims.w, height: dims.h }}
+          resize={{ scroll: false, debounce: { scroll: 0, resize: 0 } }}
+          gl={{ antialias: true, alpha: false }}
+        >
+          <ViewportResizeHandler />
+          <ambientLight intensity={1.2} />
+          <directionalLight position={[4, 5, 6]} intensity={3.5} color="#fff5ee" />
+          <directionalLight position={[-4, 2, 3]} intensity={1.8} color="#e0e4f0" />
+          <directionalLight position={[0, -2, -5]} intensity={2.0} color="#ffd4d4" />
+          <pointLight position={[3, 3, 3]} intensity={1.5} color={DDC_RED} distance={12} decay={2} />
+          <pointLight position={[-3, -2, 4]} intensity={1.0} color="#e85d6f" distance={10} decay={2} />
+          <hemisphereLight intensity={0.8} color="#f0f0ff" groundColor="#1a0808" />
 
-        <Particles />
+          <Particles />
 
-        <Float speed={0.5} rotationIntensity={0} floatIntensity={0.3}>
-          <InteractiveCubeScene
-            onNodeClick={onNodeClick}
-            isPaused={isPaused}
-            activeNode={activeNode}
-            isMobile={isMobile}
-            gyroscope={gyroscope}
-          />
-        </Float>
+          <Float speed={0.5} rotationIntensity={0} floatIntensity={0.3}>
+            <InteractiveCubeScene
+              onNodeClick={onNodeClick}
+              isPaused={isPaused}
+              activeNode={activeNode}
+              isMobile={isMobile}
+              gyroscope={gyroscope}
+            />
+          </Float>
 
-        <EffectComposer>
-          <Bloom luminanceThreshold={0.3} luminanceSmoothing={0.9} intensity={bloomIntensity} mipmapBlur />
-        </EffectComposer>
-      </Canvas>
+          <EffectComposer>
+            <Bloom luminanceThreshold={0.3} luminanceSmoothing={0.9} intensity={bloomIntensity} mipmapBlur />
+          </EffectComposer>
+        </Canvas>
+      )}
     </div>
   );
 }
