@@ -272,7 +272,6 @@ function ContactContent({ onClose }: { onClose: () => void }) {
           ))}
         </div>
       </div>
-      </div>
       <div className="mt-7">
         <motion.button
           initial={{ opacity: 0, y: 8 }}
