@@ -369,13 +369,15 @@ useGLTF.preload("/models/holoseat.glb");
 
 /* ── Scene ─────────────────────────────────────── */
 function InteractiveCubeScene({
-  onNodeClick, isPaused, activeNode, isMobile, gyroscope,
+  onNodeClick, isPaused, activeNode, isMobile, gyroscope, gestureState, mobileDragDelta,
 }: {
   onNodeClick: (index: number) => void;
   isPaused: boolean;
   activeNode: number | null;
   isMobile: boolean;
   gyroscope: { x: number; y: number; available: boolean };
+  gestureState: GestureState;
+  mobileDragDelta: React.MutableRefObject<{ x: number; y: number }>;
 }) {
   const groupRef = useRef<THREE.Group>(null);
   const targetRotation = useRef({ x: 0, y: 0 });
@@ -383,6 +385,8 @@ function InteractiveCubeScene({
   const lastPointer = useRef({ x: 0, y: 0 });
   const [hoveredNode, setHoveredNode] = useState<number | null>(null);
   const cubeScale = useRef(1);
+  // Accumulated drag rotation for mobile
+  const dragRotation = useRef({ x: 0, y: 0 });
 
   useFrame((state, delta) => {
     if (!groupRef.current) return;
@@ -393,15 +397,36 @@ function InteractiveCubeScene({
 
     if (!isPaused) {
       if (isMobile) {
-        // Mobile: use gyroscope if available, otherwise gentle idle animation only
-        if (gyroscope.available) {
-          targetRotation.current.y = gyroscope.x * Math.PI * 0.25;
-          targetRotation.current.x = -gyroscope.y * Math.PI * 0.15;
-        } else {
-          // Gentle idle rotation only — no touch drag
-          targetRotation.current.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.2;
-          targetRotation.current.x = Math.cos(state.clock.elapsedTime * 0.2) * 0.1;
+        // Accumulate drag rotation when dragging (reduced sensitivity)
+        if (gestureState === "dragging") {
+          dragRotation.current.y += mobileDragDelta.current.x * 0.002;
+          dragRotation.current.x += mobileDragDelta.current.y * 0.002;
+          // Clamp max rotation
+          dragRotation.current.y = Math.max(-Math.PI * 0.4, Math.min(Math.PI * 0.4, dragRotation.current.y));
+          dragRotation.current.x = Math.max(-Math.PI * 0.25, Math.min(Math.PI * 0.25, dragRotation.current.x));
         }
+        // Reset drag delta each frame
+        mobileDragDelta.current.x = 0;
+        mobileDragDelta.current.y = 0;
+
+        // Base rotation: gyroscope or idle
+        let baseY = 0, baseX = 0;
+        if (gyroscope.available) {
+          baseY = gyroscope.x * Math.PI * 0.25;
+          baseX = -gyroscope.y * Math.PI * 0.15;
+        } else {
+          baseY = Math.sin(state.clock.elapsedTime * 0.3) * 0.2;
+          baseX = Math.cos(state.clock.elapsedTime * 0.2) * 0.1;
+        }
+
+        // Decay drag rotation back toward zero when not dragging
+        if (gestureState !== "dragging") {
+          dragRotation.current.y *= 0.97;
+          dragRotation.current.x *= 0.97;
+        }
+
+        targetRotation.current.y = baseY + dragRotation.current.y;
+        targetRotation.current.x = baseX + dragRotation.current.x;
       } else {
         // Desktop: mouse-based rotation
         const { x, y } = state.pointer;
@@ -452,7 +477,7 @@ function InteractiveCubeScene({
           key={i} position={pos} color={VERTEX_DATA[i].color} label={VERTEX_DATA[i].name}
           index={i} onNodeClick={handleNodeClick} hoveredNode={hoveredNode}
           setHoveredNode={setHoveredNode} isPaused={isPaused} isActive={activeNode === i}
-          isInteractive={VERTEX_DATA[i].active} isMobile={isMobile}
+          isInteractive={VERTEX_DATA[i].active} isMobile={isMobile} gestureState={gestureState}
         />
       ))}
 
