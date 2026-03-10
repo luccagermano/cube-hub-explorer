@@ -19,15 +19,15 @@ export type PopupCategory =
 
 export const VERTEX_DATA = [
   // Index 0: top front right — Solutions
-  { name: "Solutions", color: DDC_RED, active: true, category: "solutions" as const },
+  { name: "Soluções", color: DDC_RED, active: true, category: "solutions" as const },
   // Index 1: top front left — Contact
-  { name: "Contact", color: "#e85d6f", active: true, category: "contact" as const },
+  { name: "Contato", color: "#e85d6f", active: true, category: "contact" as const },
   // Index 2: bottom front right — Clients
-  { name: "Clients", color: DDC_RED, active: true, category: "clients" as const },
+  { name: "Clientes", color: DDC_RED, active: true, category: "clients" as const },
   // Index 3: bottom front left — Newsletter
   { name: "Newsletter", color: "#e85d6f", active: true, category: "newsletter" as const },
   // Index 4: top back right — Company
-  { name: "Company", color: "#a83242", active: true, category: "company" as const },
+  { name: "Empresa", color: "#a83242", active: true, category: "company" as const },
   // Index 5: top back left — Intro
   { name: "DDC", color: "#e85d6f", active: true, category: "intro" as const },
   // Index 6: bottom back right — INACTIVE

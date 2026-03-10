@@ -85,9 +85,9 @@ const Index = () => {
           <button
             onClick={handleAboutClick}
             className="text-xs font-display tracking-[0.2em] uppercase text-muted-foreground hover:text-primary transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md px-2 py-1"
-            aria-label="Open About section"
+            aria-label="Abrir seção Sobre"
           >
-            About
+            Sobre
           </button>
         </div>
 
@@ -128,7 +128,7 @@ const Index = () => {
                     className={`group relative transition-all duration-300 p-1 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                       selectedNode === i ? "scale-125" : "opacity-50 hover:opacity-100"
                     }`}
-                    aria-label={`Open ${vertex.name} section`}
+                    aria-label={`Abrir seção ${vertex.name}`}
                     aria-pressed={selectedNode === i}
                   >
                     <div
