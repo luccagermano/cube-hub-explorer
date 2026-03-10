@@ -143,21 +143,26 @@ function ModalHeader({ title, subtitle, onClose }: { title: string; subtitle?: s
 function InfoCard({ title, text, icon, tooltip, className = "" }: { title: string; text: string; icon?: React.ReactNode; tooltip?: string; className?: string }) {
   const card = (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.15 }}
-      className={`group rounded-2xl p-4 sm:p-5 md:p-6 transition-all duration-300 hover:scale-[1.02] focus-within:ring-2 focus-within:ring-primary/40 ${className}`}
+      transition={{ delay: 0.12 }}
+      className={`group rounded-2xl p-5 sm:p-6 transition-all duration-300 hover:translate-y-[-2px] hover:shadow-lg focus-within:ring-2 focus-within:ring-primary/30 ${className}`}
       style={{
-        background: "rgba(255,255,255,0.04)",
-        border: `1px solid rgba(255,255,255,0.08)`,
+        background: "rgba(255,255,255,0.045)",
+        border: "1px solid rgba(255,255,255,0.08)",
+        boxShadow: "0 2px 12px rgba(0,0,0,0.15)",
       }}
       tabIndex={0}
       role="article"
       aria-label={`${title}: ${text}`}
     >
-      {icon && <div className="mb-3" style={{ color: DDC_RED }}>{icon}</div>}
-      <h4 className="text-foreground font-display text-xs sm:text-sm font-semibold tracking-wide mb-2">{title}</h4>
-      <p className="text-foreground/60 text-[11px] sm:text-xs leading-relaxed">{text}</p>
+      {icon && (
+        <div className="mb-3.5 w-9 h-9 flex items-center justify-center rounded-lg" style={{ background: `${DDC_RED}14`, color: DDC_RED }}>
+          {icon}
+        </div>
+      )}
+      <h4 className="font-display text-[13px] sm:text-sm font-semibold tracking-wide mb-1.5" style={{ color: "#e8e8ea" }}>{title}</h4>
+      <p className="text-[11px] sm:text-xs leading-relaxed" style={{ color: "rgba(255,255,255,0.45)" }}>{text}</p>
     </motion.div>
   );
 
@@ -165,7 +170,17 @@ function InfoCard({ title, text, icon, tooltip, className = "" }: { title: strin
     return (
       <Tooltip>
         <TooltipTrigger asChild>{card}</TooltipTrigger>
-        <TooltipContent className="max-w-[200px] text-xs">{tooltip}</TooltipContent>
+        <TooltipContent
+          className="max-w-[220px] text-xs font-medium"
+          style={{
+            background: "rgba(20,20,22,0.92)",
+            backdropFilter: "blur(16px)",
+            border: "1px solid rgba(255,255,255,0.1)",
+            color: "rgba(255,255,255,0.8)",
+          }}
+        >
+          {tooltip}
+        </TooltipContent>
       </Tooltip>
     );
   }
