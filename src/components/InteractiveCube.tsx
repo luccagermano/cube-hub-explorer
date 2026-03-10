@@ -336,12 +336,19 @@ function Particles() {
   );
 }
 
-/* ── GLB Model ─────────────────────────────────────── */
-function GLBModel() {
+/* ── GLB Model with Head Tracking ─────────────────── */
+function GLBModel({ isMobile, mouseRef }: { isMobile: boolean; mouseRef: React.MutableRefObject<{ x: number; y: number }> }) {
   const { scene } = useGLTF("/models/holoseat.glb");
+  const headRef = useRef<THREE.Object3D | null>(null);
+  const headRestQuat = useRef(new THREE.Quaternion());
+  const currentHeadQuat = useRef(new THREE.Quaternion());
+  const headInitialized = useRef(false);
+
   const clonedScene = useMemo(() => {
     const clone = scene.clone(true);
+    // Log hierarchy once for debugging
     clone.traverse((child) => {
+      console.log("[GLB node]", child.name, child.type);
       if ((child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.Mesh;
         if (mesh.material) {
@@ -361,6 +368,55 @@ function GLBModel() {
     clone.position.sub(center.multiplyScalar(scale));
     return clone;
   }, [scene]);
+
+  // Find head node after scene is built
+  useEffect(() => {
+    const HEAD_NAMES = ["head", "Head", "HEAD", "mixamorigHead", "Bip001_Head", "head_jnt", "HeadBone", "Armature_Head"];
+    let found: THREE.Object3D | null = null;
+    clonedScene.traverse((child) => {
+      if (found) return;
+      const nameLower = child.name.toLowerCase();
+      if (HEAD_NAMES.some(n => n.toLowerCase() === nameLower) || nameLower.includes("head")) {
+        found = child;
+      }
+    });
+    if (found) {
+      headRef.current = found;
+      headRestQuat.current.copy(found.quaternion);
+      currentHeadQuat.current.copy(found.quaternion);
+      headInitialized.current = true;
+      console.log("[Head tracking] Found head node:", found.name);
+    } else {
+      console.log("[Head tracking] No head node found in GLB hierarchy");
+    }
+  }, [clonedScene]);
+
+  // Per-frame head rotation
+  useFrame(() => {
+    if (!headRef.current || !headInitialized.current) return;
+
+    const MAX_YAW = 0.25;   // radians
+    const MAX_PITCH = 0.15;  // radians
+    const DAMPING = 0.06;
+
+    if (!isMobile) {
+      // Desktop: follow mouse
+      const targetYaw = -mouseRef.current.x * MAX_YAW;
+      const targetPitch = mouseRef.current.y * MAX_PITCH;
+
+      const targetQuat = new THREE.Quaternion();
+      const euler = new THREE.Euler(targetPitch, targetYaw, 0, "YXZ");
+      targetQuat.setFromEuler(euler);
+      targetQuat.premultiply(headRestQuat.current);
+
+      currentHeadQuat.current.slerp(targetQuat, DAMPING);
+      headRef.current.quaternion.copy(currentHeadQuat.current);
+    } else {
+      // Mobile: gently return to rest
+      currentHeadQuat.current.slerp(headRestQuat.current, DAMPING * 0.5);
+      headRef.current.quaternion.copy(currentHeadQuat.current);
+    }
+  });
 
   return <primitive object={clonedScene} />;
 }
