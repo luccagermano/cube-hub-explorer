@@ -1,16 +1,15 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import InteractiveCube, { HUB_DATA } from "@/components/InteractiveCube";
-import HubPanel from "@/components/HubPanel";
+import LiquidGlassModal from "@/components/LiquidGlassModal";
 import { motion } from "framer-motion";
 import ddcLogo from "@/assets/ddc-logo.png";
 
 const Index = () => {
   const [selectedHub, setSelectedHub] = useState<number | null>(null);
   const [visibleHub, setVisibleHub] = useState<number | null>(null);
-  const [panelSide, setPanelSide] = useState<"left" | "right">("right");
   const delayTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const handleNodeClick = useCallback((index: number, worldX: number) => {
+  const handleNodeClick = useCallback((index: number, _worldX: number) => {
     if (delayTimer.current) clearTimeout(delayTimer.current);
 
     if (selectedHub === index) {
@@ -19,10 +18,7 @@ const Index = () => {
       return;
     }
 
-    // Determine side based on node x position
-    setPanelSide(worldX < 0 ? "left" : "right");
     setSelectedHub(index);
-    // Delay panel appearance for light beam effect
     setVisibleHub(null);
     delayTimer.current = setTimeout(() => {
       setVisibleHub(index);
@@ -120,10 +116,10 @@ const Index = () => {
         ))}
       </motion.div>
 
-      <HubPanel
+      {/* Liquid Glass Modal */}
+      <LiquidGlassModal
         hub={visibleHub !== null ? HUB_DATA[visibleHub] : null}
         onClose={handleClose}
-        side={panelSide}
       />
     </div>
   );
