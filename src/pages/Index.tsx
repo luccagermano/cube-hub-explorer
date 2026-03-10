@@ -106,7 +106,7 @@ const Index = () => {
             title={hub.name}
           >
             <div
-              className="w-2 h-2 rounded-full"
+              className="w-2 h-2 rounded-[4px]"
               style={{
                 backgroundColor: hub.color,
                 boxShadow: selectedHub === i ? `0 0 12px ${hub.color}` : "none",

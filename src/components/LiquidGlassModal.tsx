@@ -31,6 +31,16 @@ export default function LiquidGlassModal({ hub, onClose }: LiquidGlassModalProps
         <>
 
           {/* Liquid Glass Modal */}
+          {/* Subtle background blur layer */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-39"
+            style={{ backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)" }}
+          />
+
           <motion.div
             initial={{ opacity: 0, scale: 0.92 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -79,7 +89,7 @@ export default function LiquidGlassModal({ hub, onClose }: LiquidGlassModalProps
                     {/* Status indicator */}
                     <div className="flex items-center gap-2 mb-4">
                       <div
-                        className="w-2 h-2 squared-full animate-pulse"
+                        className="w-2 h-2 rounded-full animate-pulse"
                         style={{
                           backgroundColor: hub.color,
                           boxShadow: `0 0 12px ${hub.color}`,
@@ -97,7 +107,7 @@ export default function LiquidGlassModal({ hub, onClose }: LiquidGlassModalProps
                     <h2
                       className="font-display text-3xl md:text-4xl font-bold tracking-wider"
                       style={{
-                        color: hub.color,
+                        color: "#161616",
                         textShadow: `0 0 40px ${hub.color}40`,
                       }}
                     >
@@ -128,14 +138,14 @@ export default function LiquidGlassModal({ hub, onClose }: LiquidGlassModalProps
 
                 {/* Middle section */}
                 <div className="mb-8">
-                  <p className="text-muted-foreground font-body leading-relaxed text-sm md:text-base max-w-2xl">
+                  <p className="font-body leading-relaxed text-sm md:text-base max-w-2xl" style={{ color: "#161616" }}>
                     {hub.description}
                   </p>
                 </div>
 
                 {/* Capabilities grid */}
                 <div className="mb-10">
-                  <span className="text-[10px] font-display tracking-[0.25em] uppercase text-muted-foreground mb-4 block">
+                  <span className="text-[10px] font-display tracking-[0.25em] uppercase mb-4 block" style={{ color: "#161616" }}>
                     Key Capabilities
                   </span>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -154,7 +164,7 @@ export default function LiquidGlassModal({ hub, onClose }: LiquidGlassModalProps
                         <Zap size={12} style={{ color: hub.color }} />
                         <span
                           className="text-xs font-body"
-                          style={{ color: `${hub.color}dd` }}
+                          style={{ color: "#161616" }}
                         >
                           {tech}
                         </span>
@@ -172,7 +182,7 @@ export default function LiquidGlassModal({ hub, onClose }: LiquidGlassModalProps
                     className="flex-1 flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-sm font-display font-semibold tracking-wider transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] group"
                     style={{
                       background: `linear-gradient(135deg, ${hub.color}25, ${hub.color}10)`,
-                      color: hub.color,
+                      color: "#161616",
                       border: `1px solid ${hub.color}25`,
                       boxShadow: `0 0 40px ${hub.color}08, 0 8px 32px rgba(0,0,0,0.3)`,
                     }}
