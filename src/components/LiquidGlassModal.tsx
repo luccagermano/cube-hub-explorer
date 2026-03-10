@@ -107,7 +107,7 @@ export default function LiquidGlassModal({ hub, onClose }: LiquidGlassModalProps
                     <h2
                       className="font-display text-3xl md:text-4xl font-bold tracking-wider"
                       style={{
-                        color: hub.color,
+                        color: "#161616",
                         textShadow: `0 0 40px ${hub.color}40`,
                       }}
                     >
