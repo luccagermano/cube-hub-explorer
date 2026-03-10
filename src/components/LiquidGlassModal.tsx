@@ -217,20 +217,20 @@ function SolutionsContent({ onClose }: { onClose: () => void }) {
           tooltip="Strategic IT and digital transformation advisory"
         />
       </div>
-      <div className="mt-6 sm:mt-8">
+      <div className="mt-8">
         <motion.button
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-display font-semibold tracking-wider transition-all duration-300 hover:scale-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary group"
+          transition={{ delay: 0.35 }}
+          className="flex items-center gap-2.5 px-6 py-3 rounded-xl text-xs font-display font-semibold tracking-widest uppercase transition-all duration-300 hover:translate-y-[-1px] hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-primary group"
           style={{
-            background: `linear-gradient(135deg, ${DDC_RED}25, ${DDC_RED}10)`,
-            color: DDC_RED,
-            border: `1px solid ${DDC_RED}25`,
+            background: `linear-gradient(135deg, ${DDC_RED}, ${DDC_RED}cc)`,
+            color: "#fff",
+            boxShadow: `0 4px 20px ${DDC_RED}30`,
           }}
         >
           EXPLORE SOLUTIONS
-          <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+          <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
         </motion.button>
       </div>
     </>
