@@ -5,6 +5,46 @@ import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import * as THREE from "three";
 import { useIsMobile } from "@/hooks/use-mobile";
 
+/* ── Resize handler — keeps camera/renderer in sync with viewport ── */
+function ViewportResizeHandler() {
+  const { camera, gl, size } = useThree();
+
+  useEffect(() => {
+    const handleResize = () => {
+      const w = gl.domElement.clientWidth;
+      const h = gl.domElement.clientHeight;
+      if (w === 0 || h === 0) return;
+      gl.setSize(w, h, false);
+      if (camera instanceof THREE.PerspectiveCamera) {
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+      }
+    };
+
+    // Fix initial sizing after first paint
+    requestAnimationFrame(() => {
+      handleResize();
+    });
+
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("orientationchange", () => {
+      // Delay to let mobile browser settle viewport
+      setTimeout(handleResize, 150);
+      setTimeout(handleResize, 500);
+    });
+    // Also handle visibility change (returning to tab)
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) setTimeout(handleResize, 100);
+    });
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [camera, gl]);
+
+  return null;
+}
+
 const DDC_RED = "#c4364a";
 const DDC_RED_DARK = "#8b2535";
 
