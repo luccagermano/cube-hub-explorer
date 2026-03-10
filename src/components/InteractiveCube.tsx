@@ -399,8 +399,8 @@ function InteractiveCubeScene({
       if (isMobile) {
         // Accumulate drag rotation when dragging (reduced sensitivity)
         if (gestureState === "dragging") {
-          dragRotation.current.y += mobileDragDelta.current.x * 0.004;
-          dragRotation.current.x += mobileDragDelta.current.y * 0.004;
+          dragRotation.current.y += mobileDragDelta.current.x * 0.008;
+          dragRotation.current.x += mobileDragDelta.current.y * 0.008;
           dragRotation.current.y = Math.max(-Math.PI * 0.4, Math.min(Math.PI * 0.4, dragRotation.current.y));
           dragRotation.current.x = Math.max(-Math.PI * 0.25, Math.min(Math.PI * 0.25, dragRotation.current.x));
         }
