@@ -295,11 +295,13 @@ useGLTF.preload("/models/holoseat.glb");
 
 /* ── Scene ─────────────────────────────────────── */
 function InteractiveCubeScene({
-  onNodeClick, isPaused, activeNode,
+  onNodeClick, isPaused, activeNode, isMobile, gyroscope,
 }: {
   onNodeClick: (index: number) => void;
   isPaused: boolean;
   activeNode: number | null;
+  isMobile: boolean;
+  gyroscope: { x: number; y: number; available: boolean };
 }) {
   const groupRef = useRef<THREE.Group>(null);
   const targetRotation = useRef({ x: 0, y: 0 });
@@ -310,27 +312,41 @@ function InteractiveCubeScene({
 
   useFrame((state, delta) => {
     if (!groupRef.current) return;
-    const { x, y } = state.pointer;
-    const moved = Math.abs(x - lastPointer.current.x) + Math.abs(y - lastPointer.current.y) > 0.001;
-    lastPointer.current = { x, y };
-    if (moved) { idleTime.current = 0; } else { idleTime.current += delta; }
 
     const targetCubeScale = isPaused ? 1.03 : 1.0;
     cubeScale.current += (targetCubeScale - cubeScale.current) * Math.min(delta * 4, 1);
     groupRef.current.scale.setScalar(cubeScale.current);
 
     if (!isPaused) {
-      const mouseInfluence = Math.max(0, 1 - idleTime.current * 0.5);
-      targetRotation.current.y = x * Math.PI * 0.5 * mouseInfluence;
-      targetRotation.current.x = -y * Math.PI * 0.35 * mouseInfluence;
-      if (idleTime.current > 1) {
-        const idleFactor = Math.min((idleTime.current - 1) * 0.3, 1);
-        targetRotation.current.y += Math.sin(state.clock.elapsedTime * 0.3) * 0.3 * idleFactor;
-        targetRotation.current.x += Math.cos(state.clock.elapsedTime * 0.2) * 0.15 * idleFactor;
+      if (isMobile) {
+        // Mobile: use gyroscope if available, otherwise gentle idle animation only
+        if (gyroscope.available) {
+          targetRotation.current.y = gyroscope.x * Math.PI * 0.25;
+          targetRotation.current.x = -gyroscope.y * Math.PI * 0.15;
+        } else {
+          // Gentle idle rotation only — no touch drag
+          targetRotation.current.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.2;
+          targetRotation.current.x = Math.cos(state.clock.elapsedTime * 0.2) * 0.1;
+        }
+      } else {
+        // Desktop: mouse-based rotation
+        const { x, y } = state.pointer;
+        const moved = Math.abs(x - lastPointer.current.x) + Math.abs(y - lastPointer.current.y) > 0.001;
+        lastPointer.current = { x, y };
+        if (moved) { idleTime.current = 0; } else { idleTime.current += delta; }
+
+        const mouseInfluence = Math.max(0, 1 - idleTime.current * 0.5);
+        targetRotation.current.y = x * Math.PI * 0.5 * mouseInfluence;
+        targetRotation.current.x = -y * Math.PI * 0.35 * mouseInfluence;
+        if (idleTime.current > 1) {
+          const idleFactor = Math.min((idleTime.current - 1) * 0.3, 1);
+          targetRotation.current.y += Math.sin(state.clock.elapsedTime * 0.3) * 0.3 * idleFactor;
+          targetRotation.current.x += Math.cos(state.clock.elapsedTime * 0.2) * 0.15 * idleFactor;
+        }
       }
     }
 
-    const springFactor = isPaused ? 0.015 : 0.05;
+    const springFactor = isPaused ? 0.015 : isMobile ? 0.03 : 0.05;
     groupRef.current.rotation.y += (targetRotation.current.y - groupRef.current.rotation.y) * springFactor;
     groupRef.current.rotation.x += (targetRotation.current.x - groupRef.current.rotation.x) * springFactor;
   });
@@ -362,7 +378,7 @@ function InteractiveCubeScene({
           key={i} position={pos} color={VERTEX_DATA[i].color} label={VERTEX_DATA[i].name}
           index={i} onNodeClick={handleNodeClick} hoveredNode={hoveredNode}
           setHoveredNode={setHoveredNode} isPaused={isPaused} isActive={activeNode === i}
-          isInteractive={VERTEX_DATA[i].active}
+          isInteractive={VERTEX_DATA[i].active} isMobile={isMobile}
         />
       ))}
 
