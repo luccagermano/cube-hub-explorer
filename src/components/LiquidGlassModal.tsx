@@ -65,39 +65,40 @@ function GlassPanel({ children, onClose }: { children: React.ReactNode; onClose:
       initial={{ opacity: 0, scale: 0.92 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
-      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
       className="fixed inset-0 z-40 flex items-center justify-center p-3 sm:p-4 pointer-events-none"
       role="dialog"
       aria-modal="true"
     >
       <div
         ref={trapRef}
-        className="relative w-[95%] sm:w-[90%] md:w-[65%] lg:w-[60%] max-h-[85vh] sm:max-h-[80vh] md:max-h-[75vh] overflow-y-auto pointer-events-auto"
+        className="relative w-[95%] sm:w-[88%] md:w-[62%] lg:w-[56%] xl:w-[50%] max-h-[88vh] sm:max-h-[82vh] md:max-h-[78vh] overflow-y-auto pointer-events-auto scrollbar-thin"
         style={{
-          background: "rgba(20, 20, 20, 0.85)",
-          backdropFilter: "blur(25px) saturate(180%)",
-          WebkitBackdropFilter: "blur(25px) saturate(180%)",
-          border: "1px solid rgba(255, 255, 255, 0.12)",
-          borderRadius: "24px",
+          background: "rgba(14, 14, 16, 0.88)",
+          backdropFilter: "blur(32px) saturate(160%)",
+          WebkitBackdropFilter: "blur(32px) saturate(160%)",
+          border: "1px solid rgba(255, 255, 255, 0.1)",
+          borderRadius: "20px",
           boxShadow: `
-            0 0 80px ${DDC_RED}12,
-            0 32px 64px rgba(0, 0, 0, 0.5),
-            inset 0 1px 0 rgba(255, 255, 255, 0.08),
-            inset 0 -1px 0 rgba(255, 255, 255, 0.02)
+            0 0 0 0.5px rgba(255, 255, 255, 0.05),
+            0 0 60px rgba(196, 54, 74, 0.06),
+            0 24px 80px rgba(0, 0, 0, 0.6),
+            inset 0 1px 0 rgba(255, 255, 255, 0.07)
           `,
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Top reflection */}
+        {/* Top specular highlight */}
         <div
-          className="absolute top-0 left-0 right-0 h-[1px] rounded-t-[24px]"
-          style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)" }}
+          className="absolute top-0 left-[10%] right-[10%] h-[1px] rounded-full"
+          style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent)" }}
         />
+        {/* Internal gradient overlay */}
         <div
-          className="absolute inset-0 rounded-[24px] pointer-events-none"
-          style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 40%, rgba(0,0,0,0.08) 100%)" }}
+          className="absolute inset-0 rounded-[20px] pointer-events-none"
+          style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.025) 0%, transparent 35%)" }}
         />
-        <div className="relative z-10 p-5 sm:p-8 md:p-12">
+        <div className="relative z-10 p-6 sm:p-8 md:p-10 lg:p-12">
           {children}
         </div>
       </div>
@@ -108,28 +109,31 @@ function GlassPanel({ children, onClose }: { children: React.ReactNode; onClose:
 /* ── Header with close button ── */
 function ModalHeader({ title, subtitle, onClose }: { title: string; subtitle?: string; onClose: () => void }) {
   return (
-    <div className="flex items-start justify-between mb-6 sm:mb-8">
-      <div>
+    <div className="flex items-start justify-between mb-8 sm:mb-10">
+      <div className="min-w-0">
         <h2
-          className="font-display text-xl sm:text-2xl md:text-3xl font-bold tracking-wider"
-          style={{ color: DDC_RED, textShadow: `0 0 30px ${DDC_RED}30` }}
+          className="font-display text-lg sm:text-xl md:text-2xl font-bold tracking-wide"
+          style={{ color: "#f0f0f2" }}
         >
           {title}
         </h2>
         {subtitle && (
-          <p className="text-foreground/70 text-xs sm:text-sm md:text-base mt-2 max-w-xl leading-relaxed">
+          <p className="text-sm sm:text-[15px] mt-2.5 max-w-xl leading-relaxed" style={{ color: "rgba(255,255,255,0.55)" }}>
             {subtitle}
           </p>
         )}
-        <div className="h-[2px] w-16 mt-4" style={{ background: `linear-gradient(90deg, ${DDC_RED}80, transparent)` }} />
+        <div
+          className="h-[2px] w-12 mt-5 rounded-full"
+          style={{ background: `linear-gradient(90deg, ${DDC_RED}, transparent)` }}
+        />
       </div>
       <button
         onClick={onClose}
         aria-label="Close dialog"
-        className="p-2 rounded-xl transition-all duration-200 hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary flex-shrink-0 ml-4"
-        style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)" }}
+        className="p-2.5 rounded-xl transition-all duration-200 hover:scale-105 hover:bg-white/[0.08] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary flex-shrink-0 ml-6"
+        style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.07)" }}
       >
-        <X size={18} className="text-foreground/60" />
+        <X size={16} style={{ color: "rgba(255,255,255,0.5)" }} />
       </button>
     </div>
   );
@@ -139,21 +143,26 @@ function ModalHeader({ title, subtitle, onClose }: { title: string; subtitle?: s
 function InfoCard({ title, text, icon, tooltip, className = "" }: { title: string; text: string; icon?: React.ReactNode; tooltip?: string; className?: string }) {
   const card = (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.15 }}
-      className={`group rounded-2xl p-4 sm:p-5 md:p-6 transition-all duration-300 hover:scale-[1.02] focus-within:ring-2 focus-within:ring-primary/40 ${className}`}
+      transition={{ delay: 0.12 }}
+      className={`group rounded-2xl p-5 sm:p-6 transition-all duration-300 hover:translate-y-[-2px] hover:shadow-lg focus-within:ring-2 focus-within:ring-primary/30 ${className}`}
       style={{
-        background: "rgba(255,255,255,0.04)",
-        border: `1px solid rgba(255,255,255,0.08)`,
+        background: "rgba(255,255,255,0.045)",
+        border: "1px solid rgba(255,255,255,0.08)",
+        boxShadow: "0 2px 12px rgba(0,0,0,0.15)",
       }}
       tabIndex={0}
       role="article"
       aria-label={`${title}: ${text}`}
     >
-      {icon && <div className="mb-3" style={{ color: DDC_RED }}>{icon}</div>}
-      <h4 className="text-foreground font-display text-xs sm:text-sm font-semibold tracking-wide mb-2">{title}</h4>
-      <p className="text-foreground/60 text-[11px] sm:text-xs leading-relaxed">{text}</p>
+      {icon && (
+        <div className="mb-3.5 w-9 h-9 flex items-center justify-center rounded-lg" style={{ background: `${DDC_RED}14`, color: DDC_RED }}>
+          {icon}
+        </div>
+      )}
+      <h4 className="font-display text-[13px] sm:text-sm font-semibold tracking-wide mb-1.5" style={{ color: "#e8e8ea" }}>{title}</h4>
+      <p className="text-[11px] sm:text-xs leading-relaxed" style={{ color: "rgba(255,255,255,0.45)" }}>{text}</p>
     </motion.div>
   );
 
@@ -161,7 +170,17 @@ function InfoCard({ title, text, icon, tooltip, className = "" }: { title: strin
     return (
       <Tooltip>
         <TooltipTrigger asChild>{card}</TooltipTrigger>
-        <TooltipContent className="max-w-[200px] text-xs">{tooltip}</TooltipContent>
+        <TooltipContent
+          className="max-w-[220px] text-xs font-medium"
+          style={{
+            background: "rgba(20,20,22,0.92)",
+            backdropFilter: "blur(16px)",
+            border: "1px solid rgba(255,255,255,0.1)",
+            color: "rgba(255,255,255,0.8)",
+          }}
+        >
+          {tooltip}
+        </TooltipContent>
       </Tooltip>
     );
   }
@@ -198,20 +217,20 @@ function SolutionsContent({ onClose }: { onClose: () => void }) {
           tooltip="Strategic IT and digital transformation advisory"
         />
       </div>
-      <div className="mt-6 sm:mt-8">
+      <div className="mt-8">
         <motion.button
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-display font-semibold tracking-wider transition-all duration-300 hover:scale-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary group"
+          transition={{ delay: 0.35 }}
+          className="flex items-center gap-2.5 px-6 py-3 rounded-xl text-xs font-display font-semibold tracking-widest uppercase transition-all duration-300 hover:translate-y-[-1px] hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-primary group"
           style={{
-            background: `linear-gradient(135deg, ${DDC_RED}25, ${DDC_RED}10)`,
-            color: DDC_RED,
-            border: `1px solid ${DDC_RED}25`,
+            background: `linear-gradient(135deg, ${DDC_RED}, ${DDC_RED}cc)`,
+            color: "#fff",
+            boxShadow: `0 4px 20px ${DDC_RED}30`,
           }}
         >
           EXPLORE SOLUTIONS
-          <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+          <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
         </motion.button>
       </div>
     </>
@@ -228,56 +247,45 @@ function ContactContent({ onClose }: { onClose: () => void }) {
         onClose={onClose}
       />
       <div
-        className="rounded-2xl p-5 sm:p-6 md:p-8"
+        className="rounded-2xl p-5 sm:p-7"
         style={{
           background: "rgba(255,255,255,0.04)",
-          border: "1px solid rgba(255,255,255,0.08)",
+          border: "1px solid rgba(255,255,255,0.07)",
+          boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
         }}
       >
-        <div className="space-y-4 sm:space-y-5">
-          <div className="flex items-center gap-3 sm:gap-4">
-            <div className="p-2 sm:p-2.5 rounded-xl flex-shrink-0" style={{ background: `${DDC_RED}15` }}>
-              <Phone size={18} style={{ color: DDC_RED }} />
+        <div className="space-y-5">
+          {[
+            { icon: <Phone size={16} />, label: "Phone", value: "+55 11 99140-8071" },
+            { icon: <Mail size={16} />, label: "Email", value: "contato@ddccompany.com.br", breakAll: true },
+            { icon: <MapPin size={16} />, label: "Location", value: "Av. João Manoel, 600, Centro, Arujá-SP" },
+          ].map((item, i) => (
+            <div key={i} className="flex items-center gap-4">
+              <div className="w-9 h-9 flex items-center justify-center rounded-lg flex-shrink-0" style={{ background: `${DDC_RED}12`, color: DDC_RED }}>
+                {item.icon}
+              </div>
+              <div>
+                <p className="text-[10px] sm:text-[11px] font-display tracking-widest uppercase mb-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>{item.label}</p>
+                <p className={`text-sm font-medium ${item.breakAll ? "break-all" : ""}`} style={{ color: "#e8e8ea" }}>{item.value}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-foreground/50 text-[10px] sm:text-xs font-display tracking-wider uppercase">Phone</p>
-              <p className="text-foreground text-xs sm:text-sm font-medium">+55 11 99140-8071</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 sm:gap-4">
-            <div className="p-2 sm:p-2.5 rounded-xl flex-shrink-0" style={{ background: `${DDC_RED}15` }}>
-              <Mail size={18} style={{ color: DDC_RED }} />
-            </div>
-            <div>
-              <p className="text-foreground/50 text-[10px] sm:text-xs font-display tracking-wider uppercase">Email</p>
-              <p className="text-foreground text-xs sm:text-sm font-medium break-all">contato@ddccompany.com.br</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 sm:gap-4">
-            <div className="p-2 sm:p-2.5 rounded-xl flex-shrink-0" style={{ background: `${DDC_RED}15` }}>
-              <MapPin size={18} style={{ color: DDC_RED }} />
-            </div>
-            <div>
-              <p className="text-foreground/50 text-[10px] sm:text-xs font-display tracking-wider uppercase">Location</p>
-              <p className="text-foreground text-xs sm:text-sm font-medium">Av. João Manoel, 600, Centro, Arujá-SP</p>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
-      <div className="mt-5 sm:mt-6">
+      <div className="mt-7">
         <motion.button
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-display font-semibold tracking-wider transition-all duration-300 hover:scale-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary group"
+          className="flex items-center gap-2.5 px-6 py-3 rounded-xl text-xs font-display font-semibold tracking-widest uppercase transition-all duration-300 hover:translate-y-[-1px] hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-primary group"
           style={{
-            background: `linear-gradient(135deg, ${DDC_RED}25, ${DDC_RED}10)`,
-            color: DDC_RED,
-            border: `1px solid ${DDC_RED}25`,
+            background: `linear-gradient(135deg, ${DDC_RED}, ${DDC_RED}cc)`,
+            color: "#fff",
+            boxShadow: `0 4px 20px ${DDC_RED}30`,
           }}
         >
           REQUEST A QUOTE
-          <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+          <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
         </motion.button>
       </div>
     </>
@@ -346,13 +354,14 @@ function ClientsContent({ onClose }: { onClose: () => void }) {
           <Tooltip key={i}>
             <TooltipTrigger asChild>
               <motion.div
-                initial={{ opacity: 0, y: 12 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 + i * 0.06 }}
-                className="flex items-center justify-center rounded-2xl p-4 sm:p-5 aspect-square transition-all duration-300 hover:scale-[1.03] focus-visible:ring-2 focus-visible:ring-primary/40"
+                transition={{ delay: 0.08 + i * 0.05 }}
+                className="flex items-center justify-center rounded-2xl p-5 sm:p-6 aspect-square transition-all duration-300 hover:translate-y-[-2px] hover:shadow-lg focus-visible:ring-2 focus-visible:ring-primary/30"
                 style={{
-                  background: "rgba(255,255,255,0.05)",
-                  border: "1px solid rgba(255,255,255,0.08)",
+                  background: "rgba(255,255,255,0.04)",
+                  border: "1px solid rgba(255,255,255,0.07)",
+                  boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
                 }}
                 tabIndex={0}
                 role="img"
@@ -361,12 +370,21 @@ function ClientsContent({ onClose }: { onClose: () => void }) {
                 <img
                   src={partner.src}
                   alt={partner.name}
-                  className="max-w-[80%] max-h-[80%] object-contain opacity-80 hover:opacity-100 transition-opacity"
+                  className="max-w-[75%] max-h-[75%] object-contain opacity-75 group-hover:opacity-100 transition-opacity duration-300"
                   loading="lazy"
                 />
               </motion.div>
             </TooltipTrigger>
-            <TooltipContent>{partner.name}</TooltipContent>
+            <TooltipContent
+              style={{
+                background: "rgba(20,20,22,0.92)",
+                backdropFilter: "blur(16px)",
+                border: "1px solid rgba(255,255,255,0.1)",
+                color: "rgba(255,255,255,0.8)",
+              }}
+            >
+              {partner.name}
+            </TooltipContent>
           </Tooltip>
         ))}
       </div>
@@ -395,25 +413,26 @@ function NewsletterContent({ onClose }: { onClose: () => void }) {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="your@email.com"
             aria-label="Email address for newsletter"
-            className="flex-1 px-4 sm:px-5 py-3 sm:py-3.5 rounded-xl text-sm text-foreground placeholder:text-foreground/30 outline-none transition-all duration-200 focus:ring-2 focus:ring-primary/50"
+            className="flex-1 px-5 py-3.5 rounded-xl text-sm outline-none transition-all duration-200 focus:ring-2 focus:ring-primary/40"
             style={{
-              background: "rgba(255,255,255,0.06)",
-              border: "1px solid rgba(255,255,255,0.1)",
+              background: "rgba(255,255,255,0.05)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              color: "#e8e8ea",
             }}
           />
           <motion.button
-            initial={{ opacity: 0, x: 10 }}
+            initial={{ opacity: 0, x: 8 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
-            className="flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl text-xs sm:text-sm font-display font-semibold tracking-wider transition-all duration-300 hover:scale-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary whitespace-nowrap"
+            className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-xs font-display font-semibold tracking-widest uppercase transition-all duration-300 hover:translate-y-[-1px] hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-primary whitespace-nowrap"
             style={{
               background: `linear-gradient(135deg, ${DDC_RED}, ${DDC_RED}cc)`,
               color: "#fff",
-              border: "none",
+              boxShadow: `0 4px 20px ${DDC_RED}30`,
             }}
             aria-label="Subscribe to newsletter"
           >
-            <Send size={14} />
+            <Send size={13} />
             SUBSCRIBE
           </motion.button>
         </div>
@@ -430,46 +449,34 @@ function IntroContent({ onClose }: { onClose: () => void }) {
         title="Connecting People, Empowering Business."
         onClose={onClose}
       />
-      <p className="text-foreground/70 text-xs sm:text-sm md:text-base leading-relaxed max-w-2xl mb-6 sm:mb-8">
+      <p className="text-sm sm:text-[15px] leading-relaxed max-w-2xl mb-8" style={{ color: "rgba(255,255,255,0.55)" }}>
         Innovation and technology go hand in hand. We are a company specialized in IT solutions that propel businesses into the future. From strategic consulting to software development, we offer cutting-edge technology to turn challenges into opportunities.
       </p>
       <div className="flex flex-col sm:flex-row flex-wrap gap-3">
-        <motion.a
-          href="https://www.linkedin.com/company/ddc-company/"
-          target="_blank"
-          rel="noopener noreferrer"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-display font-semibold tracking-wider transition-all duration-300 hover:scale-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-          style={{
-            background: `linear-gradient(135deg, ${DDC_RED}25, ${DDC_RED}10)`,
-            color: DDC_RED,
-            border: `1px solid ${DDC_RED}25`,
-          }}
-          aria-label="Visit DDC on LinkedIn"
-        >
-          <Linkedin size={16} />
-          LINKEDIN
-        </motion.a>
-        <motion.a
-          href="https://www.instagram.com/ddc.company/"
-          target="_blank"
-          rel="noopener noreferrer"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-display font-semibold tracking-wider transition-all duration-300 hover:scale-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-          style={{
-            background: `linear-gradient(135deg, ${DDC_RED}25, ${DDC_RED}10)`,
-            color: DDC_RED,
-            border: `1px solid ${DDC_RED}25`,
-          }}
-          aria-label="Visit DDC on Instagram"
-        >
-          <Instagram size={16} />
-          INSTAGRAM
-        </motion.a>
+        {[
+          { href: "https://www.linkedin.com/company/ddc-company/", icon: <Linkedin size={15} />, label: "LinkedIn" },
+          { href: "https://www.instagram.com/ddc.company/", icon: <Instagram size={15} />, label: "Instagram" },
+        ].map((link, i) => (
+          <motion.a
+            key={link.label}
+            href={link.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 + i * 0.08 }}
+            className="flex items-center justify-center gap-2.5 px-6 py-3 rounded-xl text-xs font-display font-semibold tracking-widest uppercase transition-all duration-300 hover:translate-y-[-1px] hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            style={{
+              background: "rgba(255,255,255,0.05)",
+              color: "#e8e8ea",
+              border: "1px solid rgba(255,255,255,0.08)",
+            }}
+            aria-label={`Visit DDC on ${link.label}`}
+          >
+            {link.icon}
+            {link.label.toUpperCase()}
+          </motion.a>
+        ))}
       </div>
     </>
   );
@@ -485,16 +492,17 @@ function AboutContent({ onClose }: { onClose: () => void }) {
         onClose={onClose}
       />
       <div
-        className="rounded-2xl p-5 sm:p-6 md:p-8"
+        className="rounded-2xl p-6 sm:p-7"
         style={{
           background: "rgba(255,255,255,0.04)",
-          border: "1px solid rgba(255,255,255,0.08)",
+          border: "1px solid rgba(255,255,255,0.07)",
+          boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
         }}
       >
-        <p className="text-foreground/80 text-xs sm:text-sm md:text-base leading-relaxed mb-4">
+        <p className="text-sm sm:text-[15px] leading-relaxed mb-4" style={{ color: "rgba(255,255,255,0.7)" }}>
           With the mission to innovate the financial market, we use technology as the primary tool to reach new administrative heights. DDC is more than just a booster — it's the future.
         </p>
-        <p className="text-foreground/60 text-xs sm:text-sm leading-relaxed">
+        <p className="text-[13px] sm:text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.45)" }}>
           Our qualified team, driven by a passion for innovation, creates secure, scalable, and efficient solutions so your company can grow with confidence. Come discover the new world built to take you to the top.
         </p>
       </div>
