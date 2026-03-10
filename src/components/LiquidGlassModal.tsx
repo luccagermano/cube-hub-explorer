@@ -41,15 +41,15 @@ export default function LiquidGlassModal({ hub, onClose }: LiquidGlassModalProps
             <div
               className="relative w-[90%] md:w-[65%] lg:w-[60%] max-h-[80vh] md:max-h-[70vh] overflow-y-auto pointer-events-auto"
               style={{
-                background: "rgba(255, 255, 255, 0.06)",
-                backdropFilter: "blur(30px) saturate(180%)",
-                WebkitBackdropFilter: "blur(30px) saturate(180%)",
-                border: "1px solid rgba(255, 255, 255, 0.12)",
+                background: "rgba(255, 255, 255, 0.08)",
+                backdropFilter: "blur(25px) saturate(180%)",
+                WebkitBackdropFilter: "blur(25px) saturate(180%)",
+                border: "1px solid rgba(255, 255, 255, 0.2)",
                 borderRadius: "24px",
                 boxShadow: `
                   0 0 80px ${hub.color}12,
                   0 0 160px ${hub.color}06,
-                  0 32px 64px rgba(0, 0, 0, 0.5),
+                  0 32px 64px rgba(0, 0, 0, 0.4),
                   inset 0 1px 0 rgba(255, 255, 255, 0.1),
                   inset 0 -1px 0 rgba(255, 255, 255, 0.03)
                 `,
