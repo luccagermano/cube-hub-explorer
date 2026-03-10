@@ -355,13 +355,14 @@ function ClientsContent({ onClose }: { onClose: () => void }) {
           <Tooltip key={i}>
             <TooltipTrigger asChild>
               <motion.div
-                initial={{ opacity: 0, y: 12 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 + i * 0.06 }}
-                className="flex items-center justify-center rounded-2xl p-4 sm:p-5 aspect-square transition-all duration-300 hover:scale-[1.03] focus-visible:ring-2 focus-visible:ring-primary/40"
+                transition={{ delay: 0.08 + i * 0.05 }}
+                className="flex items-center justify-center rounded-2xl p-5 sm:p-6 aspect-square transition-all duration-300 hover:translate-y-[-2px] hover:shadow-lg focus-visible:ring-2 focus-visible:ring-primary/30"
                 style={{
-                  background: "rgba(255,255,255,0.05)",
-                  border: "1px solid rgba(255,255,255,0.08)",
+                  background: "rgba(255,255,255,0.04)",
+                  border: "1px solid rgba(255,255,255,0.07)",
+                  boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
                 }}
                 tabIndex={0}
                 role="img"
@@ -370,12 +371,21 @@ function ClientsContent({ onClose }: { onClose: () => void }) {
                 <img
                   src={partner.src}
                   alt={partner.name}
-                  className="max-w-[80%] max-h-[80%] object-contain opacity-80 hover:opacity-100 transition-opacity"
+                  className="max-w-[75%] max-h-[75%] object-contain opacity-75 group-hover:opacity-100 transition-opacity duration-300"
                   loading="lazy"
                 />
               </motion.div>
             </TooltipTrigger>
-            <TooltipContent>{partner.name}</TooltipContent>
+            <TooltipContent
+              style={{
+                background: "rgba(20,20,22,0.92)",
+                backdropFilter: "blur(16px)",
+                border: "1px solid rgba(255,255,255,0.1)",
+                color: "rgba(255,255,255,0.8)",
+              }}
+            >
+              {partner.name}
+            </TooltipContent>
           </Tooltip>
         ))}
       </div>
