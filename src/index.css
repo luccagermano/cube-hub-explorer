@@ -59,6 +59,15 @@
     @apply bg-background text-foreground;
     font-family: 'Space Grotesk', 'Inter', sans-serif;
   }
+
+  html, body, #root {
+    overflow: hidden;
+    height: 100dvh;
+    width: 100vw;
+    position: fixed;
+    touch-action: none;
+    overscroll-behavior: none;
+  }
 }
 
 @layer utilities {
