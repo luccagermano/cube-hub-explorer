@@ -32,10 +32,10 @@ export default function LiquidGlassModal({ hub, onClose }: LiquidGlassModalProps
 
           {/* Liquid Glass Modal */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.92 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
             className="fixed inset-0 z-40 flex items-center justify-center p-4 pointer-events-none"
           >
             <div
