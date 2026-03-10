@@ -182,7 +182,7 @@ export default function LiquidGlassModal({ hub, onClose }: LiquidGlassModalProps
                     className="flex-1 flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-sm font-display font-semibold tracking-wider transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] group"
                     style={{
                       background: `linear-gradient(135deg, ${hub.color}25, ${hub.color}10)`,
-                      color: hub.color,
+                      color: "#161616",
                       border: `1px solid ${hub.color}25`,
                       boxShadow: `0 0 40px ${hub.color}08, 0 8px 32px rgba(0,0,0,0.3)`,
                     }}
