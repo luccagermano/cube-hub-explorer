@@ -197,7 +197,7 @@ const GlowNode = forwardRef<THREE.Group, {
   });
 
   // Invisible hit area sphere — larger on mobile for easier tapping
-  const hitRadius = isMobile && isInteractive ? 3.0 : 1;
+  const hitRadius = isMobile && isInteractive ? 1.6 : 0.7;
 
   const handleClick = useCallback((e: any) => {
     e.stopPropagation();
@@ -399,8 +399,8 @@ function InteractiveCubeScene({
       if (isMobile) {
         // Accumulate drag rotation when dragging (reduced sensitivity)
         if (gestureState === "dragging") {
-          dragRotation.current.y += mobileDragDelta.current.x * 0.002;
-          dragRotation.current.x += mobileDragDelta.current.y * 0.002;
+          dragRotation.current.y += mobileDragDelta.current.x * 0.004;
+          dragRotation.current.x += mobileDragDelta.current.y * 0.004;
           dragRotation.current.y = Math.max(-Math.PI * 0.4, Math.min(Math.PI * 0.4, dragRotation.current.y));
           dragRotation.current.x = Math.max(-Math.PI * 0.25, Math.min(Math.PI * 0.25, dragRotation.current.x));
         }
@@ -643,8 +643,8 @@ export default function InteractiveCube({
       }}
     >
       {dims && (
-        <Canvas
-          camera={{ position: [0, 0, 5], fov: isMobile ? 55 : 50 }}
+          <Canvas
+          camera={{ position: [0, 0, 5], fov: isMobile ? 60 : 50 }}
           dpr={[1, isMobile ? 1.2 : 1.5]}
           style={{ width: dims.w, height: dims.h }}
           resize={{ scroll: false, debounce: { scroll: 0, resize: 0 } }}
