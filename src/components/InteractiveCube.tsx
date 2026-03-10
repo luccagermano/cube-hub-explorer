@@ -3,6 +3,7 @@ import { Canvas, useFrame, useThree, useLoader } from "@react-three/fiber";
 import { Text, Float, useGLTF } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import * as THREE from "three";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const DDC_RED = "#c4364a";
 const DDC_RED_DARK = "#8b2535";
@@ -125,15 +126,17 @@ const GlowNode = forwardRef<THREE.Group, {
   position: [number, number, number]; color: string; label: string; index: number;
   onNodeClick: (index: number) => void; hoveredNode: number | null;
   setHoveredNode: (i: number | null) => void; isPaused: boolean; isActive: boolean;
-  isInteractive: boolean;
+  isInteractive: boolean; isMobile: boolean;
 }>(function GlowNode({
-  position, color, label, index, onNodeClick, hoveredNode, setHoveredNode, isPaused, isActive, isInteractive,
+  position, color, label, index, onNodeClick, hoveredNode, setHoveredNode, isPaused, isActive, isInteractive, isMobile,
 }, ref) {
   const meshRef = useRef<THREE.Mesh>(null);
   const isHovered = hoveredNode === index;
   const baseScale = isPaused ? 0.08 : 0.06;
   const inactiveScale = 0.04;
-  const targetScale = !isInteractive ? inactiveScale : isActive ? 0.16 : isHovered ? 0.14 : baseScale;
+  // On mobile, make interactive nodes larger for easier tapping
+  const mobileBoost = isMobile && isInteractive ? 1.6 : 1;
+  const targetScale = !isInteractive ? inactiveScale : isActive ? 0.16 * mobileBoost : isHovered ? 0.14 * mobileBoost : baseScale * mobileBoost;
   const currentScale = useRef(baseScale);
   const pulseTime = useRef(0);
 
@@ -151,18 +154,27 @@ const GlowNode = forwardRef<THREE.Group, {
     }
   });
 
+  // Invisible hit area sphere (larger on mobile)
+  const hitRadius = isMobile && isInteractive ? 2.5 : 1;
+
   return (
     <group position={position}>
-      <mesh
-        ref={meshRef}
-        onClick={(e) => {
-          if (!isInteractive) return;
-          e.stopPropagation();
-          onNodeClick(index);
-        }}
-        onPointerOver={() => isInteractive && setHoveredNode(index)}
-        onPointerOut={() => setHoveredNode(null)}
-      >
+      {/* Invisible enlarged hit target */}
+      {isInteractive && (
+        <mesh
+          onClick={(e) => {
+            e.stopPropagation();
+            onNodeClick(index);
+          }}
+          onPointerOver={() => !isMobile && setHoveredNode(index)}
+          onPointerOut={() => !isMobile && setHoveredNode(null)}
+        >
+          <sphereGeometry args={[hitRadius, 12, 12]} />
+          <meshBasicMaterial visible={false} />
+        </mesh>
+      )}
+      {/* Visual sphere */}
+      <mesh ref={meshRef}>
         <sphereGeometry args={[1, 24, 24]} />
         <meshStandardMaterial
           color={color}
@@ -179,8 +191,8 @@ const GlowNode = forwardRef<THREE.Group, {
       </mesh>
       {isInteractive && label && (
         <Text
-          position={[0, 0.3, 0]}
-          fontSize={0.09}
+          position={[0, isMobile ? 0.4 : 0.3, 0]}
+          fontSize={isMobile ? 0.11 : 0.09}
           color={isHovered || isActive ? color : "#ffffff"}
           anchorX="center"
           anchorY="bottom"
@@ -283,11 +295,13 @@ useGLTF.preload("/models/holoseat.glb");
 
 /* ── Scene ─────────────────────────────────────── */
 function InteractiveCubeScene({
-  onNodeClick, isPaused, activeNode,
+  onNodeClick, isPaused, activeNode, isMobile, gyroscope,
 }: {
   onNodeClick: (index: number) => void;
   isPaused: boolean;
   activeNode: number | null;
+  isMobile: boolean;
+  gyroscope: { x: number; y: number; available: boolean };
 }) {
   const groupRef = useRef<THREE.Group>(null);
   const targetRotation = useRef({ x: 0, y: 0 });
@@ -298,27 +312,41 @@ function InteractiveCubeScene({
 
   useFrame((state, delta) => {
     if (!groupRef.current) return;
-    const { x, y } = state.pointer;
-    const moved = Math.abs(x - lastPointer.current.x) + Math.abs(y - lastPointer.current.y) > 0.001;
-    lastPointer.current = { x, y };
-    if (moved) { idleTime.current = 0; } else { idleTime.current += delta; }
 
     const targetCubeScale = isPaused ? 1.03 : 1.0;
     cubeScale.current += (targetCubeScale - cubeScale.current) * Math.min(delta * 4, 1);
     groupRef.current.scale.setScalar(cubeScale.current);
 
     if (!isPaused) {
-      const mouseInfluence = Math.max(0, 1 - idleTime.current * 0.5);
-      targetRotation.current.y = x * Math.PI * 0.5 * mouseInfluence;
-      targetRotation.current.x = -y * Math.PI * 0.35 * mouseInfluence;
-      if (idleTime.current > 1) {
-        const idleFactor = Math.min((idleTime.current - 1) * 0.3, 1);
-        targetRotation.current.y += Math.sin(state.clock.elapsedTime * 0.3) * 0.3 * idleFactor;
-        targetRotation.current.x += Math.cos(state.clock.elapsedTime * 0.2) * 0.15 * idleFactor;
+      if (isMobile) {
+        // Mobile: use gyroscope if available, otherwise gentle idle animation only
+        if (gyroscope.available) {
+          targetRotation.current.y = gyroscope.x * Math.PI * 0.25;
+          targetRotation.current.x = -gyroscope.y * Math.PI * 0.15;
+        } else {
+          // Gentle idle rotation only — no touch drag
+          targetRotation.current.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.2;
+          targetRotation.current.x = Math.cos(state.clock.elapsedTime * 0.2) * 0.1;
+        }
+      } else {
+        // Desktop: mouse-based rotation
+        const { x, y } = state.pointer;
+        const moved = Math.abs(x - lastPointer.current.x) + Math.abs(y - lastPointer.current.y) > 0.001;
+        lastPointer.current = { x, y };
+        if (moved) { idleTime.current = 0; } else { idleTime.current += delta; }
+
+        const mouseInfluence = Math.max(0, 1 - idleTime.current * 0.5);
+        targetRotation.current.y = x * Math.PI * 0.5 * mouseInfluence;
+        targetRotation.current.x = -y * Math.PI * 0.35 * mouseInfluence;
+        if (idleTime.current > 1) {
+          const idleFactor = Math.min((idleTime.current - 1) * 0.3, 1);
+          targetRotation.current.y += Math.sin(state.clock.elapsedTime * 0.3) * 0.3 * idleFactor;
+          targetRotation.current.x += Math.cos(state.clock.elapsedTime * 0.2) * 0.15 * idleFactor;
+        }
       }
     }
 
-    const springFactor = isPaused ? 0.015 : 0.05;
+    const springFactor = isPaused ? 0.015 : isMobile ? 0.03 : 0.05;
     groupRef.current.rotation.y += (targetRotation.current.y - groupRef.current.rotation.y) * springFactor;
     groupRef.current.rotation.x += (targetRotation.current.x - groupRef.current.rotation.x) * springFactor;
   });
@@ -350,7 +378,7 @@ function InteractiveCubeScene({
           key={i} position={pos} color={VERTEX_DATA[i].color} label={VERTEX_DATA[i].name}
           index={i} onNodeClick={handleNodeClick} hoveredNode={hoveredNode}
           setHoveredNode={setHoveredNode} isPaused={isPaused} isActive={activeNode === i}
-          isInteractive={VERTEX_DATA[i].active}
+          isInteractive={VERTEX_DATA[i].active} isMobile={isMobile}
         />
       ))}
 
@@ -377,33 +405,79 @@ export default function InteractiveCube({
   activeNode: number | null;
 }) {
   const bloomIntensity = activeNode !== null ? 1.8 : 1.0;
+  const isMobile = useIsMobile();
+  const [gyroscope, setGyroscope] = useState({ x: 0, y: 0, available: false });
+
+  // Gyroscope listener — runs only on mobile
+  useEffect(() => {
+    if (!isMobile) return;
+    if (!("DeviceOrientationEvent" in window)) return;
+
+    let mounted = true;
+    const raw = { x: 0, y: 0 };
+    const smooth = { x: 0, y: 0 };
+    let rafId = 0;
+    let hasData = false;
+
+    const handleOrientation = (e: DeviceOrientationEvent) => {
+      if (e.gamma === null || e.beta === null) return;
+      hasData = true;
+      const maxTilt = 30;
+      raw.x = Math.max(-1, Math.min(1, (e.gamma || 0) / maxTilt));
+      raw.y = Math.max(-1, Math.min(1, ((e.beta || 0) - 45) / maxTilt));
+    };
+
+    const loop = () => {
+      smooth.x += (raw.x - smooth.x) * 0.08;
+      smooth.y += (raw.y - smooth.y) * 0.08;
+      if (mounted) {
+        setGyroscope({ x: smooth.x, y: smooth.y, available: hasData });
+      }
+      rafId = requestAnimationFrame(loop);
+    };
+
+    const startListening = async () => {
+      const DOE = DeviceOrientationEvent as any;
+      if (typeof DOE.requestPermission === "function") {
+        try {
+          const result = await DOE.requestPermission();
+          if (result !== "granted") return;
+        } catch { return; }
+      }
+      window.addEventListener("deviceorientation", handleOrientation, { passive: true });
+      rafId = requestAnimationFrame(loop);
+    };
+
+    startListening();
+
+    return () => {
+      mounted = false;
+      window.removeEventListener("deviceorientation", handleOrientation);
+      cancelAnimationFrame(rafId);
+    };
+  }, [isMobile]);
 
   return (
-    <div className="w-full h-full cursor-pointer">
-      <Canvas camera={{ position: [0, 0, 5], fov: 50 }} dpr={[1, 1.5]}>
-        {/* Ambient fill — soft neutral base */}
+    <div className="w-full h-full cursor-pointer" style={isMobile ? { touchAction: "none" } : undefined}>
+      <Canvas camera={{ position: [0, 0, 5], fov: isMobile ? 55 : 50 }} dpr={[1, isMobile ? 1.2 : 1.5]}>
         <ambientLight intensity={1.2} />
-
-        {/* Key light — warm white from upper-right-front */}
         <directionalLight position={[4, 5, 6]} intensity={3.5} color="#fff5ee" />
-
-        {/* Fill light — cooler, softer, from the left */}
         <directionalLight position={[-4, 2, 3]} intensity={1.8} color="#e0e4f0" />
-
-        {/* Rim / back light — warm accent for edge separation */}
         <directionalLight position={[0, -2, -5]} intensity={2.0} color="#ffd4d4" />
-
-        {/* Subtle red accent — brand color without overexposure */}
         <pointLight position={[3, 3, 3]} intensity={1.5} color={DDC_RED} distance={12} decay={2} />
         <pointLight position={[-3, -2, 4]} intensity={1.0} color="#e85d6f" distance={10} decay={2} />
-
-        {/* Hemisphere for natural ground/sky gradient */}
         <hemisphereLight intensity={0.8} color="#f0f0ff" groundColor="#1a0808" />
 
         <Particles />
 
         <Float speed={0.5} rotationIntensity={0} floatIntensity={0.3}>
-          <InteractiveCubeScene onNodeClick={onNodeClick} isPaused={isPaused} activeNode={activeNode} />
+          <InteractiveCubeScene
+            onNodeClick={onNodeClick}
+            isPaused={isPaused}
+            activeNode={activeNode}
+            isMobile={isMobile}
+            gyroscope={gyroscope}
+          />
         </Float>
 
         <EffectComposer>
