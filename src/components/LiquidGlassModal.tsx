@@ -3,7 +3,7 @@ import { X, ArrowRight, Phone, Mail, MapPin, Send, Linkedin, Instagram, Briefcas
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { PopupCategory } from "./InteractiveCube";
-import ddcLogo from "@/assets/ddc-logo.png";
+import ddcLogo from "@/assets/ddc-logo.svg";
 
 interface LiquidGlassModalProps {
   category: PopupCategory;
