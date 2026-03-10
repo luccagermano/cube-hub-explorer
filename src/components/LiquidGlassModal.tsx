@@ -79,7 +79,7 @@ export default function LiquidGlassModal({ hub, onClose }: LiquidGlassModalProps
                     {/* Status indicator */}
                     <div className="flex items-center gap-2 mb-4">
                       <div
-                        className="w-2 h-2 rounded-full animate-pulse"
+                        className="w-2 h-2 squared-full animate-pulse"
                         style={{
                           backgroundColor: hub.color,
                           boxShadow: `0 0 12px ${hub.color}`,
