@@ -507,6 +507,54 @@ export default function InteractiveCube({
   const isMobile = useIsMobile();
   const [gyroscope, setGyroscope] = useState({ x: 0, y: 0, available: false });
 
+  /* ── Mobile gesture state machine ── */
+  const TAP_THRESHOLD = 12; // px movement to classify as drag
+  const [gestureState, setGestureState] = useState<GestureState>("idle");
+  const gestureRef = useRef({
+    startX: 0, startY: 0, startTime: 0, lastX: 0, lastY: 0,
+  });
+  const mobileDragDelta = useRef({ x: 0, y: 0 });
+
+  const handlePointerDown = useCallback((e: React.PointerEvent) => {
+    if (!isMobile) return;
+    gestureRef.current.startX = e.clientX;
+    gestureRef.current.startY = e.clientY;
+    gestureRef.current.lastX = e.clientX;
+    gestureRef.current.lastY = e.clientY;
+    gestureRef.current.startTime = Date.now();
+    setGestureState("tapCandidate");
+  }, [isMobile]);
+
+  const handlePointerMove = useCallback((e: React.PointerEvent) => {
+    if (!isMobile) return;
+    const g = gestureRef.current;
+    const dx = e.clientX - g.startX;
+    const dy = e.clientY - g.startY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    if (gestureState === "tapCandidate" && dist > TAP_THRESHOLD) {
+      setGestureState("dragging");
+    }
+
+    if (gestureState === "dragging" || dist > TAP_THRESHOLD) {
+      // Accumulate frame delta for the scene
+      mobileDragDelta.current.x += e.clientX - g.lastX;
+      mobileDragDelta.current.y += e.clientY - g.lastY;
+    }
+    g.lastX = e.clientX;
+    g.lastY = e.clientY;
+  }, [isMobile, gestureState]);
+
+  const handlePointerUp = useCallback(() => {
+    if (!isMobile) return;
+    setGestureState("idle");
+  }, [isMobile]);
+
+  const handlePointerCancel = useCallback(() => {
+    if (!isMobile) return;
+    setGestureState("idle");
+  }, [isMobile]);
+
   // Gyroscope listener — runs only on mobile
   useEffect(() => {
     if (!isMobile) return;
@@ -566,7 +614,6 @@ export default function InteractiveCube({
       const { clientWidth: w, clientHeight: h } = containerRef.current;
       if (w > 0 && h > 0) setDims({ w, h });
     };
-    // Measure immediately + after a frame for safety
     measure();
     const raf = requestAnimationFrame(measure);
     window.addEventListener("resize", measure);
@@ -583,6 +630,10 @@ export default function InteractiveCube({
   return (
     <div
       ref={containerRef}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerCancel}
       style={{
         position: "absolute",
         inset: 0,
@@ -619,6 +670,8 @@ export default function InteractiveCube({
               activeNode={activeNode}
               isMobile={isMobile}
               gyroscope={gyroscope}
+              gestureState={gestureState}
+              mobileDragDelta={mobileDragDelta}
             />
           </Float>
 
