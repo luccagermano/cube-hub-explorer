@@ -336,14 +336,9 @@ function Particles() {
   );
 }
 
-/* ── GLB Model with Head Tracking ─────────────────── */
-function GLBModel({ isMobile, mouseRef }: { isMobile: boolean; mouseRef: React.MutableRefObject<{ x: number; y: number }> }) {
+/* ── GLB Model ─────────────────────────────────────── */
+function GLBModel() {
   const { scene } = useGLTF("/models/holoseat.glb");
-  const headRef = useRef<THREE.Object3D | null>(null);
-  const headRestQuat = useRef(new THREE.Quaternion());
-  const currentHeadQuat = useRef(new THREE.Quaternion());
-  const headInitialized = useRef(false);
-
   const clonedScene = useMemo(() => {
     const clone = scene.clone(true);
     clone.traverse((child) => {
@@ -367,54 +362,6 @@ function GLBModel({ isMobile, mouseRef }: { isMobile: boolean; mouseRef: React.M
     return clone;
   }, [scene]);
 
-  // Find head node after scene is built
-  useEffect(() => {
-    const HEAD_NAMES = ["head", "Head", "HEAD", "mixamorigHead", "Bip001_Head", "head_jnt", "HeadBone", "Armature_Head"];
-    let found: THREE.Object3D | null = null;
-    clonedScene.traverse((child) => {
-      if (found) return;
-      const nameLower = child.name.toLowerCase();
-      if (HEAD_NAMES.some(n => n.toLowerCase() === nameLower) || nameLower.includes("head")) {
-        found = child;
-      }
-    });
-    if (found) {
-      headRef.current = found;
-      headRestQuat.current.copy(found.quaternion);
-      currentHeadQuat.current.copy(found.quaternion);
-      headInitialized.current = true;
-    } else {
-      // No head node found — head tracking disabled silently
-    }
-  }, [clonedScene]);
-
-  // Per-frame head rotation
-  useFrame(() => {
-    if (!headRef.current || !headInitialized.current) return;
-
-    const MAX_YAW = 0.25;   // radians
-    const MAX_PITCH = 0.15;  // radians
-    const DAMPING = 0.06;
-
-    if (!isMobile) {
-      // Desktop: follow mouse
-      const targetYaw = -mouseRef.current.x * MAX_YAW;
-      const targetPitch = mouseRef.current.y * MAX_PITCH;
-
-      const targetQuat = new THREE.Quaternion();
-      const euler = new THREE.Euler(targetPitch, targetYaw, 0, "YXZ");
-      targetQuat.setFromEuler(euler);
-      targetQuat.premultiply(headRestQuat.current);
-
-      currentHeadQuat.current.slerp(targetQuat, DAMPING);
-      headRef.current.quaternion.copy(currentHeadQuat.current);
-    } else {
-      // Mobile: gently return to rest
-      currentHeadQuat.current.slerp(headRestQuat.current, DAMPING * 0.5);
-      headRef.current.quaternion.copy(currentHeadQuat.current);
-    }
-  });
-
   return <primitive object={clonedScene} />;
 }
 
@@ -434,12 +381,12 @@ function InteractiveCubeScene({
 }) {
   const groupRef = useRef<THREE.Group>(null);
   const targetRotation = useRef({ x: 0, y: 0 });
+  const idleTime = useRef(0);
+  const lastPointer = useRef({ x: 0, y: 0 });
   const [hoveredNode, setHoveredNode] = useState<number | null>(null);
   const cubeScale = useRef(1);
   // Accumulated drag rotation for mobile
   const dragRotation = useRef({ x: 0, y: 0 });
-  // Mouse position ref for head tracking (normalized -1 to 1)
-  const mouseRef = useRef({ x: 0, y: 0 });
 
   useFrame((state, delta) => {
     if (!groupRef.current) return;
@@ -447,12 +394,6 @@ function InteractiveCubeScene({
     const targetCubeScale = isPaused ? 1.03 : 1.0;
     cubeScale.current += (targetCubeScale - cubeScale.current) * Math.min(delta * 4, 1);
     groupRef.current.scale.setScalar(cubeScale.current);
-
-    // Update mouse ref for head tracking (desktop only, no scene rotation)
-    if (!isMobile) {
-      mouseRef.current.x = state.pointer.x;
-      mouseRef.current.y = state.pointer.y;
-    }
 
     if (!isPaused) {
       if (isMobile) {
@@ -473,7 +414,7 @@ function InteractiveCubeScene({
         // Optional: subtle gyroscope parallax (very limited range)
         let gyroY = 0, gyroX = 0;
         if (gyroscope.available) {
-          gyroY = gyroscope.x * Math.PI * 0.06;
+          gyroY = gyroscope.x * Math.PI * 0.06; // very subtle
           gyroX = -gyroscope.y * Math.PI * 0.04;
         }
 
@@ -486,11 +427,20 @@ function InteractiveCubeScene({
         targetRotation.current.y = idleY + gyroY + dragRotation.current.y;
         targetRotation.current.x = idleX + gyroX + dragRotation.current.x;
       } else {
-        // Desktop: idle animation only (mouse follow is on head only)
-        const idleY = Math.sin(state.clock.elapsedTime * 0.3) * 0.3;
-        const idleX = Math.cos(state.clock.elapsedTime * 0.2) * 0.15;
-        targetRotation.current.y = idleY;
-        targetRotation.current.x = idleX;
+        // Desktop: mouse-based rotation
+        const { x, y } = state.pointer;
+        const moved = Math.abs(x - lastPointer.current.x) + Math.abs(y - lastPointer.current.y) > 0.001;
+        lastPointer.current = { x, y };
+        if (moved) { idleTime.current = 0; } else { idleTime.current += delta; }
+
+        const mouseInfluence = Math.max(0, 1 - idleTime.current * 0.5);
+        targetRotation.current.y = x * Math.PI * 0.5 * mouseInfluence;
+        targetRotation.current.x = -y * Math.PI * 0.35 * mouseInfluence;
+        if (idleTime.current > 1) {
+          const idleFactor = Math.min((idleTime.current - 1) * 0.3, 1);
+          targetRotation.current.y += Math.sin(state.clock.elapsedTime * 0.3) * 0.3 * idleFactor;
+          targetRotation.current.x += Math.cos(state.clock.elapsedTime * 0.2) * 0.15 * idleFactor;
+        }
       }
     }
 
@@ -514,7 +464,7 @@ function InteractiveCubeScene({
         <CubeEdge key={i} start={scaledVertices[a]} end={scaledVertices[b]} />
       ))}
 
-      <GLBModel isMobile={isMobile} mouseRef={mouseRef} />
+      <GLBModel />
 
       <mesh>
         <boxGeometry args={[1.8, 1.8, 1.8]} />

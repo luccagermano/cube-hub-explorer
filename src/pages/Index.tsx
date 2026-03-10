@@ -89,78 +89,18 @@ const Index = () => {
       className="fixed inset-0 bg-background overflow-hidden font-body select-none touch-none"
       style={{ width: "100vw", height: "100dvh" }}
     >
-      {/* ── Liquid Glass Background Layers ── */}
-
-      {/* L1 — Base: deep charcoal fill */}
-      <div className="absolute inset-0" style={{ background: "#161616" }} />
-
-      {/* L2 — Subtle grid lines */}
+      {/* Subtle grid */}
       <div
-        className="absolute inset-0 opacity-[0.012]"
+        className="absolute inset-0 opacity-[0.015]"
         style={{
           backgroundImage: `linear-gradient(hsl(var(--primary)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary)) 1px, transparent 1px)`,
           backgroundSize: "80px 80px",
         }}
       />
 
-      {/* L3 — Central soft glow (glass diffusion) */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background: `radial-gradient(ellipse 70% 60% at 50% 48%, hsl(0 0% 18% / 0.25) 0%, transparent 70%)`,
-        }}
-      />
-
-      {/* L4 — Warm red accent bloom (very subtle, localized) */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background: `radial-gradient(ellipse 50% 45% at 50% 50%, hsl(350 60% 22% / 0.07) 0%, transparent 60%)`,
-        }}
-      />
-
-      {/* L5 — Top-left reflective highlight band */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background: `linear-gradient(155deg, hsl(0 0% 100% / 0.015) 0%, transparent 35%)`,
-        }}
-      />
-
-      {/* L6 — Bottom-right secondary highlight */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background: `linear-gradient(335deg, hsl(0 0% 100% / 0.008) 0%, transparent 30%)`,
-        }}
-      />
-
-      {/* L7 — Glass surface edge shimmer */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background: `
-            radial-gradient(ellipse 120% 30% at 50% 0%, hsl(0 0% 100% / 0.012) 0%, transparent 50%),
-            radial-gradient(ellipse 120% 30% at 50% 100%, hsl(0 0% 100% / 0.008) 0%, transparent 50%)
-          `,
-        }}
-      />
-
-      {/* L8 — Deep vignette (cinematic edge darkening) */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background: `radial-gradient(ellipse 80% 75% at 50% 50%, transparent 30%, hsl(0 0% 3% / 0.6) 100%)`,
-        }}
-      />
-
-      {/* L9 — Inner glass depth ring */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background: `radial-gradient(ellipse 55% 50% at 50% 50%, transparent 50%, hsl(0 0% 8% / 0.3) 80%, transparent 100%)`,
-        }}
-      />
+      {/* Radial glows — soft center warmth + vignette */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_hsl(350_40%_20%_/_0.04)_0%,_transparent_50%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_40%,_hsl(0_0%_4%_/_0.5)_100%)]" />
 
       {/* Navbar */}
       <motion.nav
