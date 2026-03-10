@@ -380,15 +380,25 @@ export default function InteractiveCube({
 
   return (
     <div className="w-full h-full cursor-pointer">
-      <Canvas camera={{ position: [0, 0, 5], fov: 50 }} dpr={[1, 2]}>
-        <ambientLight intensity={2.0} />
-        <pointLight position={[5, 5, 5]} intensity={3.0} color={DDC_RED} />
-        <pointLight position={[-5, -3, 5]} intensity={2.5} color="#e85d6f" />
-        <pointLight position={[0, 5, -5]} intensity={2.0} color="#a83242" />
-        <pointLight position={[0, -5, 5]} intensity={1.5} color="#ffffff" />
-        <directionalLight position={[0, 3, 5]} intensity={2.0} />
-        <directionalLight position={[0, -2, -3]} intensity={1.5} />
-        <hemisphereLight intensity={1.5} color="#ffffff" groundColor="#c4364a" />
+      <Canvas camera={{ position: [0, 0, 5], fov: 50 }} dpr={[1, 1.5]}>
+        {/* Ambient fill — soft neutral base */}
+        <ambientLight intensity={1.2} />
+
+        {/* Key light — warm white from upper-right-front */}
+        <directionalLight position={[4, 5, 6]} intensity={3.5} color="#fff5ee" />
+
+        {/* Fill light — cooler, softer, from the left */}
+        <directionalLight position={[-4, 2, 3]} intensity={1.8} color="#e0e4f0" />
+
+        {/* Rim / back light — warm accent for edge separation */}
+        <directionalLight position={[0, -2, -5]} intensity={2.0} color="#ffd4d4" />
+
+        {/* Subtle red accent — brand color without overexposure */}
+        <pointLight position={[3, 3, 3]} intensity={1.5} color={DDC_RED} distance={12} decay={2} />
+        <pointLight position={[-3, -2, 4]} intensity={1.0} color="#e85d6f" distance={10} decay={2} />
+
+        {/* Hemisphere for natural ground/sky gradient */}
+        <hemisphereLight intensity={0.8} color="#f0f0ff" groundColor="#1a0808" />
 
         <Particles />
 
@@ -397,7 +407,7 @@ export default function InteractiveCube({
         </Float>
 
         <EffectComposer>
-          <Bloom luminanceThreshold={0.2} luminanceSmoothing={0.9} intensity={bloomIntensity} mipmapBlur />
+          <Bloom luminanceThreshold={0.3} luminanceSmoothing={0.9} intensity={bloomIntensity} mipmapBlur />
         </EffectComposer>
       </Canvas>
     </div>
