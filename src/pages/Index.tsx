@@ -98,9 +98,9 @@ const Index = () => {
         }}
       />
 
-      {/* Radial glows */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_hsl(350_65%_52%_/_0.06)_0%,_transparent_60%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_hsl(0_0%_20%_/_0.04)_0%,_transparent_50%)]" />
+      {/* Radial glows — subtle red accent only */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_hsl(350_65%_52%_/_0.03)_0%,_transparent_55%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_hsl(0_0%_12%_/_0.06)_0%,_transparent_50%)]" />
 
       {/* Navbar */}
       <motion.nav
