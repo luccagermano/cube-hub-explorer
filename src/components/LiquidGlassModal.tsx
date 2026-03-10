@@ -414,25 +414,26 @@ function NewsletterContent({ onClose }: { onClose: () => void }) {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="your@email.com"
             aria-label="Email address for newsletter"
-            className="flex-1 px-4 sm:px-5 py-3 sm:py-3.5 rounded-xl text-sm text-foreground placeholder:text-foreground/30 outline-none transition-all duration-200 focus:ring-2 focus:ring-primary/50"
+            className="flex-1 px-5 py-3.5 rounded-xl text-sm outline-none transition-all duration-200 focus:ring-2 focus:ring-primary/40"
             style={{
-              background: "rgba(255,255,255,0.06)",
-              border: "1px solid rgba(255,255,255,0.1)",
+              background: "rgba(255,255,255,0.05)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              color: "#e8e8ea",
             }}
           />
           <motion.button
-            initial={{ opacity: 0, x: 10 }}
+            initial={{ opacity: 0, x: 8 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
-            className="flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl text-xs sm:text-sm font-display font-semibold tracking-wider transition-all duration-300 hover:scale-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary whitespace-nowrap"
+            className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-xs font-display font-semibold tracking-widest uppercase transition-all duration-300 hover:translate-y-[-1px] hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-primary whitespace-nowrap"
             style={{
               background: `linear-gradient(135deg, ${DDC_RED}, ${DDC_RED}cc)`,
               color: "#fff",
-              border: "none",
+              boxShadow: `0 4px 20px ${DDC_RED}30`,
             }}
             aria-label="Subscribe to newsletter"
           >
-            <Send size={14} />
+            <Send size={13} />
             SUBSCRIBE
           </motion.button>
         </div>
