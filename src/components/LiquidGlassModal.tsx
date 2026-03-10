@@ -247,41 +247,31 @@ function ContactContent({ onClose }: { onClose: () => void }) {
         onClose={onClose}
       />
       <div
-        className="rounded-2xl p-5 sm:p-6 md:p-8"
+        className="rounded-2xl p-5 sm:p-7"
         style={{
           background: "rgba(255,255,255,0.04)",
-          border: "1px solid rgba(255,255,255,0.08)",
+          border: "1px solid rgba(255,255,255,0.07)",
+          boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
         }}
       >
-        <div className="space-y-4 sm:space-y-5">
-          <div className="flex items-center gap-3 sm:gap-4">
-            <div className="p-2 sm:p-2.5 rounded-xl flex-shrink-0" style={{ background: `${DDC_RED}15` }}>
-              <Phone size={18} style={{ color: DDC_RED }} />
+        <div className="space-y-5">
+          {[
+            { icon: <Phone size={16} />, label: "Phone", value: "+55 11 99140-8071" },
+            { icon: <Mail size={16} />, label: "Email", value: "contato@ddccompany.com.br", breakAll: true },
+            { icon: <MapPin size={16} />, label: "Location", value: "Av. João Manoel, 600, Centro, Arujá-SP" },
+          ].map((item, i) => (
+            <div key={i} className="flex items-center gap-4">
+              <div className="w-9 h-9 flex items-center justify-center rounded-lg flex-shrink-0" style={{ background: `${DDC_RED}12`, color: DDC_RED }}>
+                {item.icon}
+              </div>
+              <div>
+                <p className="text-[10px] sm:text-[11px] font-display tracking-widest uppercase mb-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>{item.label}</p>
+                <p className={`text-sm font-medium ${item.breakAll ? "break-all" : ""}`} style={{ color: "#e8e8ea" }}>{item.value}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-foreground/50 text-[10px] sm:text-xs font-display tracking-wider uppercase">Phone</p>
-              <p className="text-foreground text-xs sm:text-sm font-medium">+55 11 99140-8071</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 sm:gap-4">
-            <div className="p-2 sm:p-2.5 rounded-xl flex-shrink-0" style={{ background: `${DDC_RED}15` }}>
-              <Mail size={18} style={{ color: DDC_RED }} />
-            </div>
-            <div>
-              <p className="text-foreground/50 text-[10px] sm:text-xs font-display tracking-wider uppercase">Email</p>
-              <p className="text-foreground text-xs sm:text-sm font-medium break-all">contato@ddccompany.com.br</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 sm:gap-4">
-            <div className="p-2 sm:p-2.5 rounded-xl flex-shrink-0" style={{ background: `${DDC_RED}15` }}>
-              <MapPin size={18} style={{ color: DDC_RED }} />
-            </div>
-            <div>
-              <p className="text-foreground/50 text-[10px] sm:text-xs font-display tracking-wider uppercase">Location</p>
-              <p className="text-foreground text-xs sm:text-sm font-medium">Av. João Manoel, 600, Centro, Arujá-SP</p>
-            </div>
-          </div>
+          ))}
         </div>
+      </div>
       </div>
       <div className="mt-5 sm:mt-6">
         <motion.button
