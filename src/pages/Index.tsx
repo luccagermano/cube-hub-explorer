@@ -210,7 +210,7 @@ const Index = () => {
               aria-label="Menu de navegação"
             >
               {/* Header area with close */}
-              <div className="flex items-center justify-between px-6 sm:px-8 pt-5 pb-4">
+              <div className="flex items-center justify-between px-6 sm:px-8 pb-4" style={{ paddingTop: "max(1.25rem, env(safe-area-inset-top))" }}>
                 <span className="text-[10px] font-display tracking-[0.25em] uppercase text-muted-foreground">
                   Navegação
                 </span>
