@@ -3,6 +3,7 @@ import { Canvas, useFrame, useThree, useLoader } from "@react-three/fiber";
 import { Text, Float, useGLTF } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import * as THREE from "three";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const DDC_RED = "#c4364a";
 const DDC_RED_DARK = "#8b2535";
