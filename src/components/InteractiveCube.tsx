@@ -5,6 +5,9 @@ import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import * as THREE from "three";
 import { useIsMobile } from "@/hooks/use-mobile";
 
+/* ── Mobile gesture types ── */
+export type GestureState = "idle" | "tapCandidate" | "dragging";
+
 /* ── Resize handler — keeps camera/renderer in sync with viewport ── */
 function ViewportResizeHandler() {
   const { camera, gl, size } = useThree();
