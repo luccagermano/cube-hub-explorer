@@ -493,16 +493,17 @@ function AboutContent({ onClose }: { onClose: () => void }) {
         onClose={onClose}
       />
       <div
-        className="rounded-2xl p-5 sm:p-6 md:p-8"
+        className="rounded-2xl p-6 sm:p-7"
         style={{
           background: "rgba(255,255,255,0.04)",
-          border: "1px solid rgba(255,255,255,0.08)",
+          border: "1px solid rgba(255,255,255,0.07)",
+          boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
         }}
       >
-        <p className="text-foreground/80 text-xs sm:text-sm md:text-base leading-relaxed mb-4">
+        <p className="text-sm sm:text-[15px] leading-relaxed mb-4" style={{ color: "rgba(255,255,255,0.7)" }}>
           With the mission to innovate the financial market, we use technology as the primary tool to reach new administrative heights. DDC is more than just a booster — it's the future.
         </p>
-        <p className="text-foreground/60 text-xs sm:text-sm leading-relaxed">
+        <p className="text-[13px] sm:text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.45)" }}>
           Our qualified team, driven by a passion for innovation, creates secure, scalable, and efficient solutions so your company can grow with confidence. Come discover the new world built to take you to the top.
         </p>
       </div>
