@@ -145,7 +145,7 @@ export default function LiquidGlassModal({ hub, onClose }: LiquidGlassModalProps
 
                 {/* Capabilities grid */}
                 <div className="mb-10">
-                  <span className="text-[10px] font-display tracking-[0.25em] uppercase text-muted-foreground mb-4 block">
+                  <span className="text-[10px] font-display tracking-[0.25em] uppercase mb-4 block" style={{ color: "#161616" }}>
                     Key Capabilities
                   </span>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
