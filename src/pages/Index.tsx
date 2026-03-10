@@ -6,11 +6,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import ddcLogo from "@/assets/ddc-logo.svg";
 
 const MENU_ITEMS = [
-  { label: "Sobre", action: "about" as const },
+  { label: "DDC", action: "about" as const },
   { label: "Soluções", action: "node" as const, nodeIndex: 0 },
   { label: "Perfil da Empresa", action: "node" as const, nodeIndex: 4 },
   { label: "Clientes", action: "node" as const, nodeIndex: 2 },
-  { label: "Boletim", action: "node" as const, nodeIndex: 3 },
+  { label: "Newsletter", action: "node" as const, nodeIndex: 3 },
   { label: "Contato", action: "node" as const, nodeIndex: 1 },
 ];
 

@@ -643,8 +643,8 @@ export default function InteractiveCube({
       }}
     >
       {dims && (
-        <Canvas
-          camera={{ position: [0, 0, 5], fov: isMobile ? 55 : 50 }}
+          <Canvas
+          camera={{ position: [0, 0, 5], fov: isMobile ? 60 : 50 }}
           dpr={[1, isMobile ? 1.2 : 1.5]}
           style={{ width: dims.w, height: dims.h }}
           resize={{ scroll: false, debounce: { scroll: 0, resize: 0 } }}
