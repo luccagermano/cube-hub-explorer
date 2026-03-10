@@ -570,8 +570,8 @@ export default function InteractiveCube({
           style={{ width: dims.w, height: dims.h }}
           resize={{ scroll: false, debounce: { scroll: 0, resize: 0 } }}
           gl={{ antialias: true, alpha: false }}
+          scene={{ background: new THREE.Color("#252222") }}
         >
-          <ViewportResizeHandler />
           <ambientLight intensity={1.2} />
           <directionalLight position={[4, 5, 6]} intensity={3.5} color="#fff5ee" />
           <directionalLight position={[-4, 2, 3]} intensity={1.8} color="#e0e4f0" />
