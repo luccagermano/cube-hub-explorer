@@ -454,42 +454,30 @@ function IntroContent({ onClose }: { onClose: () => void }) {
         Innovation and technology go hand in hand. We are a company specialized in IT solutions that propel businesses into the future. From strategic consulting to software development, we offer cutting-edge technology to turn challenges into opportunities.
       </p>
       <div className="flex flex-col sm:flex-row flex-wrap gap-3">
-        <motion.a
-          href="https://www.linkedin.com/company/ddc-company/"
-          target="_blank"
-          rel="noopener noreferrer"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-display font-semibold tracking-wider transition-all duration-300 hover:scale-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-          style={{
-            background: `linear-gradient(135deg, ${DDC_RED}25, ${DDC_RED}10)`,
-            color: DDC_RED,
-            border: `1px solid ${DDC_RED}25`,
-          }}
-          aria-label="Visit DDC on LinkedIn"
-        >
-          <Linkedin size={16} />
-          LINKEDIN
-        </motion.a>
-        <motion.a
-          href="https://www.instagram.com/ddc.company/"
-          target="_blank"
-          rel="noopener noreferrer"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-display font-semibold tracking-wider transition-all duration-300 hover:scale-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-          style={{
-            background: `linear-gradient(135deg, ${DDC_RED}25, ${DDC_RED}10)`,
-            color: DDC_RED,
-            border: `1px solid ${DDC_RED}25`,
-          }}
-          aria-label="Visit DDC on Instagram"
-        >
-          <Instagram size={16} />
-          INSTAGRAM
-        </motion.a>
+        {[
+          { href: "https://www.linkedin.com/company/ddc-company/", icon: <Linkedin size={15} />, label: "LinkedIn" },
+          { href: "https://www.instagram.com/ddc.company/", icon: <Instagram size={15} />, label: "Instagram" },
+        ].map((link, i) => (
+          <motion.a
+            key={link.label}
+            href={link.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 + i * 0.08 }}
+            className="flex items-center justify-center gap-2.5 px-6 py-3 rounded-xl text-xs font-display font-semibold tracking-widest uppercase transition-all duration-300 hover:translate-y-[-1px] hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            style={{
+              background: "rgba(255,255,255,0.05)",
+              color: "#e8e8ea",
+              border: "1px solid rgba(255,255,255,0.08)",
+            }}
+            aria-label={`Visit DDC on ${link.label}`}
+          >
+            {link.icon}
+            {link.label.toUpperCase()}
+          </motion.a>
+        ))}
       </div>
     </>
   );
