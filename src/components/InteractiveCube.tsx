@@ -126,15 +126,17 @@ const GlowNode = forwardRef<THREE.Group, {
   position: [number, number, number]; color: string; label: string; index: number;
   onNodeClick: (index: number) => void; hoveredNode: number | null;
   setHoveredNode: (i: number | null) => void; isPaused: boolean; isActive: boolean;
-  isInteractive: boolean;
+  isInteractive: boolean; isMobile: boolean;
 }>(function GlowNode({
-  position, color, label, index, onNodeClick, hoveredNode, setHoveredNode, isPaused, isActive, isInteractive,
+  position, color, label, index, onNodeClick, hoveredNode, setHoveredNode, isPaused, isActive, isInteractive, isMobile,
 }, ref) {
   const meshRef = useRef<THREE.Mesh>(null);
   const isHovered = hoveredNode === index;
   const baseScale = isPaused ? 0.08 : 0.06;
   const inactiveScale = 0.04;
-  const targetScale = !isInteractive ? inactiveScale : isActive ? 0.16 : isHovered ? 0.14 : baseScale;
+  // On mobile, make interactive nodes larger for easier tapping
+  const mobileBoost = isMobile && isInteractive ? 1.6 : 1;
+  const targetScale = !isInteractive ? inactiveScale : isActive ? 0.16 * mobileBoost : isHovered ? 0.14 * mobileBoost : baseScale * mobileBoost;
   const currentScale = useRef(baseScale);
   const pulseTime = useRef(0);
 
@@ -152,18 +154,27 @@ const GlowNode = forwardRef<THREE.Group, {
     }
   });
 
+  // Invisible hit area sphere (larger on mobile)
+  const hitRadius = isMobile && isInteractive ? 2.5 : 1;
+
   return (
     <group position={position}>
-      <mesh
-        ref={meshRef}
-        onClick={(e) => {
-          if (!isInteractive) return;
-          e.stopPropagation();
-          onNodeClick(index);
-        }}
-        onPointerOver={() => isInteractive && setHoveredNode(index)}
-        onPointerOut={() => setHoveredNode(null)}
-      >
+      {/* Invisible enlarged hit target */}
+      {isInteractive && (
+        <mesh
+          onClick={(e) => {
+            e.stopPropagation();
+            onNodeClick(index);
+          }}
+          onPointerOver={() => !isMobile && setHoveredNode(index)}
+          onPointerOut={() => !isMobile && setHoveredNode(null)}
+        >
+          <sphereGeometry args={[hitRadius, 12, 12]} />
+          <meshBasicMaterial visible={false} />
+        </mesh>
+      )}
+      {/* Visual sphere */}
+      <mesh ref={meshRef}>
         <sphereGeometry args={[1, 24, 24]} />
         <meshStandardMaterial
           color={color}
@@ -180,8 +191,8 @@ const GlowNode = forwardRef<THREE.Group, {
       </mesh>
       {isInteractive && label && (
         <Text
-          position={[0, 0.3, 0]}
-          fontSize={0.09}
+          position={[0, isMobile ? 0.4 : 0.3, 0]}
+          fontSize={isMobile ? 0.11 : 0.09}
           color={isHovered || isActive ? color : "#ffffff"}
           anchorX="center"
           anchorY="bottom"
