@@ -164,7 +164,7 @@ export default function LiquidGlassModal({ hub, onClose }: LiquidGlassModalProps
                         <Zap size={12} style={{ color: hub.color }} />
                         <span
                           className="text-xs font-body"
-                          style={{ color: `${hub.color}dd` }}
+                          style={{ color: "#161616" }}
                         >
                           {tech}
                         </span>
