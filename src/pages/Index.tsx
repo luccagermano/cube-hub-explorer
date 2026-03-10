@@ -107,7 +107,12 @@ const Index = () => {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.1 }}
-        className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-4 sm:px-8 py-4 sm:py-5"
+        className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between py-4 sm:py-5"
+        style={{
+          paddingLeft: "max(1rem, env(safe-area-inset-left))",
+          paddingRight: "max(1rem, env(safe-area-inset-right))",
+          paddingTop: "max(1rem, env(safe-area-inset-top))",
+        }}
         role="navigation"
         aria-label="Navegação principal"
       >
