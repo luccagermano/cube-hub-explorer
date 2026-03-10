@@ -85,7 +85,10 @@ const Index = () => {
   }, [menuOpen]);
 
   return (
-    <div className="fixed inset-0 bg-background overflow-hidden font-body select-none touch-none">
+    <div
+      className="fixed inset-0 bg-background overflow-hidden font-body select-none touch-none"
+      style={{ width: "100vw", height: "100dvh" }}
+    >
       {/* Subtle grid */}
       <div
         className="absolute inset-0 opacity-[0.015]"
