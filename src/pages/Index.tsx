@@ -128,7 +128,7 @@ const Index = () => {
                     className={`group relative transition-all duration-300 p-1 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                       selectedNode === i ? "scale-125" : "opacity-50 hover:opacity-100"
                     }`}
-                    aria-label={`Open ${vertex.name} section`}
+                    aria-label={`Abrir seção ${vertex.name}`}
                     aria-pressed={selectedNode === i}
                   >
                     <div

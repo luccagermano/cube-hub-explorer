@@ -1,8 +1,9 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ArrowRight, Phone, Mail, MapPin, Send, Linkedin, Instagram, Briefcase, Code, Users, Shield, Lightbulb, HeadphonesIcon, GraduationCap } from "lucide-react";
+import { X, ArrowRight, Phone, Mail, MapPin, Send, Linkedin, Instagram, Briefcase, Code, Users, Shield, Lightbulb, HeadphonesIcon, GraduationCap, Rocket } from "lucide-react";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { PopupCategory } from "./InteractiveCube";
+import ddcLogo from "@/assets/ddc-logo.png";
 
 interface LiquidGlassModalProps {
   category: PopupCategory;
@@ -23,7 +24,6 @@ function useFocusTrap(active: boolean) {
     const container = containerRef.current;
     if (!container) return;
 
-    // Focus first focusable element
     const focusable = container.querySelectorAll<HTMLElement>(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
     );
@@ -129,7 +129,7 @@ function ModalHeader({ title, subtitle, onClose }: { title: string; subtitle?: s
       </div>
       <button
         onClick={onClose}
-        aria-label="Close dialog"
+        aria-label="Fechar"
         className="p-2.5 rounded-xl transition-all duration-200 hover:scale-105 hover:bg-white/[0.08] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary flex-shrink-0 ml-6"
         style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.07)" }}
       >
@@ -193,28 +193,28 @@ function SolutionsContent({ onClose }: { onClose: () => void }) {
   return (
     <>
       <ModalHeader
-        title="Solutions & Services"
-        subtitle="Agile, innovative solutions to help your business grow, automate processes, and stand out in the market."
+        title="Soluções & Serviços"
+        subtitle="Tecnologia sob medida para acelerar seu negócio. Desenvolvemos, integramos e otimizamos para você crescer mais rápido."
         onClose={onClose}
       />
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
         <InfoCard
           icon={<Briefcase size={22} />}
           title="DDC Workspace Platform"
-          text="Custom-built ERP tailored for investment offices — streamlining operations and decision-making."
-          tooltip="Enterprise resource planning built for the financial sector"
+          text="ERP customizado para escritórios de investimento — decisões mais rápidas com dados em tempo real."
+          tooltip="Plataforma de gestão inteligente para o setor financeiro"
         />
         <InfoCard
           icon={<Code size={22} />}
-          title="Custom Software Development"
-          text="Bespoke software solutions designed to transform your business with cutting-edge technology."
-          tooltip="End-to-end software engineering for your unique needs"
+          title="Desenvolvimento Sob Medida"
+          text="Software projetado do zero para transformar operações e escalar seu negócio com tecnologia de ponta."
+          tooltip="Engenharia de software completa para suas necessidades"
         />
         <InfoCard
           icon={<Lightbulb size={22} />}
-          title="Specialized Consulting"
-          text="Expert advisors ready to accelerate your digital transformation and business growth."
-          tooltip="Strategic IT and digital transformation advisory"
+          title="Consultoria Especializada"
+          text="Especialistas prontos para acelerar sua transformação digital e impulsionar resultados."
+          tooltip="Assessoria estratégica em TI e transformação digital"
         />
       </div>
       <div className="mt-8">
@@ -229,7 +229,7 @@ function SolutionsContent({ onClose }: { onClose: () => void }) {
             boxShadow: `0 4px 20px ${DDC_RED}30`,
           }}
         >
-          EXPLORE SOLUTIONS
+          EXPLORAR SOLUÇÕES
           <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
         </motion.button>
       </div>
@@ -242,8 +242,8 @@ function ContactContent({ onClose }: { onClose: () => void }) {
   return (
     <>
       <ModalHeader
-        title="Get in Touch"
-        subtitle="Ready to transform your business? Let's talk."
+        title="Fale Conosco"
+        subtitle="Pronto para acelerar seu negócio? Vamos conversar."
         onClose={onClose}
       />
       <div
@@ -256,9 +256,9 @@ function ContactContent({ onClose }: { onClose: () => void }) {
       >
         <div className="space-y-5">
           {[
-            { icon: <Phone size={16} />, label: "Phone", value: "+55 11 99140-8071" },
-            { icon: <Mail size={16} />, label: "Email", value: "contato@ddccompany.com.br", breakAll: true },
-            { icon: <MapPin size={16} />, label: "Location", value: "Av. João Manoel, 600, Centro, Arujá-SP" },
+            { icon: <Phone size={16} />, label: "Telefone", value: "+55 11 99140-8071" },
+            { icon: <Mail size={16} />, label: "E-mail", value: "contato@ddccompany.com.br", breakAll: true },
+            { icon: <MapPin size={16} />, label: "Endereço", value: "Av. João Manoel, 600, Centro, Arujá-SP" },
           ].map((item, i) => (
             <div key={i} className="flex items-center gap-4">
               <div className="w-9 h-9 flex items-center justify-center rounded-lg flex-shrink-0" style={{ background: `${DDC_RED}12`, color: DDC_RED }}>
@@ -284,7 +284,7 @@ function ContactContent({ onClose }: { onClose: () => void }) {
             boxShadow: `0 4px 20px ${DDC_RED}30`,
           }}
         >
-          REQUEST A QUOTE
+          SOLICITAR ORÇAMENTO
           <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
         </motion.button>
       </div>
@@ -297,34 +297,34 @@ function CompanyContent({ onClose }: { onClose: () => void }) {
   return (
     <>
       <ModalHeader
-        title="Company Profile"
-        subtitle="DDC adapts to fit your business profile with versatility and precision."
+        title="Perfil da Empresa"
+        subtitle="A DDC é uma Booster Tech — impulsionamos negócios com tecnologia estratégica, engenharia de alta performance e inovação contínua."
         onClose={onClose}
       />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         <InfoCard
-          icon={<Briefcase size={20} />}
-          title="Decision at Your Fingertips"
-          text="DDC tools make your decision-making faster and more efficient with real-time data insights."
-          tooltip="Real-time business intelligence dashboards"
+          icon={<Rocket size={20} />}
+          title="Aceleração Digital"
+          text="Ferramentas e estratégias que colocam dados em tempo real na palma da sua mão para decisões mais rápidas."
+          tooltip="Business intelligence e dashboards em tempo real"
         />
         <InfoCard
           icon={<Shield size={20} />}
-          title="Market-Leading Booster"
-          text="Experience the true concept of Fintech — the most complete booster on the market."
-          tooltip="Comprehensive fintech acceleration platform"
+          title="Booster de Mercado"
+          text="O conceito mais completo de Fintech — a plataforma que impulsiona seu negócio ao próximo nível."
+          tooltip="Plataforma completa de aceleração fintech"
         />
         <InfoCard
           icon={<HeadphonesIcon size={20} />}
-          title="Dedicated Support"
-          text="Exclusive support team available to resolve all product and platform inquiries."
-          tooltip="Priority support with dedicated account managers"
+          title="Suporte Dedicado"
+          text="Equipe exclusiva disponível para resolver todas as dúvidas sobre produtos e plataforma."
+          tooltip="Suporte prioritário com gerentes de conta dedicados"
         />
         <InfoCard
           icon={<GraduationCap size={20} />}
-          title="Consulting & Training"
-          text="Beyond consulting — built-in training programs to prepare your entire team for success."
-          tooltip="Onboarding and continuous education programs"
+          title="Consultoria & Treinamento"
+          text="Além de consultoria — programas de capacitação integrados para preparar toda a sua equipe."
+          tooltip="Programas de onboarding e educação contínua"
         />
       </div>
     </>
@@ -334,19 +334,19 @@ function CompanyContent({ onClose }: { onClose: () => void }) {
 /* ── D) Clients Popup ── */
 function ClientsContent({ onClose }: { onClose: () => void }) {
   const partners = [
-    { src: "/partners/partner-1.png", name: "Partner 1" },
-    { src: "/partners/partner-2.png", name: "Partner 2" },
-    { src: "/partners/partner-3.png", name: "Partner 3" },
-    { src: "/partners/partner-4.png", name: "Partner 4" },
-    { src: "/partners/partner-5.png", name: "Partner 5" },
-    { src: "/partners/partner-6.png", name: "Partner 6" },
+    { src: "/partners/partner-1.png", name: "Parceiro 1" },
+    { src: "/partners/partner-2.png", name: "Parceiro 2" },
+    { src: "/partners/partner-3.png", name: "Parceiro 3" },
+    { src: "/partners/partner-4.png", name: "Parceiro 4" },
+    { src: "/partners/partner-5.png", name: "Parceiro 5" },
+    { src: "/partners/partner-6.png", name: "Parceiro 6" },
   ];
 
   return (
     <>
       <ModalHeader
-        title="Our Partners"
-        subtitle="Companies that trusted us to accelerate their business."
+        title="Nossos Parceiros"
+        subtitle="Empresas que confiaram na DDC para acelerar seus resultados."
         onClose={onClose}
       />
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
@@ -399,20 +399,20 @@ function NewsletterContent({ onClose }: { onClose: () => void }) {
   return (
     <>
       <ModalHeader
-        title="Stay Informed"
-        subtitle="Subscribe to our newsletter and be the first to know about innovations, insights, and exclusive updates from DDC."
+        title="Fique por Dentro"
+        subtitle="Assine nossa newsletter e receba em primeira mão novidades, insights e atualizações exclusivas da DDC."
         onClose={onClose}
       />
       <div className="max-w-md">
-        <label htmlFor="newsletter-email" className="sr-only">Email address</label>
+        <label htmlFor="newsletter-email" className="sr-only">Endereço de e-mail</label>
         <div className="flex flex-col sm:flex-row gap-3">
           <input
             id="newsletter-email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="your@email.com"
-            aria-label="Email address for newsletter"
+            placeholder="seu@email.com"
+            aria-label="Endereço de e-mail para newsletter"
             className="flex-1 px-5 py-3.5 rounded-xl text-sm outline-none transition-all duration-200 focus:ring-2 focus:ring-primary/40"
             style={{
               background: "rgba(255,255,255,0.05)",
@@ -430,10 +430,10 @@ function NewsletterContent({ onClose }: { onClose: () => void }) {
               color: "#fff",
               boxShadow: `0 4px 20px ${DDC_RED}30`,
             }}
-            aria-label="Subscribe to newsletter"
+            aria-label="Assinar newsletter"
           >
             <Send size={13} />
-            SUBSCRIBE
+            ASSINAR
           </motion.button>
         </div>
       </div>
@@ -446,11 +446,17 @@ function IntroContent({ onClose }: { onClose: () => void }) {
   return (
     <>
       <ModalHeader
-        title="Connecting People, Empowering Business."
+        title="Impulsionamos Negócios com Tecnologia."
         onClose={onClose}
       />
+      <div className="flex items-center gap-4 mb-6">
+        <img src={ddcLogo} alt="DDC Company" className="h-8 sm:h-10 w-auto" />
+        <span className="text-[10px] sm:text-xs font-display tracking-[0.25em] uppercase" style={{ color: DDC_RED }}>
+          BOOSTER TECH
+        </span>
+      </div>
       <p className="text-sm sm:text-[15px] leading-relaxed max-w-2xl mb-8" style={{ color: "rgba(255,255,255,0.55)" }}>
-        Innovation and technology go hand in hand. We are a company specialized in IT solutions that propel businesses into the future. From strategic consulting to software development, we offer cutting-edge technology to turn challenges into opportunities.
+        Somos uma Booster Tech especializada em acelerar empresas através de engenharia de software, consultoria estratégica e soluções digitais de alto impacto. Da concepção à execução, transformamos desafios em crescimento real.
       </p>
       <div className="flex flex-col sm:flex-row flex-wrap gap-3">
         {[
@@ -471,7 +477,7 @@ function IntroContent({ onClose }: { onClose: () => void }) {
               color: "#e8e8ea",
               border: "1px solid rgba(255,255,255,0.08)",
             }}
-            aria-label={`Visit DDC on ${link.label}`}
+            aria-label={`Visite a DDC no ${link.label}`}
           >
             {link.icon}
             {link.label.toUpperCase()}
@@ -487,10 +493,16 @@ function AboutContent({ onClose }: { onClose: () => void }) {
   return (
     <>
       <ModalHeader
-        title="About DDC"
-        subtitle="Since 2020, building the future of finance and technology."
+        title="Sobre a DDC"
+        subtitle="Desde 2020, construindo o futuro da tecnologia e dos negócios."
         onClose={onClose}
       />
+      <div className="flex items-center gap-4 mb-6">
+        <img src={ddcLogo} alt="DDC Company" className="h-7 sm:h-9 w-auto" />
+        <span className="text-[10px] sm:text-xs font-display tracking-[0.25em] uppercase" style={{ color: DDC_RED }}>
+          BOOSTER TECH
+        </span>
+      </div>
       <div
         className="rounded-2xl p-6 sm:p-7"
         style={{
@@ -500,10 +512,10 @@ function AboutContent({ onClose }: { onClose: () => void }) {
         }}
       >
         <p className="text-sm sm:text-[15px] leading-relaxed mb-4" style={{ color: "rgba(255,255,255,0.7)" }}>
-          With the mission to innovate the financial market, we use technology as the primary tool to reach new administrative heights. DDC is more than just a booster — it's the future.
+          Com a missão de impulsionar o mercado, usamos tecnologia como ferramenta principal para alcançar novos patamares. A DDC é mais do que um booster — somos o parceiro estratégico que acelera sua transformação digital.
         </p>
         <p className="text-[13px] sm:text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.45)" }}>
-          Our qualified team, driven by a passion for innovation, creates secure, scalable, and efficient solutions so your company can grow with confidence. Come discover the new world built to take you to the top.
+          Nossa equipe qualificada, movida por inovação e execução, cria soluções seguras, escaláveis e de alta performance para que sua empresa cresça com confiança. Venha descobrir o novo patamar construído para levar você ao topo.
         </p>
       </div>
     </>
