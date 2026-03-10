@@ -450,7 +450,7 @@ function IntroContent({ onClose }: { onClose: () => void }) {
         title="Connecting People, Empowering Business."
         onClose={onClose}
       />
-      <p className="text-foreground/70 text-xs sm:text-sm md:text-base leading-relaxed max-w-2xl mb-6 sm:mb-8">
+      <p className="text-sm sm:text-[15px] leading-relaxed max-w-2xl mb-8" style={{ color: "rgba(255,255,255,0.55)" }}>
         Innovation and technology go hand in hand. We are a company specialized in IT solutions that propel businesses into the future. From strategic consulting to software development, we offer cutting-edge technology to turn challenges into opportunities.
       </p>
       <div className="flex flex-col sm:flex-row flex-wrap gap-3">
