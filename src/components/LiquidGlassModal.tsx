@@ -65,39 +65,40 @@ function GlassPanel({ children, onClose }: { children: React.ReactNode; onClose:
       initial={{ opacity: 0, scale: 0.92 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
-      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
       className="fixed inset-0 z-40 flex items-center justify-center p-3 sm:p-4 pointer-events-none"
       role="dialog"
       aria-modal="true"
     >
       <div
         ref={trapRef}
-        className="relative w-[95%] sm:w-[90%] md:w-[65%] lg:w-[60%] max-h-[85vh] sm:max-h-[80vh] md:max-h-[75vh] overflow-y-auto pointer-events-auto"
+        className="relative w-[95%] sm:w-[88%] md:w-[62%] lg:w-[56%] xl:w-[50%] max-h-[88vh] sm:max-h-[82vh] md:max-h-[78vh] overflow-y-auto pointer-events-auto scrollbar-thin"
         style={{
-          background: "rgba(20, 20, 20, 0.85)",
-          backdropFilter: "blur(25px) saturate(180%)",
-          WebkitBackdropFilter: "blur(25px) saturate(180%)",
-          border: "1px solid rgba(255, 255, 255, 0.12)",
-          borderRadius: "24px",
+          background: "rgba(14, 14, 16, 0.88)",
+          backdropFilter: "blur(32px) saturate(160%)",
+          WebkitBackdropFilter: "blur(32px) saturate(160%)",
+          border: "1px solid rgba(255, 255, 255, 0.1)",
+          borderRadius: "20px",
           boxShadow: `
-            0 0 80px ${DDC_RED}12,
-            0 32px 64px rgba(0, 0, 0, 0.5),
-            inset 0 1px 0 rgba(255, 255, 255, 0.08),
-            inset 0 -1px 0 rgba(255, 255, 255, 0.02)
+            0 0 0 0.5px rgba(255, 255, 255, 0.05),
+            0 0 60px rgba(196, 54, 74, 0.06),
+            0 24px 80px rgba(0, 0, 0, 0.6),
+            inset 0 1px 0 rgba(255, 255, 255, 0.07)
           `,
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Top reflection */}
+        {/* Top specular highlight */}
         <div
-          className="absolute top-0 left-0 right-0 h-[1px] rounded-t-[24px]"
-          style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)" }}
+          className="absolute top-0 left-[10%] right-[10%] h-[1px] rounded-full"
+          style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent)" }}
         />
+        {/* Internal gradient overlay */}
         <div
-          className="absolute inset-0 rounded-[24px] pointer-events-none"
-          style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 40%, rgba(0,0,0,0.08) 100%)" }}
+          className="absolute inset-0 rounded-[20px] pointer-events-none"
+          style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.025) 0%, transparent 35%)" }}
         />
-        <div className="relative z-10 p-5 sm:p-8 md:p-12">
+        <div className="relative z-10 p-6 sm:p-8 md:p-10 lg:p-12">
           {children}
         </div>
       </div>
