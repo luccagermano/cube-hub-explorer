@@ -85,7 +85,10 @@ const Index = () => {
   }, [menuOpen]);
 
   return (
-    <div className="fixed inset-0 bg-background overflow-hidden font-body select-none touch-none">
+    <div
+      className="fixed inset-0 bg-background overflow-hidden font-body select-none touch-none"
+      style={{ width: "100vw", height: "100dvh" }}
+    >
       {/* Subtle grid */}
       <div
         className="absolute inset-0 opacity-[0.015]"
@@ -104,7 +107,12 @@ const Index = () => {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.1 }}
-        className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-4 sm:px-8 py-4 sm:py-5"
+        className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between py-4 sm:py-5"
+        style={{
+          paddingLeft: "max(1rem, env(safe-area-inset-left))",
+          paddingRight: "max(1rem, env(safe-area-inset-right))",
+          paddingTop: "max(1rem, env(safe-area-inset-top))",
+        }}
         role="navigation"
         aria-label="Navegação principal"
       >
@@ -154,10 +162,11 @@ const Index = () => {
 
       {/* 3D Canvas — fullscreen background */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.7 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1.2, delay: 0.5, ease: "easeOut" }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.0, delay: 0.3, ease: "easeOut" }}
         className="absolute inset-0"
+        style={{ width: "100%", height: "100%" }}
         aria-hidden="true"
       >
         <InteractiveCube
@@ -201,7 +210,7 @@ const Index = () => {
               aria-label="Menu de navegação"
             >
               {/* Header area with close */}
-              <div className="flex items-center justify-between px-6 sm:px-8 pt-5 pb-4">
+              <div className="flex items-center justify-between px-6 sm:px-8 pb-4" style={{ paddingTop: "max(1.25rem, env(safe-area-inset-top))" }}>
                 <span className="text-[10px] font-display tracking-[0.25em] uppercase text-muted-foreground">
                   Navegação
                 </span>
@@ -244,7 +253,7 @@ const Index = () => {
               </nav>
 
               {/* Footer branding */}
-              <div className="px-6 sm:px-8 pb-6 pt-2">
+              <div className="px-6 sm:px-8 pt-2" style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom))" }}>
                 <div className="h-px bg-[hsl(0_0%_100%_/_0.06)] mb-4" />
                 <div className="flex items-center gap-2">
                   <img src={ddcLogo} alt="" className="h-4 w-auto opacity-40" />
