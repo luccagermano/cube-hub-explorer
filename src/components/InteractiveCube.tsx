@@ -7,55 +7,33 @@ import * as THREE from "three";
 const DDC_RED = "#c4364a";
 const DDC_RED_DARK = "#8b2535";
 
-export const HUB_DATA = [
-  {
-    name: "AI & Automation",
-    color: DDC_RED,
-    description: "Driving intelligent automation and AI-powered solutions that transform how businesses operate and innovate at scale.",
-    technologies: ["Machine Learning", "NLP", "RPA", "Predictive Analytics"],
-  },
-  {
-    name: "Data Intelligence",
-    color: "#e85d6f",
-    description: "Harnessing the power of data to deliver actionable insights, advanced analytics, and real-time decision frameworks.",
-    technologies: ["Big Data", "Data Lakes", "BI Dashboards", "ETL Pipelines"],
-  },
-  {
-    name: "Digital Transformation",
-    color: DDC_RED,
-    description: "End-to-end digital transformation strategies that modernize legacy systems and unlock new business capabilities.",
-    technologies: ["Microservices", "API-First", "DevOps", "Agile Delivery"],
-  },
-  {
-    name: "Cloud Infrastructure",
-    color: "#a83242",
-    description: "Building resilient, scalable cloud architectures that power mission-critical enterprise applications globally.",
-    technologies: ["AWS", "Azure", "Kubernetes", "Serverless"],
-  },
-  {
-    name: "Product Engineering",
-    color: "#e85d6f",
-    description: "Crafting world-class digital products from concept to launch with cutting-edge engineering and design thinking.",
-    technologies: ["React", "Mobile Apps", "UX Design", "CI/CD"],
-  },
-  {
-    name: "Innovation Lab",
-    color: DDC_RED,
-    description: "Our experimental playground — prototyping breakthrough ideas in emerging tech and pushing the boundaries of possibility.",
-    technologies: ["AR/VR", "Blockchain", "IoT", "Edge Computing"],
-  },
-  {
-    name: "R&D",
-    color: "#a83242",
-    description: "Deep research into next-generation technologies, from quantum-resistant security to neuromorphic computing paradigms.",
-    technologies: ["Quantum Computing", "Neural Nets", "Materials Science", "Robotics"],
-  },
-  {
-    name: "Strategic Consulting",
-    color: "#e85d6f",
-    description: "Advisory services that bridge technology and business strategy, guiding enterprises through complex digital landscapes.",
-    technologies: ["Tech Strategy", "Change Management", "M&A Advisory", "Digital Roadmaps"],
-  },
+// Popup category type
+export type PopupCategory =
+  | "solutions"
+  | "contact"
+  | "company"
+  | "clients"
+  | "newsletter"
+  | "intro"
+  | null;
+
+export const VERTEX_DATA = [
+  // Index 0: top front right — Solutions
+  { name: "Solutions", color: DDC_RED, active: true, category: "solutions" as const },
+  // Index 1: top front left — Contact
+  { name: "Contact", color: "#e85d6f", active: true, category: "contact" as const },
+  // Index 2: bottom front right — Clients
+  { name: "Clients", color: DDC_RED, active: true, category: "clients" as const },
+  // Index 3: bottom front left — Newsletter
+  { name: "Newsletter", color: "#e85d6f", active: true, category: "newsletter" as const },
+  // Index 4: top back right — Company
+  { name: "Company", color: "#a83242", active: true, category: "company" as const },
+  // Index 5: top back left — Intro
+  { name: "DDC", color: "#e85d6f", active: true, category: "intro" as const },
+  // Index 6: bottom back right — INACTIVE
+  { name: "", color: "#3a1a1a", active: false, category: null },
+  // Index 7: bottom back left — INACTIVE
+  { name: "", color: "#3a1a1a", active: false, category: null },
 ];
 
 const VERTEX_POSITIONS: [number, number, number][] = [
@@ -102,7 +80,6 @@ const LightBeam = forwardRef<THREE.Group, { origin: [number, number, number]; co
         0.02 + progress.current * 0.08,
         progress.current * 4
       );
-      // Point beam toward camera (z direction)
       beamRef.current.position.set(origin[0], origin[1], origin[2] + progress.current * 2);
     }
 
@@ -121,13 +98,10 @@ const LightBeam = forwardRef<THREE.Group, { origin: [number, number, number]; co
 
   return (
     <group ref={ref}>
-      {/* Beam cylinder */}
       <mesh ref={beamRef} position={origin}>
         <cylinderGeometry args={[1, 0.3, 1, 8]} />
         <meshBasicMaterial color={color} transparent opacity={0} toneMapped={false} />
       </mesh>
-
-      {/* Point light flash */}
       <pointLight
         ref={glowRef}
         position={origin}
@@ -136,8 +110,6 @@ const LightBeam = forwardRef<THREE.Group, { origin: [number, number, number]; co
         distance={5}
         decay={2}
       />
-
-      {/* Particle burst */}
       <points ref={particles} position={origin}>
         <bufferGeometry>
           <bufferAttribute attach="attributes-position" args={[particlePositions, 3]} count={30} />
@@ -153,13 +125,15 @@ const GlowNode = forwardRef<THREE.Group, {
   position: [number, number, number]; color: string; label: string; index: number;
   onNodeClick: (index: number) => void; hoveredNode: number | null;
   setHoveredNode: (i: number | null) => void; isPaused: boolean; isActive: boolean;
+  isInteractive: boolean;
 }>(function GlowNode({
-  position, color, label, index, onNodeClick, hoveredNode, setHoveredNode, isPaused, isActive,
+  position, color, label, index, onNodeClick, hoveredNode, setHoveredNode, isPaused, isActive, isInteractive,
 }, ref) {
   const meshRef = useRef<THREE.Mesh>(null);
   const isHovered = hoveredNode === index;
   const baseScale = isPaused ? 0.08 : 0.06;
-  const targetScale = isActive ? 0.16 : isHovered ? 0.14 : baseScale;
+  const inactiveScale = 0.04;
+  const targetScale = !isInteractive ? inactiveScale : isActive ? 0.16 : isHovered ? 0.14 : baseScale;
   const currentScale = useRef(baseScale);
   const pulseTime = useRef(0);
 
@@ -167,8 +141,7 @@ const GlowNode = forwardRef<THREE.Group, {
     if (!meshRef.current) return;
     currentScale.current += (targetScale - currentScale.current) * Math.min(delta * 8, 1);
 
-    // Pulse on active
-    if (isActive) {
+    if (isActive && isInteractive) {
       pulseTime.current += delta * 6;
       const pulse = 1 + Math.sin(pulseTime.current) * 0.08;
       meshRef.current.scale.setScalar(currentScale.current * pulse);
@@ -182,32 +155,39 @@ const GlowNode = forwardRef<THREE.Group, {
     <group position={position}>
       <mesh
         ref={meshRef}
-        onClick={(e) => { e.stopPropagation(); onNodeClick(index); }}
-        onPointerOver={() => setHoveredNode(index)}
+        onClick={(e) => {
+          if (!isInteractive) return;
+          e.stopPropagation();
+          onNodeClick(index);
+        }}
+        onPointerOver={() => isInteractive && setHoveredNode(index)}
         onPointerOut={() => setHoveredNode(null)}
       >
         <sphereGeometry args={[1, 24, 24]} />
         <meshStandardMaterial
           color={color}
           emissive={color}
-          emissiveIntensity={isActive ? 6 : isHovered ? 4 : 1.5}
+          emissiveIntensity={!isInteractive ? 0.3 : isActive ? 6 : isHovered ? 4 : 1.5}
           toneMapped={false}
+          transparent={!isInteractive}
+          opacity={isInteractive ? 1 : 0.3}
         />
       </mesh>
-      <mesh scale={isActive ? 0.35 : isHovered ? 0.25 : 0.15}>
+      <mesh scale={!isInteractive ? 0.08 : isActive ? 0.35 : isHovered ? 0.25 : 0.15}>
         <sphereGeometry args={[1, 16, 16]} />
-        <meshBasicMaterial color={color} transparent opacity={isActive ? 0.35 : isHovered ? 0.2 : 0.08} />
+        <meshBasicMaterial color={color} transparent opacity={!isInteractive ? 0.03 : isActive ? 0.35 : isHovered ? 0.2 : 0.08} />
       </mesh>
-      {(isHovered || isActive) && (
+      {isInteractive && label && (
         <Text
           position={[0, 0.3, 0]}
-          fontSize={0.1}
-          color={color}
+          fontSize={0.09}
+          color={isHovered || isActive ? color : "#ffffff"}
           anchorX="center"
           anchorY="bottom"
           font="/fonts/Orbitron.ttf"
-          outlineWidth={0.004}
+          outlineWidth={0.005}
           outlineColor="#000000"
+          fillOpacity={isHovered || isActive ? 1 : 0.6}
         >
           {label}
         </Text>
@@ -305,7 +285,7 @@ useGLTF.preload("/models/holoseat.glb");
 function InteractiveCubeScene({
   onNodeClick, isPaused, activeNode,
 }: {
-  onNodeClick: (index: number, worldX: number) => void;
+  onNodeClick: (index: number) => void;
   isPaused: boolean;
   activeNode: number | null;
 }) {
@@ -323,7 +303,6 @@ function InteractiveCubeScene({
     lastPointer.current = { x, y };
     if (moved) { idleTime.current = 0; } else { idleTime.current += delta; }
 
-    // Scale pulse on click
     const targetCubeScale = isPaused ? 1.03 : 1.0;
     cubeScale.current += (targetCubeScale - cubeScale.current) * Math.min(delta * 4, 1);
     groupRef.current.scale.setScalar(cubeScale.current);
@@ -339,7 +318,6 @@ function InteractiveCubeScene({
       }
     }
 
-    // Slower rotation when paused
     const springFactor = isPaused ? 0.015 : 0.05;
     groupRef.current.rotation.y += (targetRotation.current.y - groupRef.current.rotation.y) * springFactor;
     groupRef.current.rotation.x += (targetRotation.current.x - groupRef.current.rotation.x) * springFactor;
@@ -351,9 +329,7 @@ function InteractiveCubeScene({
   );
 
   const handleNodeClick = useCallback((index: number) => {
-    // Determine world X of the node
-    const worldX = VERTEX_POSITIONS[index][0];
-    onNodeClick(index, worldX);
+    onNodeClick(index);
   }, [onNodeClick]);
 
   return (
@@ -371,20 +347,22 @@ function InteractiveCubeScene({
 
       {scaledVertices.map((pos, i) => (
         <GlowNode
-          key={i} position={pos} color={HUB_DATA[i].color} label={HUB_DATA[i].name}
+          key={i} position={pos} color={VERTEX_DATA[i].color} label={VERTEX_DATA[i].name}
           index={i} onNodeClick={handleNodeClick} hoveredNode={hoveredNode}
           setHoveredNode={setHoveredNode} isPaused={isPaused} isActive={activeNode === i}
+          isInteractive={VERTEX_DATA[i].active}
         />
       ))}
 
-      {/* Light beams for active node */}
       {scaledVertices.map((pos, i) => (
-        <LightBeam
-          key={`beam-${i}`}
-          origin={pos}
-          color={HUB_DATA[i].color}
-          active={activeNode === i}
-        />
+        VERTEX_DATA[i].active ? (
+          <LightBeam
+            key={`beam-${i}`}
+            origin={pos}
+            color={VERTEX_DATA[i].color}
+            active={activeNode === i}
+          />
+        ) : null
       ))}
     </group>
   );
@@ -394,7 +372,7 @@ function InteractiveCubeScene({
 export default function InteractiveCube({
   onNodeClick, isPaused, activeNode,
 }: {
-  onNodeClick: (index: number, worldX: number) => void;
+  onNodeClick: (index: number) => void;
   isPaused: boolean;
   activeNode: number | null;
 }) {

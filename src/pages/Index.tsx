@@ -1,34 +1,51 @@
 import { useState, useCallback, useRef, useEffect } from "react";
-import InteractiveCube, { HUB_DATA } from "@/components/InteractiveCube";
-import LiquidGlassModal from "@/components/LiquidGlassModal";
+import InteractiveCube, { VERTEX_DATA } from "@/components/InteractiveCube";
+import type { PopupCategory } from "@/components/InteractiveCube";
+import LiquidGlassModal, { AboutModal } from "@/components/LiquidGlassModal";
 import { motion } from "framer-motion";
 import ddcLogo from "@/assets/ddc-logo.png";
 
 const Index = () => {
-  const [selectedHub, setSelectedHub] = useState<number | null>(null);
-  const [visibleHub, setVisibleHub] = useState<number | null>(null);
+  const [selectedNode, setSelectedNode] = useState<number | null>(null);
+  const [visibleCategory, setVisibleCategory] = useState<PopupCategory>(null);
+  const [aboutOpen, setAboutOpen] = useState(false);
   const delayTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const handleNodeClick = useCallback((index: number, _worldX: number) => {
+  const handleNodeClick = useCallback((index: number) => {
     if (delayTimer.current) clearTimeout(delayTimer.current);
 
-    if (selectedHub === index) {
-      setSelectedHub(null);
-      setVisibleHub(null);
+    const vertex = VERTEX_DATA[index];
+    if (!vertex.active) return;
+
+    if (selectedNode === index) {
+      setSelectedNode(null);
+      setVisibleCategory(null);
       return;
     }
 
-    setSelectedHub(index);
-    setVisibleHub(null);
+    setSelectedNode(index);
+    setVisibleCategory(null);
+    setAboutOpen(false);
     delayTimer.current = setTimeout(() => {
-      setVisibleHub(index);
+      setVisibleCategory(vertex.category);
     }, 400);
-  }, [selectedHub]);
+  }, [selectedNode]);
 
   const handleClose = useCallback(() => {
     if (delayTimer.current) clearTimeout(delayTimer.current);
-    setSelectedHub(null);
-    setVisibleHub(null);
+    setSelectedNode(null);
+    setVisibleCategory(null);
+  }, []);
+
+  const handleAboutClick = useCallback(() => {
+    if (delayTimer.current) clearTimeout(delayTimer.current);
+    setSelectedNode(null);
+    setVisibleCategory(null);
+    setAboutOpen(true);
+  }, []);
+
+  const handleAboutClose = useCallback(() => {
+    setAboutOpen(false);
   }, []);
 
   useEffect(() => {
@@ -61,15 +78,13 @@ const Index = () => {
           <img src={ddcLogo} alt=".ddc logo" className="h-8 w-auto" />
         </div>
 
-        <div className="hidden md:flex items-center gap-8">
-          {["About", "Services", "Careers", "Contact"].map((item) => (
-            <span
-              key={item}
-              className="text-xs font-display tracking-[0.2em] uppercase text-muted-foreground hover:text-primary transition-colors cursor-pointer"
-            >
-              {item}
-            </span>
-          ))}
+        <div className="flex items-center gap-8">
+          <button
+            onClick={handleAboutClick}
+            className="text-xs font-display tracking-[0.2em] uppercase text-muted-foreground hover:text-primary transition-colors cursor-pointer"
+          >
+            About
+          </button>
         </div>
 
         <div className="w-20" />
@@ -84,8 +99,8 @@ const Index = () => {
       >
         <InteractiveCube
           onNodeClick={handleNodeClick}
-          isPaused={selectedHub !== null}
-          activeNode={selectedHub}
+          isPaused={selectedNode !== null}
+          activeNode={selectedNode}
         />
       </motion.div>
 
@@ -96,36 +111,38 @@ const Index = () => {
         transition={{ delay: 1.2 }}
         className="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-2 z-10"
       >
-        {HUB_DATA.map((hub, i) => (
-          <button
-            key={hub.name}
-            onClick={() => handleNodeClick(i, VERTEX_X[i])}
-            className={`group relative transition-all duration-300 ${
-              selectedHub === i ? "scale-125" : "opacity-50 hover:opacity-100"
-            }`}
-            title={hub.name}
-          >
-            <div
-              className="w-2 h-2 rounded-full"
-              style={{
-                backgroundColor: hub.color,
-                boxShadow: selectedHub === i ? `0 0 12px ${hub.color}` : "none",
-              }}
-            />
-          </button>
+        {VERTEX_DATA.map((vertex, i) => (
+          vertex.active ? (
+            <button
+              key={i}
+              onClick={() => handleNodeClick(i)}
+              className={`group relative transition-all duration-300 ${
+                selectedNode === i ? "scale-125" : "opacity-50 hover:opacity-100"
+              }`}
+              title={vertex.name}
+            >
+              <div
+                className="w-2 h-2 rounded-full"
+                style={{
+                  backgroundColor: vertex.color,
+                  boxShadow: selectedNode === i ? `0 0 12px ${vertex.color}` : "none",
+                }}
+              />
+            </button>
+          ) : null
         ))}
       </motion.div>
 
-      {/* Liquid Glass Modal */}
+      {/* Liquid Glass Modal for vertex popups */}
       <LiquidGlassModal
-        hub={visibleHub !== null ? HUB_DATA[visibleHub] : null}
+        category={visibleCategory}
         onClose={handleClose}
       />
+
+      {/* About Modal (navbar) */}
+      <AboutModal open={aboutOpen} onClose={handleAboutClose} />
     </div>
   );
 };
-
-// Pre-computed vertex X positions for bottom indicator buttons
-const VERTEX_X = [1, -1, 1, -1, 1, -1, 1, -1];
 
 export default Index;
