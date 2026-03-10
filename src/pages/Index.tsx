@@ -109,43 +109,50 @@ const Index = () => {
         />
       </motion.div>
 
-      {/* Hub indicators — accessible navigation dots */}
-      <TooltipProvider delayDuration={200}>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.2 }}
-          className="absolute bottom-4 sm:bottom-5 left-1/2 -translate-x-1/2 flex gap-1.5 sm:gap-2 z-10"
-          role="navigation"
-          aria-label="Hub navigation"
-        >
-          {VERTEX_DATA.map((vertex, i) => (
-            vertex.active ? (
-              <Tooltip key={i}>
-                <TooltipTrigger asChild>
-                  <button
-                    onClick={() => handleNodeClick(i)}
-                    className={`group relative transition-all duration-300 p-1 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
-                      selectedNode === i ? "scale-125" : "opacity-50 hover:opacity-100"
-                    }`}
-                    aria-label={`Abrir seção ${vertex.name}`}
-                    aria-pressed={selectedNode === i}
-                  >
-                    <div
-                      className="w-2.5 h-2.5 sm:w-2 sm:h-2 rounded-full"
-                      style={{
-                        backgroundColor: vertex.color,
-                        boxShadow: selectedNode === i ? `0 0 12px ${vertex.color}` : "none",
-                      }}
-                    />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent side="top" className="text-xs">{vertex.name}</TooltipContent>
-              </Tooltip>
-            ) : null
-          ))}
-        </motion.div>
-      </TooltipProvider>
+      {/* Hub navigation — capsule indicators */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.2 }}
+        className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 flex gap-1.5 sm:gap-2 z-10 flex-wrap justify-center max-w-[95vw]"
+        role="navigation"
+        aria-label="Navegação principal"
+      >
+        {VERTEX_DATA.map((vertex, i) => {
+          if (!vertex.active) return null;
+          const isActive = selectedNode === i;
+          return (
+            <button
+              key={i}
+              onClick={() => handleNodeClick(i)}
+              className="relative rounded-full px-3.5 sm:px-4 py-1.5 sm:py-2 text-[10px] sm:text-xs font-display font-semibold tracking-[0.12em] uppercase transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary whitespace-nowrap"
+              style={{
+                background: isActive
+                  ? `linear-gradient(135deg, ${vertex.color}30, ${vertex.color}18)`
+                  : "rgba(255,255,255,0.04)",
+                border: `1px solid ${isActive ? `${vertex.color}50` : "rgba(255,255,255,0.08)"}`,
+                color: isActive ? "#f0f0f2" : "rgba(255,255,255,0.4)",
+                backdropFilter: "blur(12px)",
+                WebkitBackdropFilter: "blur(12px)",
+                boxShadow: isActive
+                  ? `0 0 20px ${vertex.color}20, 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06)`
+                  : "0 2px 8px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.03)",
+              }}
+              aria-label={`Abrir seção ${vertex.name}`}
+              aria-pressed={isActive}
+            >
+              {/* Active glow dot */}
+              {isActive && (
+                <span
+                  className="absolute left-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full"
+                  style={{ backgroundColor: vertex.color, boxShadow: `0 0 6px ${vertex.color}` }}
+                />
+              )}
+              <span className={isActive ? "ml-2" : ""}>{vertex.name}</span>
+            </button>
+          );
+        })}
+      </motion.div>
 
       {/* Liquid Glass Modal for vertex popups */}
       <LiquidGlassModal
