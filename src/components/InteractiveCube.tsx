@@ -259,46 +259,76 @@ const CubeEdge = forwardRef<THREE.Group, { start: [number, number, number]; end:
   return <primitive object={lineObj} />;
 });
 
-/* ── Particles ─────────────────────────────────────── */
+/* ── Square Star Particles ─────────────────────────── */
 function Particles() {
-  const count = 250;
-  const mesh = useRef<THREE.Points>(null);
-  const [positions, velocities] = useMemo(() => {
-    const pos = new Float32Array(count * 3);
-    const vel = new Float32Array(count * 3);
+  const count = 180;
+  const meshRef = useRef<THREE.InstancedMesh>(null);
+  const dummy = useMemo(() => new THREE.Object3D(), []);
+
+  const RED_VARIANTS = useMemo(() => [
+    new THREE.Color("#c4364a"),
+    new THREE.Color("#8b2535"),
+    new THREE.Color("#e85d6f"),
+    new THREE.Color("#a83242"),
+  ], []);
+
+  const [data] = useMemo(() => {
+    const items = [];
     for (let i = 0; i < count; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 20;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 20;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 20;
-      vel[i * 3] = (Math.random() - 0.5) * 0.002;
-      vel[i * 3 + 1] = (Math.random() - 0.5) * 0.002;
-      vel[i * 3 + 2] = (Math.random() - 0.5) * 0.002;
+      items.push({
+        x: (Math.random() - 0.5) * 22,
+        y: (Math.random() - 0.5) * 22,
+        z: (Math.random() - 0.5) * 22,
+        vx: (Math.random() - 0.5) * 0.0015,
+        vy: (Math.random() - 0.5) * 0.0015,
+        vz: (Math.random() - 0.5) * 0.0015,
+        size: 0.015 + Math.random() * 0.025,
+        opacity: 0.15 + Math.random() * 0.25,
+        colorIdx: Math.floor(Math.random() * 4),
+      });
     }
-    return [pos, vel];
+    return [items];
   }, []);
 
-  useFrame(() => {
-    if (!mesh.current) return;
-    const posAttr = mesh.current.geometry.attributes.position;
+  // Set initial colors
+  useEffect(() => {
+    if (!meshRef.current) return;
     for (let i = 0; i < count; i++) {
-      const arr = posAttr.array as Float32Array;
-      arr[i * 3] += velocities[i * 3];
-      arr[i * 3 + 1] += velocities[i * 3 + 1];
-      arr[i * 3 + 2] += velocities[i * 3 + 2];
-      for (let j = 0; j < 3; j++) {
-        if (Math.abs(arr[i * 3 + j]) > 10) arr[i * 3 + j] *= -0.9;
-      }
+      meshRef.current.setColorAt(i, RED_VARIANTS[data[i].colorIdx]);
     }
-    posAttr.needsUpdate = true;
+    if (meshRef.current.instanceColor) meshRef.current.instanceColor.needsUpdate = true;
+  }, [data, RED_VARIANTS]);
+
+  useFrame(() => {
+    if (!meshRef.current) return;
+    for (let i = 0; i < count; i++) {
+      const d = data[i];
+      d.x += d.vx;
+      d.y += d.vy;
+      d.z += d.vz;
+      for (const axis of ["x", "y", "z"] as const) {
+        if (Math.abs(d[axis]) > 11) d[axis] *= -0.9;
+      }
+      dummy.position.set(d.x, d.y, d.z);
+      dummy.scale.setScalar(d.size);
+      dummy.updateMatrix();
+      meshRef.current.setMatrixAt(i, dummy.matrix);
+    }
+    meshRef.current.instanceMatrix.needsUpdate = true;
   });
 
   return (
-    <points ref={mesh}>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" args={[positions, 3]} count={count} />
-      </bufferGeometry>
-      <pointsMaterial size={0.02} color={DDC_RED} transparent opacity={0.35} sizeAttenuation />
-    </points>
+    <instancedMesh ref={meshRef} args={[undefined, undefined, count]}>
+      <planeGeometry args={[1, 1]} />
+      <meshBasicMaterial
+        color="#ffffff"
+        transparent
+        opacity={0.3}
+        toneMapped={false}
+        side={THREE.DoubleSide}
+        depthWrite={false}
+      />
+    </instancedMesh>
   );
 }
 
