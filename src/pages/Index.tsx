@@ -162,10 +162,11 @@ const Index = () => {
 
       {/* 3D Canvas — fullscreen background */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.7 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1.2, delay: 0.5, ease: "easeOut" }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.0, delay: 0.3, ease: "easeOut" }}
         className="absolute inset-0"
+        style={{ width: "100%", height: "100%" }}
         aria-hidden="true"
       >
         <InteractiveCube
