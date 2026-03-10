@@ -197,7 +197,7 @@ const GlowNode = forwardRef<THREE.Group, {
   });
 
   // Invisible hit area sphere — larger on mobile for easier tapping
-  const hitRadius = isMobile && isInteractive ? 1.6 : 0.7;
+  const hitRadius = isMobile && isInteractive ? 0.8 : 0.4;
 
   const handleClick = useCallback((e: any) => {
     e.stopPropagation();
