@@ -29,52 +29,27 @@ export default function LiquidGlassModal({ hub, onClose }: LiquidGlassModalProps
     <AnimatePresence>
       {hub && (
         <>
-          {/* Backdrop: blur + dim */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-30"
-            style={{
-              background: "rgba(0, 0, 0, 0.2)",
-              backdropFilter: "blur(8px)",
-              WebkitBackdropFilter: "blur(8px)",
-            }}
-            onClick={onClose}
-          />
-
-          {/* Glow flash from node color */}
-          <motion.div
-            initial={{ opacity: 0.6 }}
-            animate={{ opacity: 0 }}
-            transition={{ duration: 0.8 }}
-            className="fixed inset-0 z-35 pointer-events-none"
-            style={{
-              background: `radial-gradient(circle at 50% 50%, ${hub.color}25, transparent 60%)`,
-            }}
-          />
 
           {/* Liquid Glass Modal */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.92 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
             className="fixed inset-0 z-40 flex items-center justify-center p-4 pointer-events-none"
           >
             <div
               className="relative w-[90%] md:w-[65%] lg:w-[60%] max-h-[80vh] md:max-h-[70vh] overflow-y-auto pointer-events-auto"
               style={{
-                background: "rgba(255, 255, 255, 0.06)",
-                backdropFilter: "blur(30px) saturate(180%)",
-                WebkitBackdropFilter: "blur(30px) saturate(180%)",
-                border: "1px solid rgba(255, 255, 255, 0.12)",
+                background: "rgba(255, 255, 255, 0.08)",
+                backdropFilter: "blur(25px) saturate(180%)",
+                WebkitBackdropFilter: "blur(25px) saturate(180%)",
+                border: "1px solid rgba(255, 255, 255, 0.2)",
                 borderRadius: "24px",
                 boxShadow: `
                   0 0 80px ${hub.color}12,
                   0 0 160px ${hub.color}06,
-                  0 32px 64px rgba(0, 0, 0, 0.5),
+                  0 32px 64px rgba(0, 0, 0, 0.4),
                   inset 0 1px 0 rgba(255, 255, 255, 0.1),
                   inset 0 -1px 0 rgba(255, 255, 255, 0.03)
                 `,
