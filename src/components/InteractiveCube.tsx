@@ -346,9 +346,7 @@ function GLBModel({ isMobile, mouseRef }: { isMobile: boolean; mouseRef: React.M
 
   const clonedScene = useMemo(() => {
     const clone = scene.clone(true);
-    // Log hierarchy once for debugging
     clone.traverse((child) => {
-      console.log("[GLB node]", child.name, child.type);
       if ((child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.Mesh;
         if (mesh.material) {
