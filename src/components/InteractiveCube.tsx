@@ -169,15 +169,14 @@ const GlowNode = forwardRef<THREE.Group, {
   position: [number, number, number]; color: string; label: string; index: number;
   onNodeClick: (index: number) => void; hoveredNode: number | null;
   setHoveredNode: (i: number | null) => void; isPaused: boolean; isActive: boolean;
-  isInteractive: boolean; isMobile: boolean;
+  isInteractive: boolean; isMobile: boolean; gestureState: GestureState;
 }>(function GlowNode({
-  position, color, label, index, onNodeClick, hoveredNode, setHoveredNode, isPaused, isActive, isInteractive, isMobile,
+  position, color, label, index, onNodeClick, hoveredNode, setHoveredNode, isPaused, isActive, isInteractive, isMobile, gestureState,
 }, ref) {
   const meshRef = useRef<THREE.Mesh>(null);
   const isHovered = hoveredNode === index;
   const baseScale = isPaused ? 0.08 : 0.06;
   const inactiveScale = 0.04;
-  // On mobile, make interactive nodes larger for easier tapping
   const mobileBoost = isMobile && isInteractive ? 1.6 : 1;
   const targetScale = !isInteractive ? inactiveScale : isActive ? 0.16 * mobileBoost : isHovered ? 0.14 * mobileBoost : baseScale * mobileBoost;
   const currentScale = useRef(baseScale);
@@ -197,18 +196,21 @@ const GlowNode = forwardRef<THREE.Group, {
     }
   });
 
-  // Invisible hit area sphere (larger on mobile)
-  const hitRadius = isMobile && isInteractive ? 2.5 : 1;
+  // Invisible hit area sphere — larger on mobile for easier tapping
+  const hitRadius = isMobile && isInteractive ? 3.0 : 1;
+
+  const handleClick = useCallback((e: any) => {
+    e.stopPropagation();
+    // On mobile, only allow tap if gesture is NOT dragging
+    if (isMobile && gestureState === "dragging") return;
+    onNodeClick(index);
+  }, [isMobile, gestureState, onNodeClick, index]);
 
   return (
     <group position={position}>
-      {/* Invisible enlarged hit target */}
       {isInteractive && (
         <mesh
-          onClick={(e) => {
-            e.stopPropagation();
-            onNodeClick(index);
-          }}
+          onClick={handleClick}
           onPointerOver={() => !isMobile && setHoveredNode(index)}
           onPointerOut={() => !isMobile && setHoveredNode(null)}
         >
@@ -216,7 +218,6 @@ const GlowNode = forwardRef<THREE.Group, {
           <meshBasicMaterial visible={false} />
         </mesh>
       )}
-      {/* Visual sphere */}
       <mesh ref={meshRef}>
         <sphereGeometry args={[1, 24, 24]} />
         <meshStandardMaterial
