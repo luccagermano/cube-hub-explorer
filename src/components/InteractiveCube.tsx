@@ -384,7 +384,7 @@ function GLBModel({ isMobile, mouseRef }: { isMobile: boolean; mouseRef: React.M
       currentHeadQuat.current.copy(found.quaternion);
       headInitialized.current = true;
     } else {
-      console.log("[Head tracking] No head node found in GLB hierarchy");
+      // No head node found — head tracking disabled silently
     }
   }, [clonedScene]);
 
