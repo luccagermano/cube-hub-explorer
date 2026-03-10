@@ -138,7 +138,7 @@ export default function LiquidGlassModal({ hub, onClose }: LiquidGlassModalProps
 
                 {/* Middle section */}
                 <div className="mb-8">
-                  <p className="text-muted-foreground font-body leading-relaxed text-sm md:text-base max-w-2xl">
+                  <p className="font-body leading-relaxed text-sm md:text-base max-w-2xl" style={{ color: "#161616" }}>
                     {hub.description}
                   </p>
                 </div>
