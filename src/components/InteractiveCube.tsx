@@ -401,32 +401,31 @@ function InteractiveCubeScene({
         if (gestureState === "dragging") {
           dragRotation.current.y += mobileDragDelta.current.x * 0.002;
           dragRotation.current.x += mobileDragDelta.current.y * 0.002;
-          // Clamp max rotation
           dragRotation.current.y = Math.max(-Math.PI * 0.4, Math.min(Math.PI * 0.4, dragRotation.current.y));
           dragRotation.current.x = Math.max(-Math.PI * 0.25, Math.min(Math.PI * 0.25, dragRotation.current.x));
         }
-        // Reset drag delta each frame
         mobileDragDelta.current.x = 0;
         mobileDragDelta.current.y = 0;
 
-        // Base rotation: gyroscope or idle
-        let baseY = 0, baseX = 0;
+        // Primary: gentle idle animation (always runs)
+        const idleY = Math.sin(state.clock.elapsedTime * 0.3) * 0.2;
+        const idleX = Math.cos(state.clock.elapsedTime * 0.2) * 0.1;
+
+        // Optional: subtle gyroscope parallax (very limited range)
+        let gyroY = 0, gyroX = 0;
         if (gyroscope.available) {
-          baseY = gyroscope.x * Math.PI * 0.25;
-          baseX = -gyroscope.y * Math.PI * 0.15;
-        } else {
-          baseY = Math.sin(state.clock.elapsedTime * 0.3) * 0.2;
-          baseX = Math.cos(state.clock.elapsedTime * 0.2) * 0.1;
+          gyroY = gyroscope.x * Math.PI * 0.06; // very subtle
+          gyroX = -gyroscope.y * Math.PI * 0.04;
         }
 
-        // Decay drag rotation back toward zero when not dragging
+        // Decay drag rotation when not dragging
         if (gestureState !== "dragging") {
           dragRotation.current.y *= 0.97;
           dragRotation.current.x *= 0.97;
         }
 
-        targetRotation.current.y = baseY + dragRotation.current.y;
-        targetRotation.current.x = baseX + dragRotation.current.x;
+        targetRotation.current.y = idleY + gyroY + dragRotation.current.y;
+        targetRotation.current.x = idleX + gyroX + dragRotation.current.x;
       } else {
         // Desktop: mouse-based rotation
         const { x, y } = state.pointer;
