@@ -54,7 +54,7 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="relative w-screen h-screen bg-background overflow-hidden font-body select-none">
+    <div className="fixed inset-0 bg-background overflow-hidden font-body select-none touch-none">
       {/* Subtle grid */}
       <div
         className="absolute inset-0 opacity-[0.015]"
