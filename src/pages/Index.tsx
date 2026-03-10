@@ -95,11 +95,12 @@ const Index = () => {
       </motion.nav>
 
       {/* 3D Cube — centered with padding for nav/capsules */}
+      {/* 3D Canvas — true fullscreen background layer */}
       <motion.div
         initial={{ opacity: 0, scale: 0.7 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 1.2, delay: 0.5, ease: "easeOut" }}
-        className="absolute inset-0 top-14 sm:top-16 bottom-16 sm:bottom-20"
+        className="absolute inset-0"
         aria-hidden="true"
       >
         <InteractiveCube
