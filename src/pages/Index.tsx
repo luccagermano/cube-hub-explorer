@@ -3,7 +3,7 @@ import InteractiveCube, { VERTEX_DATA } from "@/components/InteractiveCube";
 import type { PopupCategory } from "@/components/InteractiveCube";
 import LiquidGlassModal, { AboutModal } from "@/components/LiquidGlassModal";
 import { motion, AnimatePresence } from "framer-motion";
-import ddcLogo from "@/assets/ddc-logo.png";
+import ddcLogo from "@/assets/ddc-logo.svg";
 
 const MENU_ITEMS = [
   { label: "Sobre", action: "about" as const },
