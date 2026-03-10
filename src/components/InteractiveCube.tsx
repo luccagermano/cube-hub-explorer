@@ -437,12 +437,12 @@ function InteractiveCubeScene({
 }) {
   const groupRef = useRef<THREE.Group>(null);
   const targetRotation = useRef({ x: 0, y: 0 });
-  const idleTime = useRef(0);
-  const lastPointer = useRef({ x: 0, y: 0 });
   const [hoveredNode, setHoveredNode] = useState<number | null>(null);
   const cubeScale = useRef(1);
   // Accumulated drag rotation for mobile
   const dragRotation = useRef({ x: 0, y: 0 });
+  // Mouse position ref for head tracking (normalized -1 to 1)
+  const mouseRef = useRef({ x: 0, y: 0 });
 
   useFrame((state, delta) => {
     if (!groupRef.current) return;
@@ -450,6 +450,12 @@ function InteractiveCubeScene({
     const targetCubeScale = isPaused ? 1.03 : 1.0;
     cubeScale.current += (targetCubeScale - cubeScale.current) * Math.min(delta * 4, 1);
     groupRef.current.scale.setScalar(cubeScale.current);
+
+    // Update mouse ref for head tracking (desktop only, no scene rotation)
+    if (!isMobile) {
+      mouseRef.current.x = state.pointer.x;
+      mouseRef.current.y = state.pointer.y;
+    }
 
     if (!isPaused) {
       if (isMobile) {
@@ -470,7 +476,7 @@ function InteractiveCubeScene({
         // Optional: subtle gyroscope parallax (very limited range)
         let gyroY = 0, gyroX = 0;
         if (gyroscope.available) {
-          gyroY = gyroscope.x * Math.PI * 0.06; // very subtle
+          gyroY = gyroscope.x * Math.PI * 0.06;
           gyroX = -gyroscope.y * Math.PI * 0.04;
         }
 
@@ -483,20 +489,11 @@ function InteractiveCubeScene({
         targetRotation.current.y = idleY + gyroY + dragRotation.current.y;
         targetRotation.current.x = idleX + gyroX + dragRotation.current.x;
       } else {
-        // Desktop: mouse-based rotation
-        const { x, y } = state.pointer;
-        const moved = Math.abs(x - lastPointer.current.x) + Math.abs(y - lastPointer.current.y) > 0.001;
-        lastPointer.current = { x, y };
-        if (moved) { idleTime.current = 0; } else { idleTime.current += delta; }
-
-        const mouseInfluence = Math.max(0, 1 - idleTime.current * 0.5);
-        targetRotation.current.y = x * Math.PI * 0.5 * mouseInfluence;
-        targetRotation.current.x = -y * Math.PI * 0.35 * mouseInfluence;
-        if (idleTime.current > 1) {
-          const idleFactor = Math.min((idleTime.current - 1) * 0.3, 1);
-          targetRotation.current.y += Math.sin(state.clock.elapsedTime * 0.3) * 0.3 * idleFactor;
-          targetRotation.current.x += Math.cos(state.clock.elapsedTime * 0.2) * 0.15 * idleFactor;
-        }
+        // Desktop: idle animation only (mouse follow is on head only)
+        const idleY = Math.sin(state.clock.elapsedTime * 0.3) * 0.3;
+        const idleX = Math.cos(state.clock.elapsedTime * 0.2) * 0.15;
+        targetRotation.current.y = idleY;
+        targetRotation.current.x = idleX;
       }
     }
 
@@ -520,7 +517,7 @@ function InteractiveCubeScene({
         <CubeEdge key={i} start={scaledVertices[a]} end={scaledVertices[b]} />
       ))}
 
-      <GLBModel />
+      <GLBModel isMobile={isMobile} mouseRef={mouseRef} />
 
       <mesh>
         <boxGeometry args={[1.8, 1.8, 1.8]} />
