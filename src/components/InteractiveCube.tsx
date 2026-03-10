@@ -405,33 +405,79 @@ export default function InteractiveCube({
   activeNode: number | null;
 }) {
   const bloomIntensity = activeNode !== null ? 1.8 : 1.0;
+  const isMobile = useIsMobile();
+  const [gyroscope, setGyroscope] = useState({ x: 0, y: 0, available: false });
+
+  // Gyroscope listener — runs only on mobile
+  useEffect(() => {
+    if (!isMobile) return;
+    if (!("DeviceOrientationEvent" in window)) return;
+
+    let mounted = true;
+    const raw = { x: 0, y: 0 };
+    const smooth = { x: 0, y: 0 };
+    let rafId = 0;
+    let hasData = false;
+
+    const handleOrientation = (e: DeviceOrientationEvent) => {
+      if (e.gamma === null || e.beta === null) return;
+      hasData = true;
+      const maxTilt = 30;
+      raw.x = Math.max(-1, Math.min(1, (e.gamma || 0) / maxTilt));
+      raw.y = Math.max(-1, Math.min(1, ((e.beta || 0) - 45) / maxTilt));
+    };
+
+    const loop = () => {
+      smooth.x += (raw.x - smooth.x) * 0.08;
+      smooth.y += (raw.y - smooth.y) * 0.08;
+      if (mounted) {
+        setGyroscope({ x: smooth.x, y: smooth.y, available: hasData });
+      }
+      rafId = requestAnimationFrame(loop);
+    };
+
+    const startListening = async () => {
+      const DOE = DeviceOrientationEvent as any;
+      if (typeof DOE.requestPermission === "function") {
+        try {
+          const result = await DOE.requestPermission();
+          if (result !== "granted") return;
+        } catch { return; }
+      }
+      window.addEventListener("deviceorientation", handleOrientation, { passive: true });
+      rafId = requestAnimationFrame(loop);
+    };
+
+    startListening();
+
+    return () => {
+      mounted = false;
+      window.removeEventListener("deviceorientation", handleOrientation);
+      cancelAnimationFrame(rafId);
+    };
+  }, [isMobile]);
 
   return (
-    <div className="w-full h-full cursor-pointer">
-      <Canvas camera={{ position: [0, 0, 5], fov: 50 }} dpr={[1, 1.5]}>
-        {/* Ambient fill — soft neutral base */}
+    <div className="w-full h-full cursor-pointer" style={isMobile ? { touchAction: "none" } : undefined}>
+      <Canvas camera={{ position: [0, 0, 5], fov: isMobile ? 55 : 50 }} dpr={[1, isMobile ? 1.2 : 1.5]}>
         <ambientLight intensity={1.2} />
-
-        {/* Key light — warm white from upper-right-front */}
         <directionalLight position={[4, 5, 6]} intensity={3.5} color="#fff5ee" />
-
-        {/* Fill light — cooler, softer, from the left */}
         <directionalLight position={[-4, 2, 3]} intensity={1.8} color="#e0e4f0" />
-
-        {/* Rim / back light — warm accent for edge separation */}
         <directionalLight position={[0, -2, -5]} intensity={2.0} color="#ffd4d4" />
-
-        {/* Subtle red accent — brand color without overexposure */}
         <pointLight position={[3, 3, 3]} intensity={1.5} color={DDC_RED} distance={12} decay={2} />
         <pointLight position={[-3, -2, 4]} intensity={1.0} color="#e85d6f" distance={10} decay={2} />
-
-        {/* Hemisphere for natural ground/sky gradient */}
         <hemisphereLight intensity={0.8} color="#f0f0ff" groundColor="#1a0808" />
 
         <Particles />
 
         <Float speed={0.5} rotationIntensity={0} floatIntensity={0.3}>
-          <InteractiveCubeScene onNodeClick={onNodeClick} isPaused={isPaused} activeNode={activeNode} />
+          <InteractiveCubeScene
+            onNodeClick={onNodeClick}
+            isPaused={isPaused}
+            activeNode={activeNode}
+            isMobile={isMobile}
+            gyroscope={gyroscope}
+          />
         </Float>
 
         <EffectComposer>
