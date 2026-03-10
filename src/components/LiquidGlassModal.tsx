@@ -109,28 +109,31 @@ function GlassPanel({ children, onClose }: { children: React.ReactNode; onClose:
 /* ── Header with close button ── */
 function ModalHeader({ title, subtitle, onClose }: { title: string; subtitle?: string; onClose: () => void }) {
   return (
-    <div className="flex items-start justify-between mb-6 sm:mb-8">
-      <div>
+    <div className="flex items-start justify-between mb-8 sm:mb-10">
+      <div className="min-w-0">
         <h2
-          className="font-display text-xl sm:text-2xl md:text-3xl font-bold tracking-wider"
-          style={{ color: DDC_RED, textShadow: `0 0 30px ${DDC_RED}30` }}
+          className="font-display text-lg sm:text-xl md:text-2xl font-bold tracking-wide"
+          style={{ color: "#f0f0f2" }}
         >
           {title}
         </h2>
         {subtitle && (
-          <p className="text-foreground/70 text-xs sm:text-sm md:text-base mt-2 max-w-xl leading-relaxed">
+          <p className="text-sm sm:text-[15px] mt-2.5 max-w-xl leading-relaxed" style={{ color: "rgba(255,255,255,0.55)" }}>
             {subtitle}
           </p>
         )}
-        <div className="h-[2px] w-16 mt-4" style={{ background: `linear-gradient(90deg, ${DDC_RED}80, transparent)` }} />
+        <div
+          className="h-[2px] w-12 mt-5 rounded-full"
+          style={{ background: `linear-gradient(90deg, ${DDC_RED}, transparent)` }}
+        />
       </div>
       <button
         onClick={onClose}
         aria-label="Close dialog"
-        className="p-2 rounded-xl transition-all duration-200 hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary flex-shrink-0 ml-4"
-        style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)" }}
+        className="p-2.5 rounded-xl transition-all duration-200 hover:scale-105 hover:bg-white/[0.08] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary flex-shrink-0 ml-6"
+        style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.07)" }}
       >
-        <X size={18} className="text-foreground/60" />
+        <X size={16} style={{ color: "rgba(255,255,255,0.5)" }} />
       </button>
     </div>
   );
