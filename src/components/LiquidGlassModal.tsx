@@ -29,31 +29,6 @@ export default function LiquidGlassModal({ hub, onClose }: LiquidGlassModalProps
     <AnimatePresence>
       {hub && (
         <>
-          {/* Backdrop: blur + dim */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-30"
-            style={{
-              background: "rgba(0, 0, 0, 0.2)",
-              backdropFilter: "blur(8px)",
-              WebkitBackdropFilter: "blur(8px)",
-            }}
-            onClick={onClose}
-          />
-
-          {/* Glow flash from node color */}
-          <motion.div
-            initial={{ opacity: 0.6 }}
-            animate={{ opacity: 0 }}
-            transition={{ duration: 0.8 }}
-            className="fixed inset-0 z-35 pointer-events-none"
-            style={{
-              background: `radial-gradient(circle at 50% 50%, ${hub.color}25, transparent 60%)`,
-            }}
-          />
 
           {/* Liquid Glass Modal */}
           <motion.div
