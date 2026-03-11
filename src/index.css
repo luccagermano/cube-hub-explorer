@@ -64,22 +64,22 @@
 
   .light {
     --background: 40 20% 97%;
-    --foreground: 350 55% 38%;
+    --foreground: 0 0% 12%;
 
     --card: 40 15% 95%;
-    --card-foreground: 350 55% 38%;
+    --card-foreground: 0 0% 12%;
 
     --popover: 40 15% 95%;
-    --popover-foreground: 350 55% 38%;
+    --popover-foreground: 0 0% 12%;
 
     --primary: 350 65% 48%;
     --primary-foreground: 0 0% 98%;
 
     --secondary: 40 10% 90%;
-    --secondary-foreground: 350 45% 32%;
+    --secondary-foreground: 0 0% 20%;
 
     --muted: 40 10% 92%;
-    --muted-foreground: 350 30% 45%;
+    --muted-foreground: 0 0% 40%;
 
     --accent: 350 65% 48%;
     --accent-foreground: 0 0% 98%;
@@ -92,11 +92,11 @@
     --ring: 350 65% 48%;
 
     --sidebar-background: 40 20% 96%;
-    --sidebar-foreground: 350 55% 38%;
+    --sidebar-foreground: 0 0% 15%;
     --sidebar-primary: 350 65% 48%;
     --sidebar-primary-foreground: 0 0% 98%;
     --sidebar-accent: 40 10% 92%;
-    --sidebar-accent-foreground: 350 55% 38%;
+    --sidebar-accent-foreground: 0 0% 15%;
     --sidebar-border: 40 10% 85%;
     --sidebar-ring: 350 65% 48%;
 
@@ -105,9 +105,9 @@
 
     --glass-bg: 0 0% 100% / 0.82;
     --glass-border: 0 0% 0% / 0.08;
-    --glass-text: 350 55% 35%;
-    --glass-text-sub: 350 40% 40%;
-    --glass-text-muted: 350 25% 50%;
+    --glass-text: 0 0% 12%;
+    --glass-text-sub: 0 0% 0% / 0.6;
+    --glass-text-muted: 0 0% 0% / 0.45;
     --glass-card-bg: 0 0% 0% / 0.04;
     --glass-card-border: 0 0% 0% / 0.08;
 

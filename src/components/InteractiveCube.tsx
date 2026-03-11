@@ -169,9 +169,9 @@ const GlowNode = forwardRef<THREE.Group, {
   position: [number, number, number]; color: string; label: string; index: number;
   onNodeClick: (index: number) => void; hoveredNode: number | null;
   setHoveredNode: (i: number | null) => void; isPaused: boolean; isActive: boolean;
-  isInteractive: boolean; isMobile: boolean; gestureState: GestureState; isDark?: boolean;
+  isInteractive: boolean; isMobile: boolean; gestureState: GestureState;
 }>(function GlowNode({
-  position, color, label, index, onNodeClick, hoveredNode, setHoveredNode, isPaused, isActive, isInteractive, isMobile, gestureState, isDark = true,
+  position, color, label, index, onNodeClick, hoveredNode, setHoveredNode, isPaused, isActive, isInteractive, isMobile, gestureState,
 }, ref) {
   const meshRef = useRef<THREE.Mesh>(null);
   const isHovered = hoveredNode === index;
@@ -237,12 +237,12 @@ const GlowNode = forwardRef<THREE.Group, {
         <Text
           position={[0, isMobile ? 0.4 : 0.3, 0]}
           fontSize={isMobile ? 0.11 : 0.09}
-          color={isHovered || isActive ? color : DDC_RED}
+          color={isHovered || isActive ? color : "#ffffff"}
           anchorX="center"
           anchorY="bottom"
           font="/fonts/Orbitron.ttf"
           outlineWidth={0.005}
-          outlineColor={isDark ? "#000000" : "#ffffff"}
+          outlineColor="#000000"
           fillOpacity={isHovered || isActive ? 1 : 0.6}
         >
           {label}
@@ -253,16 +253,14 @@ const GlowNode = forwardRef<THREE.Group, {
 });
 
 /* ── Cube Edge ─────────────────────────────────────── */
-const CubeEdge = forwardRef<THREE.Group, { start: [number, number, number]; end: [number, number, number]; isDark?: boolean }>(function CubeEdge({ start, end, isDark = true }, ref) {
-  const lineRef = useRef<THREE.Line>(null);
+const CubeEdge = forwardRef<THREE.Group, { start: [number, number, number]; end: [number, number, number] }>(function CubeEdge({ start, end }, ref) {
   const lineObj = useMemo(() => {
     const points = [new THREE.Vector3(...start), new THREE.Vector3(...end)];
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
-    const material = new THREE.LineBasicMaterial({ color: isDark ? "#3a1a1a" : "#d4c5c5", transparent: true, opacity: isDark ? 0.5 : 0.35 });
-    const line = new THREE.Line(geometry, material);
-    return line;
-  }, [start, end, isDark]);
-  return <primitive ref={lineRef} object={lineObj} />;
+    const material = new THREE.LineBasicMaterial({ color: "#3a1a1a", transparent: true, opacity: 0.5 });
+    return new THREE.Line(geometry, material);
+  }, [start, end]);
+  return <primitive object={lineObj} />;
 });
 
 /* ── Square Star Particles ─────────────────────────── */
@@ -339,10 +337,8 @@ function Particles() {
 }
 
 /* ── GLB Model ─────────────────────────────────────── */
-function GLBModel({ isDark = true }: { isDark?: boolean }) {
+function GLBModel() {
   const { scene } = useGLTF("/models/holoseat.glb");
-  const modelRef = useRef<THREE.Group>(null);
-
   const clonedScene = useMemo(() => {
     const clone = scene.clone(true);
     clone.traverse((child) => {
@@ -366,31 +362,14 @@ function GLBModel({ isDark = true }: { isDark?: boolean }) {
     return clone;
   }, [scene]);
 
-  // Smoothly adapt emissive for theme
-  const targetEmissive = useMemo(() => new THREE.Color(isDark ? "#1a0505" : "#f5e6d0"), [isDark]);
-  const targetIntensity = isDark ? 0.3 : 0.15;
-
-  useFrame((_, delta) => {
-    if (!clonedScene) return;
-    clonedScene.traverse((child) => {
-      if ((child as THREE.Mesh).isMesh) {
-        const mat = (child as THREE.Mesh).material as THREE.MeshStandardMaterial;
-        if (mat.emissive) {
-          mat.emissive.lerp(targetEmissive, Math.min(delta * 3, 1));
-          mat.emissiveIntensity += (targetIntensity - mat.emissiveIntensity) * Math.min(delta * 3, 1);
-        }
-      }
-    });
-  });
-
-  return <primitive ref={modelRef} object={clonedScene} />;
+  return <primitive object={clonedScene} />;
 }
 
 useGLTF.preload("/models/holoseat.glb");
 
 /* ── Scene ─────────────────────────────────────── */
 function InteractiveCubeScene({
-  onNodeClick, isPaused, activeNode, isMobile, gyroscope, gestureState, mobileDragDelta, isDark,
+  onNodeClick, isPaused, activeNode, isMobile, gyroscope, gestureState, mobileDragDelta,
 }: {
   onNodeClick: (index: number) => void;
   isPaused: boolean;
@@ -399,7 +378,6 @@ function InteractiveCubeScene({
   gyroscope: { x: number; y: number; available: boolean };
   gestureState: GestureState;
   mobileDragDelta: React.MutableRefObject<{ x: number; y: number }>;
-  isDark: boolean;
 }) {
   const groupRef = useRef<THREE.Group>(null);
   const targetRotation = useRef({ x: 0, y: 0 });
@@ -483,10 +461,10 @@ function InteractiveCubeScene({
   return (
     <group ref={groupRef}>
       {EDGES.map(([a, b], i) => (
-        <CubeEdge key={`${i}-${isDark}`} start={scaledVertices[a]} end={scaledVertices[b]} isDark={isDark} />
+        <CubeEdge key={i} start={scaledVertices[a]} end={scaledVertices[b]} />
       ))}
 
-      <GLBModel isDark={isDark} />
+      <GLBModel />
 
       <mesh>
         <boxGeometry args={[1.8, 1.8, 1.8]} />
@@ -499,7 +477,6 @@ function InteractiveCubeScene({
           index={i} onNodeClick={handleNodeClick} hoveredNode={hoveredNode}
           setHoveredNode={setHoveredNode} isPaused={isPaused} isActive={activeNode === i}
           isInteractive={VERTEX_DATA[i].active} isMobile={isMobile} gestureState={gestureState}
-          isDark={isDark}
         />
       ))}
 
@@ -517,107 +494,6 @@ function InteractiveCubeScene({
   );
 }
 
-/* ── Scene Theme Controller — smoothly animates background + lights ── */
-function SceneThemeController({ isDark }: { isDark: boolean }) {
-  const { scene } = useThree();
-
-  // Light refs
-  const ambientRef = useRef<THREE.AmbientLight>(null);
-  const keyRef = useRef<THREE.DirectionalLight>(null);
-  const fillRef = useRef<THREE.DirectionalLight>(null);
-  const rimRef = useRef<THREE.DirectionalLight>(null);
-  const accentRef1 = useRef<THREE.PointLight>(null);
-  const accentRef2 = useRef<THREE.PointLight>(null);
-  const hemiRef = useRef<THREE.HemisphereLight>(null);
-
-  // Target colors
-  const darkBg = useMemo(() => new THREE.Color("#252222"), []);
-  const lightBg = useMemo(() => new THREE.Color("#FAF9F6"), []);
-
-  const darkKey = useMemo(() => new THREE.Color("#fff5ee"), []);
-  const lightKey = useMemo(() => new THREE.Color("#f5f0eb"), []);
-  const darkFill = useMemo(() => new THREE.Color("#e0e4f0"), []);
-  const lightFill = useMemo(() => new THREE.Color("#ede8e2"), []);
-  const darkRim = useMemo(() => new THREE.Color("#ffd4d4"), []);
-  const lightRim = useMemo(() => new THREE.Color("#e8e0dc"), []);
-  const darkHemiSky = useMemo(() => new THREE.Color("#f0f0ff"), []);
-  const lightHemiSky = useMemo(() => new THREE.Color("#fffbf5"), []);
-  const darkHemiGround = useMemo(() => new THREE.Color("#1a0808"), []);
-  const lightHemiGround = useMemo(() => new THREE.Color("#f0e6d8"), []);
-
-  // Set initial background
-  useEffect(() => {
-    scene.background = (isDark ? darkBg : lightBg).clone();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useFrame((_, delta) => {
-    const t = Math.min(delta * 2.5, 1); // smooth lerp factor
-    const targetBg = isDark ? darkBg : lightBg;
-
-    // Background
-    if (scene.background instanceof THREE.Color) {
-      scene.background.lerp(targetBg, t);
-    }
-
-    // Ambient
-    if (ambientRef.current) {
-      const targetI = isDark ? 1.2 : 1.0;
-      ambientRef.current.intensity += (targetI - ambientRef.current.intensity) * t;
-    }
-
-    // Key light — softer in light mode
-    if (keyRef.current) {
-      const targetI = isDark ? 3.5 : 2.0;
-      keyRef.current.intensity += (targetI - keyRef.current.intensity) * t;
-      keyRef.current.color.lerp(isDark ? darkKey : lightKey, t);
-    }
-
-    // Fill light — softer in light mode
-    if (fillRef.current) {
-      const targetI = isDark ? 1.8 : 1.0;
-      fillRef.current.intensity += (targetI - fillRef.current.intensity) * t;
-      fillRef.current.color.lerp(isDark ? darkFill : lightFill, t);
-    }
-
-    // Rim light — subtle in light mode
-    if (rimRef.current) {
-      const targetI = isDark ? 2.0 : 0.6;
-      rimRef.current.intensity += (targetI - rimRef.current.intensity) * t;
-      rimRef.current.color.lerp(isDark ? darkRim : lightRim, t);
-    }
-
-    // Red accent points — very subtle in light mode
-    if (accentRef1.current) {
-      const targetI = isDark ? 1.5 : 0.3;
-      accentRef1.current.intensity += (targetI - accentRef1.current.intensity) * t;
-    }
-    if (accentRef2.current) {
-      const targetI = isDark ? 1.0 : 0.2;
-      accentRef2.current.intensity += (targetI - accentRef2.current.intensity) * t;
-    }
-
-    // Hemisphere — softer in light mode
-    if (hemiRef.current) {
-      const targetI = isDark ? 0.8 : 0.6;
-      hemiRef.current.intensity += (targetI - hemiRef.current.intensity) * t;
-      hemiRef.current.color.lerp(isDark ? darkHemiSky : lightHemiSky, t);
-      hemiRef.current.groundColor.lerp(isDark ? darkHemiGround : lightHemiGround, t);
-    }
-  });
-
-  return (
-    <>
-      <ambientLight ref={ambientRef} intensity={isDark ? 1.2 : 1.0} />
-      <directionalLight ref={keyRef} position={[4, 5, 6]} intensity={isDark ? 3.5 : 2.0} color={isDark ? "#fff5ee" : "#f5f0eb"} />
-      <directionalLight ref={fillRef} position={[-4, 2, 3]} intensity={isDark ? 1.8 : 1.0} color={isDark ? "#e0e4f0" : "#ede8e2"} />
-      <directionalLight ref={rimRef} position={[0, -2, -5]} intensity={isDark ? 2.0 : 0.6} color={isDark ? "#ffd4d4" : "#e8e0dc"} />
-      <pointLight ref={accentRef1} position={[3, 3, 3]} intensity={isDark ? 1.5 : 0.3} color={DDC_RED} distance={12} decay={2} />
-      <pointLight ref={accentRef2} position={[-3, -2, 4]} intensity={isDark ? 1.0 : 0.2} color="#e85d6f" distance={10} decay={2} />
-      <hemisphereLight ref={hemiRef} intensity={isDark ? 0.8 : 0.6} color={isDark ? "#f0f0ff" : "#fffbf5"} groundColor={isDark ? "#1a0808" : "#f0e6d8"} />
-    </>
-  );
-}
-
 /* ── Main Component ─────────────────────────────────────── */
 export default function InteractiveCube({
   onNodeClick, isPaused, activeNode, isDark = true,
@@ -627,7 +503,7 @@ export default function InteractiveCube({
   activeNode: number | null;
   isDark?: boolean;
 }) {
-  const bloomIntensity = activeNode !== null ? 1.2 : 0.6;
+  const bloomIntensity = activeNode !== null ? 1.8 : 1.0;
   const isMobile = useIsMobile();
   const [gyroscope, setGyroscope] = useState({ x: 0, y: 0, available: false });
 
@@ -774,9 +650,31 @@ export default function InteractiveCube({
           style={{ width: dims.w, height: dims.h }}
           resize={{ scroll: false, debounce: { scroll: 0, resize: 0 } }}
           gl={{ antialias: true, alpha: false }}
+          scene={{ background: new THREE.Color(isDark ? "#252222" : "#FAF9F6") }}
         >
           <ViewportResizeHandler />
-          <SceneThemeController isDark={isDark} />
+
+          {isDark ? (
+            <>
+              <ambientLight intensity={1.2} />
+              <directionalLight position={[4, 5, 6]} intensity={3.5} color="#fff5ee" />
+              <directionalLight position={[-4, 2, 3]} intensity={1.8} color="#e0e4f0" />
+              <directionalLight position={[0, -2, -5]} intensity={2.0} color="#ffd4d4" />
+              <pointLight position={[3, 3, 3]} intensity={1.5} color={DDC_RED} distance={12} decay={2} />
+              <pointLight position={[-3, -2, 4]} intensity={1.0} color="#e85d6f" distance={10} decay={2} />
+              <hemisphereLight intensity={0.8} color="#f0f0ff" groundColor="#1a0808" />
+            </>
+          ) : (
+            <>
+              <ambientLight intensity={1.8} />
+              <directionalLight position={[5, 6, 4]} intensity={4.0} color="#fff3e0" />
+              <directionalLight position={[-3, 4, 5]} intensity={2.2} color="#ffecd2" />
+              <directionalLight position={[0, -3, -4]} intensity={1.2} color="#ffe8d6" />
+              <pointLight position={[3, 3, 3]} intensity={0.8} color={DDC_RED} distance={12} decay={2} />
+              <pointLight position={[-3, -2, 4]} intensity={0.5} color="#e85d6f" distance={10} decay={2} />
+              <hemisphereLight intensity={1.2} color="#fffbf5" groundColor="#f0e6d8" />
+            </>
+          )}
 
           <Particles />
 
@@ -789,7 +687,6 @@ export default function InteractiveCube({
               gyroscope={gyroscope}
               gestureState={gestureState}
               mobileDragDelta={mobileDragDelta}
-              isDark={isDark}
             />
           </Float>
 
