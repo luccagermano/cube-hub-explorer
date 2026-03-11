@@ -315,7 +315,7 @@ const Index = () => {
 
               {/* Footer branding */}
               <div className="px-6 sm:px-8 pt-2" style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom))" }}>
-                <div className="h-px bg-[hsl(0_0%_100%_/_0.06)] mb-4" />
+                <div className="h-px mb-4" style={{ backgroundColor: `hsl(var(--menu-border))` }} />
                 <div className="flex items-center gap-2">
                   <img src={ddcLogo} alt="" className="h-4 w-auto opacity-40" />
                   <span className="text-[9px] font-display tracking-[0.2em] uppercase text-muted-foreground/40">
