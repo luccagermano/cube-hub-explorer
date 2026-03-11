@@ -415,9 +415,9 @@ function NewsletterContent({ onClose }: { onClose: () => void }) {
             aria-label="Endereço de e-mail para newsletter"
             className="flex-1 px-5 py-3.5 rounded-xl text-sm outline-none transition-all duration-200 focus:ring-2 focus:ring-primary/40"
             style={{
-              background: "rgba(255,255,255,0.05)",
-              border: "1px solid rgba(255,255,255,0.08)",
-              color: "#e8e8ea",
+              background: `hsl(var(--glass-card-bg))`,
+              border: `1px solid hsl(var(--glass-card-border))`,
+              color: "hsl(var(--glass-text))",
             }}
           />
           <motion.button
