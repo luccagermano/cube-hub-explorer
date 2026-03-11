@@ -455,7 +455,7 @@ function IntroContent({ onClose }: { onClose: () => void }) {
           BOOSTER TECH
         </span>
       </div>
-      <p className="text-sm sm:text-[15px] leading-relaxed max-w-2xl mb-8" style={{ color: "rgba(255,255,255,0.55)" }}>
+      <p className="text-sm sm:text-[15px] leading-relaxed max-w-2xl mb-8" style={{ color: "hsl(var(--glass-text-sub))" }}>
         Somos uma Booster Tech especializada em acelerar empresas através de engenharia de software, consultoria estratégica e soluções digitais de alto impacto. Da concepção à execução, transformamos desafios em crescimento real.
       </p>
       <div className="flex flex-col sm:flex-row flex-wrap gap-3">
