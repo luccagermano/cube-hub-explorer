@@ -339,8 +339,10 @@ function Particles() {
 }
 
 /* ── GLB Model ─────────────────────────────────────── */
-function GLBModel() {
+function GLBModel({ isDark = true }: { isDark?: boolean }) {
   const { scene } = useGLTF("/models/holoseat.glb");
+  const modelRef = useRef<THREE.Group>(null);
+
   const clonedScene = useMemo(() => {
     const clone = scene.clone(true);
     clone.traverse((child) => {
@@ -364,7 +366,24 @@ function GLBModel() {
     return clone;
   }, [scene]);
 
-  return <primitive object={clonedScene} />;
+  // Smoothly adapt emissive for theme
+  const targetEmissive = useMemo(() => new THREE.Color(isDark ? "#1a0505" : "#f5e6d0"), [isDark]);
+  const targetIntensity = isDark ? 0.3 : 0.15;
+
+  useFrame((_, delta) => {
+    if (!clonedScene) return;
+    clonedScene.traverse((child) => {
+      if ((child as THREE.Mesh).isMesh) {
+        const mat = (child as THREE.Mesh).material as THREE.MeshStandardMaterial;
+        if (mat.emissive) {
+          mat.emissive.lerp(targetEmissive, Math.min(delta * 3, 1));
+          mat.emissiveIntensity += (targetIntensity - mat.emissiveIntensity) * Math.min(delta * 3, 1);
+        }
+      }
+    });
+  });
+
+  return <primitive ref={modelRef} object={clonedScene} />;
 }
 
 useGLTF.preload("/models/holoseat.glb");
