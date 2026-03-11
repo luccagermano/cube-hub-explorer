@@ -17,6 +17,7 @@ const MENU_ITEMS = [
 ];
 
 const Index = () => {
+  const { theme, toggleTheme, isDark } = useTheme();
   const [selectedNode, setSelectedNode] = useState<number | null>(null);
   const [visibleCategory, setVisibleCategory] = useState<PopupCategory>(null);
   const [aboutOpen, setAboutOpen] = useState(false);
