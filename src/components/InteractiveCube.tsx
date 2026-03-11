@@ -496,12 +496,11 @@ function InteractiveCubeScene({
 
 /* ── Main Component ─────────────────────────────────────── */
 export default function InteractiveCube({
-  onNodeClick, isPaused, activeNode, isDark = true,
+  onNodeClick, isPaused, activeNode,
 }: {
   onNodeClick: (index: number) => void;
   isPaused: boolean;
   activeNode: number | null;
-  isDark?: boolean;
 }) {
   const bloomIntensity = activeNode !== null ? 1.8 : 1.0;
   const isMobile = useIsMobile();
@@ -650,31 +649,16 @@ export default function InteractiveCube({
           style={{ width: dims.w, height: dims.h }}
           resize={{ scroll: false, debounce: { scroll: 0, resize: 0 } }}
           gl={{ antialias: true, alpha: false }}
-          scene={{ background: new THREE.Color(isDark ? "#252222" : "#2a2626") }}
+          scene={{ background: new THREE.Color("#252222") }}
         >
           <ViewportResizeHandler />
-
-          {isDark ? (
-            <>
-              <ambientLight intensity={1.2} />
-              <directionalLight position={[4, 5, 6]} intensity={3.5} color="#fff5ee" />
-              <directionalLight position={[-4, 2, 3]} intensity={1.8} color="#e0e4f0" />
-              <directionalLight position={[0, -2, -5]} intensity={2.0} color="#ffd4d4" />
-              <pointLight position={[3, 3, 3]} intensity={1.5} color={DDC_RED} distance={12} decay={2} />
-              <pointLight position={[-3, -2, 4]} intensity={1.0} color="#e85d6f" distance={10} decay={2} />
-              <hemisphereLight intensity={0.8} color="#f0f0ff" groundColor="#1a0808" />
-            </>
-          ) : (
-            <>
-              <ambientLight intensity={1.4} />
-              <directionalLight position={[4, 5, 6]} intensity={3.8} color="#fff5ee" />
-              <directionalLight position={[-4, 2, 3]} intensity={2.0} color="#e0e4f0" />
-              <directionalLight position={[0, -2, -5]} intensity={1.8} color="#ffd4d4" />
-              <pointLight position={[3, 3, 3]} intensity={1.2} color={DDC_RED} distance={12} decay={2} />
-              <pointLight position={[-3, -2, 4]} intensity={0.8} color="#e85d6f" distance={10} decay={2} />
-              <hemisphereLight intensity={1.0} color="#f0f0ff" groundColor="#1a0808" />
-            </>
-          )}
+          <ambientLight intensity={1.2} />
+          <directionalLight position={[4, 5, 6]} intensity={3.5} color="#fff5ee" />
+          <directionalLight position={[-4, 2, 3]} intensity={1.8} color="#e0e4f0" />
+          <directionalLight position={[0, -2, -5]} intensity={2.0} color="#ffd4d4" />
+          <pointLight position={[3, 3, 3]} intensity={1.5} color={DDC_RED} distance={12} decay={2} />
+          <pointLight position={[-3, -2, 4]} intensity={1.0} color="#e85d6f" distance={10} decay={2} />
+          <hemisphereLight intensity={0.8} color="#f0f0ff" groundColor="#1a0808" />
 
           <Particles />
 

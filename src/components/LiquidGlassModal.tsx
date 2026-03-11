@@ -74,16 +74,16 @@ function GlassPanel({ children, onClose }: { children: React.ReactNode; onClose:
         ref={trapRef}
         className="relative w-[95%] sm:w-[88%] md:w-[62%] lg:w-[56%] xl:w-[50%] max-h-[88vh] sm:max-h-[82vh] md:max-h-[78vh] overflow-y-auto pointer-events-auto scrollbar-thin"
         style={{
-          background: `hsl(var(--glass-bg))`,
+          background: "rgba(14, 14, 16, 0.88)",
           backdropFilter: "blur(32px) saturate(160%)",
           WebkitBackdropFilter: "blur(32px) saturate(160%)",
-          border: `1px solid hsl(var(--glass-border))`,
+          border: "1px solid rgba(255, 255, 255, 0.1)",
           borderRadius: "20px",
           boxShadow: `
-            0 0 0 0.5px hsl(var(--glass-border)),
+            0 0 0 0.5px rgba(255, 255, 255, 0.05),
             0 0 60px rgba(196, 54, 74, 0.06),
-            0 24px 80px rgba(0, 0, 0, 0.4),
-            inset 0 1px 0 hsl(var(--glass-border))
+            0 24px 80px rgba(0, 0, 0, 0.6),
+            inset 0 1px 0 rgba(255, 255, 255, 0.07)
           `,
         }}
         onClick={(e) => e.stopPropagation()}
@@ -91,12 +91,12 @@ function GlassPanel({ children, onClose }: { children: React.ReactNode; onClose:
         {/* Top specular highlight */}
         <div
           className="absolute top-0 left-[10%] right-[10%] h-[1px] rounded-full"
-          style={{ background: "linear-gradient(90deg, transparent, hsl(var(--glass-border)), transparent)" }}
+          style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent)" }}
         />
         {/* Internal gradient overlay */}
         <div
           className="absolute inset-0 rounded-[20px] pointer-events-none"
-          style={{ background: "linear-gradient(180deg, hsl(var(--glass-card-bg)) 0%, transparent 35%)" }}
+          style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.025) 0%, transparent 35%)" }}
         />
         <div className="relative z-10 p-6 sm:p-8 md:p-10 lg:p-12">
           {children}
@@ -113,12 +113,12 @@ function ModalHeader({ title, subtitle, onClose }: { title: string; subtitle?: s
       <div className="min-w-0">
         <h2
           className="font-display text-lg sm:text-xl md:text-2xl font-bold tracking-wide"
-          style={{ color: "hsl(var(--glass-text))" }}
+          style={{ color: "#f0f0f2" }}
         >
           {title}
         </h2>
         {subtitle && (
-          <p className="text-sm sm:text-[15px] mt-2.5 max-w-xl leading-relaxed" style={{ color: "hsl(var(--glass-text-sub))" }}>
+          <p className="text-sm sm:text-[15px] mt-2.5 max-w-xl leading-relaxed" style={{ color: "rgba(255,255,255,0.55)" }}>
             {subtitle}
           </p>
         )}
@@ -131,9 +131,9 @@ function ModalHeader({ title, subtitle, onClose }: { title: string; subtitle?: s
         onClick={onClose}
         aria-label="Fechar"
         className="p-2.5 rounded-xl transition-all duration-200 hover:scale-105 hover:bg-white/[0.08] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary flex-shrink-0 ml-6"
-        style={{ background: "hsl(var(--glass-card-bg))", border: `1px solid hsl(var(--glass-card-border))` }}
+        style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.07)" }}
       >
-        <X size={16} className="text-muted-foreground" />
+        <X size={16} style={{ color: "rgba(255,255,255,0.5)" }} />
       </button>
     </div>
   );
@@ -148,8 +148,8 @@ function InfoCard({ title, text, icon, tooltip, className = "" }: { title: strin
       transition={{ delay: 0.12 }}
       className={`group rounded-2xl p-5 sm:p-6 transition-all duration-300 hover:translate-y-[-2px] hover:shadow-lg focus-within:ring-2 focus-within:ring-primary/30 ${className}`}
       style={{
-        background: `hsl(var(--glass-card-bg))`,
-        border: `1px solid hsl(var(--glass-card-border))`,
+        background: "rgba(255,255,255,0.045)",
+        border: "1px solid rgba(255,255,255,0.08)",
         boxShadow: "0 2px 12px rgba(0,0,0,0.15)",
       }}
       tabIndex={0}
@@ -161,8 +161,8 @@ function InfoCard({ title, text, icon, tooltip, className = "" }: { title: strin
           {icon}
         </div>
       )}
-      <h4 className="font-display text-[13px] sm:text-sm font-semibold tracking-wide mb-1.5" style={{ color: "hsl(var(--glass-text))" }}>{title}</h4>
-      <p className="text-[11px] sm:text-xs leading-relaxed" style={{ color: "hsl(var(--glass-text-muted))" }}>{text}</p>
+      <h4 className="font-display text-[13px] sm:text-sm font-semibold tracking-wide mb-1.5" style={{ color: "#e8e8ea" }}>{title}</h4>
+      <p className="text-[11px] sm:text-xs leading-relaxed" style={{ color: "rgba(255,255,255,0.45)" }}>{text}</p>
     </motion.div>
   );
 
@@ -249,8 +249,8 @@ function ContactContent({ onClose }: { onClose: () => void }) {
       <div
         className="rounded-2xl p-5 sm:p-7"
         style={{
-          background: `hsl(var(--glass-card-bg))`,
-          border: `1px solid hsl(var(--glass-card-border))`,
+          background: "rgba(255,255,255,0.04)",
+          border: "1px solid rgba(255,255,255,0.07)",
           boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
         }}
       >
@@ -265,8 +265,8 @@ function ContactContent({ onClose }: { onClose: () => void }) {
                 {item.icon}
               </div>
               <div>
-                <p className="text-[10px] sm:text-[11px] font-display tracking-widest uppercase mb-0.5 text-muted-foreground">{item.label}</p>
-                <p className={`text-sm font-medium ${item.breakAll ? "break-all" : ""}`} style={{ color: "hsl(var(--glass-text))" }}>{item.value}</p>
+                <p className="text-[10px] sm:text-[11px] font-display tracking-widest uppercase mb-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>{item.label}</p>
+                <p className={`text-sm font-medium ${item.breakAll ? "break-all" : ""}`} style={{ color: "#e8e8ea" }}>{item.value}</p>
               </div>
             </div>
           ))}
@@ -359,8 +359,8 @@ function ClientsContent({ onClose }: { onClose: () => void }) {
                 transition={{ delay: 0.08 + i * 0.05 }}
                 className="flex items-center justify-center rounded-2xl p-5 sm:p-6 aspect-square transition-all duration-300 hover:translate-y-[-2px] hover:shadow-lg focus-visible:ring-2 focus-visible:ring-primary/30"
                 style={{
-                  background: `hsl(var(--glass-card-bg))`,
-                  border: `1px solid hsl(var(--glass-card-border))`,
+                  background: "rgba(255,255,255,0.04)",
+                  border: "1px solid rgba(255,255,255,0.07)",
                   boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
                 }}
                 tabIndex={0}
@@ -415,9 +415,9 @@ function NewsletterContent({ onClose }: { onClose: () => void }) {
             aria-label="Endereço de e-mail para newsletter"
             className="flex-1 px-5 py-3.5 rounded-xl text-sm outline-none transition-all duration-200 focus:ring-2 focus:ring-primary/40"
             style={{
-              background: `hsl(var(--glass-card-bg))`,
-              border: `1px solid hsl(var(--glass-card-border))`,
-              color: "hsl(var(--glass-text))",
+              background: "rgba(255,255,255,0.05)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              color: "#e8e8ea",
             }}
           />
           <motion.button
@@ -455,7 +455,7 @@ function IntroContent({ onClose }: { onClose: () => void }) {
           BOOSTER TECH
         </span>
       </div>
-      <p className="text-sm sm:text-[15px] leading-relaxed max-w-2xl mb-8" style={{ color: "hsl(var(--glass-text-sub))" }}>
+      <p className="text-sm sm:text-[15px] leading-relaxed max-w-2xl mb-8" style={{ color: "rgba(255,255,255,0.55)" }}>
         Somos uma Booster Tech especializada em acelerar empresas através de engenharia de software, consultoria estratégica e soluções digitais de alto impacto. Da concepção à execução, transformamos desafios em crescimento real.
       </p>
       <div className="flex flex-col sm:flex-row flex-wrap gap-3">
@@ -473,9 +473,9 @@ function IntroContent({ onClose }: { onClose: () => void }) {
             transition={{ delay: 0.3 + i * 0.08 }}
             className="flex items-center justify-center gap-2.5 px-6 py-3 rounded-xl text-xs font-display font-semibold tracking-widest uppercase transition-all duration-300 hover:translate-y-[-1px] hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             style={{
-              background: `hsl(var(--glass-card-bg))`,
-              color: "hsl(var(--glass-text))",
-              border: `1px solid hsl(var(--glass-card-border))`,
+              background: "rgba(255,255,255,0.05)",
+              color: "#e8e8ea",
+              border: "1px solid rgba(255,255,255,0.08)",
             }}
             aria-label={`Visite a DDC no ${link.label}`}
           >
@@ -506,15 +506,15 @@ function AboutContent({ onClose }: { onClose: () => void }) {
       <div
         className="rounded-2xl p-6 sm:p-7"
         style={{
-          background: `hsl(var(--glass-card-bg))`,
-          border: `1px solid hsl(var(--glass-card-border))`,
+          background: "rgba(255,255,255,0.04)",
+          border: "1px solid rgba(255,255,255,0.07)",
           boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
         }}
       >
-        <p className="text-sm sm:text-[15px] leading-relaxed mb-4" style={{ color: "hsl(var(--glass-text-sub))" }}>
+        <p className="text-sm sm:text-[15px] leading-relaxed mb-4" style={{ color: "rgba(255,255,255,0.7)" }}>
           Com a missão de impulsionar o mercado, usamos tecnologia como ferramenta principal para alcançar novos patamares. A DDC é mais do que um booster — somos o parceiro estratégico que acelera sua transformação digital.
         </p>
-        <p className="text-[13px] sm:text-sm leading-relaxed" style={{ color: "hsl(var(--glass-text-muted))" }}>
+        <p className="text-[13px] sm:text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.45)" }}>
           Nossa equipe qualificada, movida por inovação e execução, cria soluções seguras, escaláveis e de alta performance para que sua empresa cresça com confiança. Venha descobrir o novo patamar construído para levar você ao topo.
         </p>
       </div>
