@@ -93,7 +93,87 @@
   }
 }
 
-@keyframes loaderSpin {
-  0% { transform: rotateX(0deg) rotateY(0deg); }
-  100% { transform: rotateX(360deg) rotateY(360deg); }
+/* Loader cube — vertex-bounce animation */
+.loader-cube-wrapper {
+  width: 40px;
+  height: 40px;
+  perspective: 200px;
+}
+
+.loader-cube {
+  width: 40px;
+  height: 40px;
+  background-color: #ce3d52;
+  animation: cubeVertexBounce 2.4s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  transform-origin: center center;
+}
+
+.loader-shadow {
+  width: 48px;
+  height: 6px;
+  margin-top: 12px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, hsl(0 0% 0% / 0.4), transparent);
+  filter: blur(3px);
+  animation: cubeVertexShadow 2.4s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+@keyframes cubeVertexBounce {
+  /* Tip onto front-right vertex */
+  0% {
+    transform: rotateZ(0deg) rotateX(0deg) scaleY(1);
+  }
+  4% {
+    transform: rotateZ(0deg) rotateX(0deg) scaleY(0.94);
+  }
+  /* Lift and rotate to next vertex */
+  12% {
+    transform: rotateZ(0deg) rotateX(0deg) scaleY(1);
+  }
+  25% {
+    transform: rotateZ(90deg) rotateX(15deg) scaleY(1);
+  }
+  /* Land on next vertex */
+  29% {
+    transform: rotateZ(90deg) rotateX(0deg) scaleY(0.94);
+  }
+  37% {
+    transform: rotateZ(90deg) rotateX(0deg) scaleY(1);
+  }
+  50% {
+    transform: rotateZ(180deg) rotateX(-12deg) scaleY(1);
+  }
+  54% {
+    transform: rotateZ(180deg) rotateX(0deg) scaleY(0.94);
+  }
+  62% {
+    transform: rotateZ(180deg) rotateX(0deg) scaleY(1);
+  }
+  75% {
+    transform: rotateZ(270deg) rotateX(10deg) scaleY(1);
+  }
+  79% {
+    transform: rotateZ(270deg) rotateX(0deg) scaleY(0.94);
+  }
+  87% {
+    transform: rotateZ(270deg) rotateX(0deg) scaleY(1);
+  }
+  100% {
+    transform: rotateZ(360deg) rotateX(0deg) scaleY(1);
+  }
+}
+
+@keyframes cubeVertexShadow {
+  0%, 4%, 29%, 54%, 79% {
+    transform: scaleX(1.15);
+    opacity: 0.5;
+  }
+  12%, 37%, 62%, 87% {
+    transform: scaleX(1);
+    opacity: 0.35;
+  }
+  25%, 50%, 75%, 100% {
+    transform: scaleX(0.85);
+    opacity: 0.25;
+  }
 }

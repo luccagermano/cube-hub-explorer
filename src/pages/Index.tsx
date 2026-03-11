@@ -193,25 +193,10 @@ const Index = () => {
             style={{ pointerEvents: "none" }}
           >
             <div className="flex flex-col items-center">
-              <div
-                className="w-10 h-10"
-                style={{
-                  animation: "loaderSpin 2s linear infinite",
-                  transformStyle: "preserve-3d",
-                }}
-              >
-                <div
-                  className="w-10 h-10 rounded-sm"
-                  style={{ backgroundColor: "#ce3d52" }}
-                />
+              <div className="loader-cube-wrapper">
+                <div className="loader-cube" />
               </div>
-              <div
-                className="mt-4 w-12 h-2 rounded-full"
-                style={{
-                  background: "radial-gradient(ellipse, hsl(0 0% 0% / 0.35), transparent)",
-                  filter: "blur(3px)",
-                }}
-              />
+              <div className="loader-shadow" />
             </div>
           </motion.div>
         )}
