@@ -138,11 +138,13 @@ const Index = () => {
           onClick={() => setMenuOpen((v) => !v)}
           className="relative z-30 flex flex-col items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-xl transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           style={{
-            background: "hsl(0 0% 12% / 0.6)",
+            background: `hsl(var(--menu-bg))`,
             backdropFilter: "blur(16px)",
             WebkitBackdropFilter: "blur(16px)",
-            border: "1px solid hsl(0 0% 100% / 0.08)",
-            boxShadow: "0 2px 12px hsl(0 0% 0% / 0.3), inset 0 1px 0 hsl(0 0% 100% / 0.04)",
+            border: `1px solid hsl(var(--menu-border))`,
+            boxShadow: isDark
+              ? "0 2px 12px hsl(0 0% 0% / 0.3), inset 0 1px 0 hsl(0 0% 100% / 0.04)"
+              : "0 2px 12px hsl(0 0% 0% / 0.06), inset 0 1px 0 hsl(0 0% 100% / 0.5)",
           }}
           aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
           aria-expanded={menuOpen}
