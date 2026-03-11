@@ -483,10 +483,10 @@ function InteractiveCubeScene({
   return (
     <group ref={groupRef}>
       {EDGES.map(([a, b], i) => (
-        <CubeEdge key={i} start={scaledVertices[a]} end={scaledVertices[b]} />
+        <CubeEdge key={`${i}-${isDark}`} start={scaledVertices[a]} end={scaledVertices[b]} isDark={isDark} />
       ))}
 
-      <GLBModel />
+      <GLBModel isDark={isDark} />
 
       <mesh>
         <boxGeometry args={[1.8, 1.8, 1.8]} />
