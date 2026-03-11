@@ -535,11 +535,11 @@ function SceneThemeController({ isDark }: { isDark: boolean }) {
   const lightBg = useMemo(() => new THREE.Color("#FAF9F6"), []);
 
   const darkKey = useMemo(() => new THREE.Color("#fff5ee"), []);
-  const lightKey = useMemo(() => new THREE.Color("#fff3e0"), []);
+  const lightKey = useMemo(() => new THREE.Color("#f5f0eb"), []);
   const darkFill = useMemo(() => new THREE.Color("#e0e4f0"), []);
-  const lightFill = useMemo(() => new THREE.Color("#ffecd2"), []);
+  const lightFill = useMemo(() => new THREE.Color("#ede8e2"), []);
   const darkRim = useMemo(() => new THREE.Color("#ffd4d4"), []);
-  const lightRim = useMemo(() => new THREE.Color("#ffe8d6"), []);
+  const lightRim = useMemo(() => new THREE.Color("#e8e0dc"), []);
   const darkHemiSky = useMemo(() => new THREE.Color("#f0f0ff"), []);
   const lightHemiSky = useMemo(() => new THREE.Color("#fffbf5"), []);
   const darkHemiGround = useMemo(() => new THREE.Color("#1a0808"), []);
@@ -561,44 +561,44 @@ function SceneThemeController({ isDark }: { isDark: boolean }) {
 
     // Ambient
     if (ambientRef.current) {
-      const targetI = isDark ? 1.2 : 1.8;
+      const targetI = isDark ? 1.2 : 1.0;
       ambientRef.current.intensity += (targetI - ambientRef.current.intensity) * t;
     }
 
-    // Key light
+    // Key light — softer in light mode
     if (keyRef.current) {
-      const targetI = isDark ? 3.5 : 4.0;
+      const targetI = isDark ? 3.5 : 2.0;
       keyRef.current.intensity += (targetI - keyRef.current.intensity) * t;
       keyRef.current.color.lerp(isDark ? darkKey : lightKey, t);
     }
 
-    // Fill light
+    // Fill light — softer in light mode
     if (fillRef.current) {
-      const targetI = isDark ? 1.8 : 2.2;
+      const targetI = isDark ? 1.8 : 1.0;
       fillRef.current.intensity += (targetI - fillRef.current.intensity) * t;
       fillRef.current.color.lerp(isDark ? darkFill : lightFill, t);
     }
 
-    // Rim light
+    // Rim light — subtle in light mode
     if (rimRef.current) {
-      const targetI = isDark ? 2.0 : 1.2;
+      const targetI = isDark ? 2.0 : 0.6;
       rimRef.current.intensity += (targetI - rimRef.current.intensity) * t;
       rimRef.current.color.lerp(isDark ? darkRim : lightRim, t);
     }
 
-    // Red accent points
+    // Red accent points — very subtle in light mode
     if (accentRef1.current) {
-      const targetI = isDark ? 1.5 : 0.6;
+      const targetI = isDark ? 1.5 : 0.3;
       accentRef1.current.intensity += (targetI - accentRef1.current.intensity) * t;
     }
     if (accentRef2.current) {
-      const targetI = isDark ? 1.0 : 0.4;
+      const targetI = isDark ? 1.0 : 0.2;
       accentRef2.current.intensity += (targetI - accentRef2.current.intensity) * t;
     }
 
-    // Hemisphere
+    // Hemisphere — softer in light mode
     if (hemiRef.current) {
-      const targetI = isDark ? 0.8 : 1.2;
+      const targetI = isDark ? 0.8 : 0.6;
       hemiRef.current.intensity += (targetI - hemiRef.current.intensity) * t;
       hemiRef.current.color.lerp(isDark ? darkHemiSky : lightHemiSky, t);
       hemiRef.current.groundColor.lerp(isDark ? darkHemiGround : lightHemiGround, t);
@@ -607,13 +607,13 @@ function SceneThemeController({ isDark }: { isDark: boolean }) {
 
   return (
     <>
-      <ambientLight ref={ambientRef} intensity={isDark ? 1.2 : 1.8} />
-      <directionalLight ref={keyRef} position={[4, 5, 6]} intensity={isDark ? 3.5 : 4.0} color={isDark ? "#fff5ee" : "#fff3e0"} />
-      <directionalLight ref={fillRef} position={[-4, 2, 3]} intensity={isDark ? 1.8 : 2.2} color={isDark ? "#e0e4f0" : "#ffecd2"} />
-      <directionalLight ref={rimRef} position={[0, -2, -5]} intensity={isDark ? 2.0 : 1.2} color={isDark ? "#ffd4d4" : "#ffe8d6"} />
-      <pointLight ref={accentRef1} position={[3, 3, 3]} intensity={isDark ? 1.5 : 0.6} color={DDC_RED} distance={12} decay={2} />
-      <pointLight ref={accentRef2} position={[-3, -2, 4]} intensity={isDark ? 1.0 : 0.4} color="#e85d6f" distance={10} decay={2} />
-      <hemisphereLight ref={hemiRef} intensity={isDark ? 0.8 : 1.2} color={isDark ? "#f0f0ff" : "#fffbf5"} groundColor={isDark ? "#1a0808" : "#f0e6d8"} />
+      <ambientLight ref={ambientRef} intensity={isDark ? 1.2 : 1.0} />
+      <directionalLight ref={keyRef} position={[4, 5, 6]} intensity={isDark ? 3.5 : 2.0} color={isDark ? "#fff5ee" : "#f5f0eb"} />
+      <directionalLight ref={fillRef} position={[-4, 2, 3]} intensity={isDark ? 1.8 : 1.0} color={isDark ? "#e0e4f0" : "#ede8e2"} />
+      <directionalLight ref={rimRef} position={[0, -2, -5]} intensity={isDark ? 2.0 : 0.6} color={isDark ? "#ffd4d4" : "#e8e0dc"} />
+      <pointLight ref={accentRef1} position={[3, 3, 3]} intensity={isDark ? 1.5 : 0.3} color={DDC_RED} distance={12} decay={2} />
+      <pointLight ref={accentRef2} position={[-3, -2, 4]} intensity={isDark ? 1.0 : 0.2} color="#e85d6f" distance={10} decay={2} />
+      <hemisphereLight ref={hemiRef} intensity={isDark ? 0.8 : 0.6} color={isDark ? "#f0f0ff" : "#fffbf5"} groundColor={isDark ? "#1a0808" : "#f0e6d8"} />
     </>
   );
 }
