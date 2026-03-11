@@ -113,7 +113,7 @@ function ModalHeader({ title, subtitle, onClose }: { title: string; subtitle?: s
       <div className="min-w-0">
         <h2
           className="font-display text-lg sm:text-xl md:text-2xl font-bold tracking-wide"
-          style={{ color: "#f0f0f2" }}
+          style={{ color: "hsl(var(--glass-text))" }}
         >
           {title}
         </h2>
