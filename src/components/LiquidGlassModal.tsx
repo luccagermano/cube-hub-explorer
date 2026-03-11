@@ -359,8 +359,8 @@ function ClientsContent({ onClose }: { onClose: () => void }) {
                 transition={{ delay: 0.08 + i * 0.05 }}
                 className="flex items-center justify-center rounded-2xl p-5 sm:p-6 aspect-square transition-all duration-300 hover:translate-y-[-2px] hover:shadow-lg focus-visible:ring-2 focus-visible:ring-primary/30"
                 style={{
-                  background: "rgba(255,255,255,0.04)",
-                  border: "1px solid rgba(255,255,255,0.07)",
+                  background: `hsl(var(--glass-card-bg))`,
+                  border: `1px solid hsl(var(--glass-card-border))`,
                   boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
                 }}
                 tabIndex={0}
