@@ -387,8 +387,8 @@ function InteractiveCubeScene({
   const lastPointer = useRef({ x: 0, y: 0 });
   const [hoveredNode, setHoveredNode] = useState<number | null>(null);
   const cubeScale = useRef(1);
-  // Accumulated drag rotation for mobile
-  const dragRotation = useRef({ x: 0, y: 0 });
+  // Accumulated user rotation (unlimited 360°)
+  const userRotation = useRef({ x: 0, y: 0 });
 
   useFrame((state, delta) => {
     if (!groupRef.current) return;
