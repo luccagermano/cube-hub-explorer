@@ -516,6 +516,107 @@ function InteractiveCubeScene({
   );
 }
 
+/* ── Scene Theme Controller — smoothly animates background + lights ── */
+function SceneThemeController({ isDark }: { isDark: boolean }) {
+  const { scene } = useThree();
+
+  // Light refs
+  const ambientRef = useRef<THREE.AmbientLight>(null);
+  const keyRef = useRef<THREE.DirectionalLight>(null);
+  const fillRef = useRef<THREE.DirectionalLight>(null);
+  const rimRef = useRef<THREE.DirectionalLight>(null);
+  const accentRef1 = useRef<THREE.PointLight>(null);
+  const accentRef2 = useRef<THREE.PointLight>(null);
+  const hemiRef = useRef<THREE.HemisphereLight>(null);
+
+  // Target colors
+  const darkBg = useMemo(() => new THREE.Color("#252222"), []);
+  const lightBg = useMemo(() => new THREE.Color("#FAF9F6"), []);
+
+  const darkKey = useMemo(() => new THREE.Color("#fff5ee"), []);
+  const lightKey = useMemo(() => new THREE.Color("#fff3e0"), []);
+  const darkFill = useMemo(() => new THREE.Color("#e0e4f0"), []);
+  const lightFill = useMemo(() => new THREE.Color("#ffecd2"), []);
+  const darkRim = useMemo(() => new THREE.Color("#ffd4d4"), []);
+  const lightRim = useMemo(() => new THREE.Color("#ffe8d6"), []);
+  const darkHemiSky = useMemo(() => new THREE.Color("#f0f0ff"), []);
+  const lightHemiSky = useMemo(() => new THREE.Color("#fffbf5"), []);
+  const darkHemiGround = useMemo(() => new THREE.Color("#1a0808"), []);
+  const lightHemiGround = useMemo(() => new THREE.Color("#f0e6d8"), []);
+
+  // Set initial background
+  useEffect(() => {
+    scene.background = (isDark ? darkBg : lightBg).clone();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useFrame((_, delta) => {
+    const t = Math.min(delta * 2.5, 1); // smooth lerp factor
+    const targetBg = isDark ? darkBg : lightBg;
+
+    // Background
+    if (scene.background instanceof THREE.Color) {
+      scene.background.lerp(targetBg, t);
+    }
+
+    // Ambient
+    if (ambientRef.current) {
+      const targetI = isDark ? 1.2 : 1.8;
+      ambientRef.current.intensity += (targetI - ambientRef.current.intensity) * t;
+    }
+
+    // Key light
+    if (keyRef.current) {
+      const targetI = isDark ? 3.5 : 4.0;
+      keyRef.current.intensity += (targetI - keyRef.current.intensity) * t;
+      keyRef.current.color.lerp(isDark ? darkKey : lightKey, t);
+    }
+
+    // Fill light
+    if (fillRef.current) {
+      const targetI = isDark ? 1.8 : 2.2;
+      fillRef.current.intensity += (targetI - fillRef.current.intensity) * t;
+      fillRef.current.color.lerp(isDark ? darkFill : lightFill, t);
+    }
+
+    // Rim light
+    if (rimRef.current) {
+      const targetI = isDark ? 2.0 : 1.2;
+      rimRef.current.intensity += (targetI - rimRef.current.intensity) * t;
+      rimRef.current.color.lerp(isDark ? darkRim : lightRim, t);
+    }
+
+    // Red accent points
+    if (accentRef1.current) {
+      const targetI = isDark ? 1.5 : 0.6;
+      accentRef1.current.intensity += (targetI - accentRef1.current.intensity) * t;
+    }
+    if (accentRef2.current) {
+      const targetI = isDark ? 1.0 : 0.4;
+      accentRef2.current.intensity += (targetI - accentRef2.current.intensity) * t;
+    }
+
+    // Hemisphere
+    if (hemiRef.current) {
+      const targetI = isDark ? 0.8 : 1.2;
+      hemiRef.current.intensity += (targetI - hemiRef.current.intensity) * t;
+      hemiRef.current.color.lerp(isDark ? darkHemiSky : lightHemiSky, t);
+      hemiRef.current.groundColor.lerp(isDark ? darkHemiGround : lightHemiGround, t);
+    }
+  });
+
+  return (
+    <>
+      <ambientLight ref={ambientRef} intensity={isDark ? 1.2 : 1.8} />
+      <directionalLight ref={keyRef} position={[4, 5, 6]} intensity={isDark ? 3.5 : 4.0} color={isDark ? "#fff5ee" : "#fff3e0"} />
+      <directionalLight ref={fillRef} position={[-4, 2, 3]} intensity={isDark ? 1.8 : 2.2} color={isDark ? "#e0e4f0" : "#ffecd2"} />
+      <directionalLight ref={rimRef} position={[0, -2, -5]} intensity={isDark ? 2.0 : 1.2} color={isDark ? "#ffd4d4" : "#ffe8d6"} />
+      <pointLight ref={accentRef1} position={[3, 3, 3]} intensity={isDark ? 1.5 : 0.6} color={DDC_RED} distance={12} decay={2} />
+      <pointLight ref={accentRef2} position={[-3, -2, 4]} intensity={isDark ? 1.0 : 0.4} color="#e85d6f" distance={10} decay={2} />
+      <hemisphereLight ref={hemiRef} intensity={isDark ? 0.8 : 1.2} color={isDark ? "#f0f0ff" : "#fffbf5"} groundColor={isDark ? "#1a0808" : "#f0e6d8"} />
+    </>
+  );
+}
+
 /* ── Main Component ─────────────────────────────────────── */
 export default function InteractiveCube({
   onNodeClick, isPaused, activeNode, isDark = true,
