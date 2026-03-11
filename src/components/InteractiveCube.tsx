@@ -496,11 +496,12 @@ function InteractiveCubeScene({
 
 /* ── Main Component ─────────────────────────────────────── */
 export default function InteractiveCube({
-  onNodeClick, isPaused, activeNode,
+  onNodeClick, isPaused, activeNode, isDark = true,
 }: {
   onNodeClick: (index: number) => void;
   isPaused: boolean;
   activeNode: number | null;
+  isDark?: boolean;
 }) {
   const bloomIntensity = activeNode !== null ? 1.8 : 1.0;
   const isMobile = useIsMobile();
