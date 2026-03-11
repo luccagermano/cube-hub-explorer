@@ -63,8 +63,8 @@
   }
 
   .light {
-    --background: 40 20% 97%;
-    --foreground: 0 0% 12%;
+    --background: 0 2% 16%;
+    --foreground: 0 0% 92%;
 
     --card: 40 15% 95%;
     --card-foreground: 0 0% 12%;
