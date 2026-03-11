@@ -3,6 +3,8 @@ import InteractiveCube, { VERTEX_DATA } from "@/components/InteractiveCube";
 import type { PopupCategory } from "@/components/InteractiveCube";
 import LiquidGlassModal, { AboutModal } from "@/components/LiquidGlassModal";
 import { motion, AnimatePresence } from "framer-motion";
+import { Sun, Moon } from "lucide-react";
+import { useTheme } from "@/hooks/use-theme";
 import ddcLogo from "@/assets/ddc-logo.svg";
 
 const MENU_ITEMS = [
