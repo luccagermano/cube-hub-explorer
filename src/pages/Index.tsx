@@ -188,6 +188,7 @@ const Index = () => {
           onNodeClick={handleNodeClick}
           isPaused={selectedNode !== null}
           activeNode={selectedNode}
+          isDark={isDark}
         />
       </motion.div>
 
