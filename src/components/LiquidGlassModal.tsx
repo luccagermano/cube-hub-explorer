@@ -148,8 +148,8 @@ function InfoCard({ title, text, icon, tooltip, className = "" }: { title: strin
       transition={{ delay: 0.12 }}
       className={`group rounded-2xl p-5 sm:p-6 transition-all duration-300 hover:translate-y-[-2px] hover:shadow-lg focus-within:ring-2 focus-within:ring-primary/30 ${className}`}
       style={{
-        background: "rgba(255,255,255,0.045)",
-        border: "1px solid rgba(255,255,255,0.08)",
+        background: `hsl(var(--glass-card-bg))`,
+        border: `1px solid hsl(var(--glass-card-border))`,
         boxShadow: "0 2px 12px rgba(0,0,0,0.15)",
       }}
       tabIndex={0}
