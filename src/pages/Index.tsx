@@ -178,8 +178,44 @@ const Index = () => {
           onNodeClick={handleNodeClick}
           isPaused={selectedNode !== null}
           activeNode={selectedNode}
+          onLoaded={handleModelLoaded}
         />
       </motion.div>
+
+      {/* Loading cube */}
+      <AnimatePresence>
+        {!modelLoaded && (
+          <motion.div
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="absolute inset-0 z-30 flex items-center justify-center"
+            style={{ pointerEvents: "none" }}
+          >
+            <div className="flex flex-col items-center">
+              <div
+                className="w-10 h-10"
+                style={{
+                  animation: "loaderSpin 2s linear infinite",
+                  transformStyle: "preserve-3d",
+                }}
+              >
+                <div
+                  className="w-10 h-10 rounded-sm"
+                  style={{ backgroundColor: "#ce3d52" }}
+                />
+              </div>
+              <div
+                className="mt-4 w-12 h-2 rounded-full"
+                style={{
+                  background: "radial-gradient(ellipse, hsl(0 0% 0% / 0.35), transparent)",
+                  filter: "blur(3px)",
+                }}
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Slide-out menu drawer */}
       <AnimatePresence>
