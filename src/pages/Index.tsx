@@ -94,16 +94,26 @@ const Index = () => {
     >
       {/* Subtle grid */}
       <div
-        className="absolute inset-0 opacity-[0.015]"
+        className="absolute inset-0 transition-opacity duration-500"
         style={{
+          opacity: isDark ? 0.015 : 0.03,
           backgroundImage: `linear-gradient(hsl(var(--primary)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary)) 1px, transparent 1px)`,
           backgroundSize: "80px 80px",
         }}
       />
 
       {/* Radial glows — soft center warmth + vignette */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_hsl(350_40%_20%_/_0.04)_0%,_transparent_50%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_40%,_hsl(0_0%_4%_/_0.5)_100%)]" />
+      {isDark ? (
+        <>
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_hsl(350_40%_20%_/_0.04)_0%,_transparent_50%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_40%,_hsl(0_0%_4%_/_0.5)_100%)]" />
+        </>
+      ) : (
+        <>
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_hsl(40_30%_92%_/_0.5)_0%,_transparent_60%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_50%,_hsl(40_15%_88%_/_0.3)_100%)]" />
+        </>
+      )}
 
       {/* Navbar */}
       <motion.nav
