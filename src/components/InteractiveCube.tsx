@@ -370,7 +370,7 @@ useGLTF.preload("/models/holoseat.glb");
 
 /* ── Scene ─────────────────────────────────────── */
 function InteractiveCubeScene({
-  onNodeClick, isPaused, activeNode, isMobile, gyroscope, gestureState, mobileDragDelta,
+  onNodeClick, isPaused, activeNode, isMobile, gyroscope, gestureState, mobileDragDelta, onLoaded,
 }: {
   onNodeClick: (index: number) => void;
   isPaused: boolean;
@@ -379,6 +379,7 @@ function InteractiveCubeScene({
   gyroscope: { x: number; y: number; available: boolean };
   gestureState: GestureState;
   mobileDragDelta: React.MutableRefObject<{ x: number; y: number }>;
+  onLoaded?: () => void;
 }) {
   const groupRef = useRef<THREE.Group>(null);
   const targetRotation = useRef({ x: 0, y: 0 });
