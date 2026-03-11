@@ -169,9 +169,9 @@ const GlowNode = forwardRef<THREE.Group, {
   position: [number, number, number]; color: string; label: string; index: number;
   onNodeClick: (index: number) => void; hoveredNode: number | null;
   setHoveredNode: (i: number | null) => void; isPaused: boolean; isActive: boolean;
-  isInteractive: boolean; isMobile: boolean; gestureState: GestureState;
+  isInteractive: boolean; isMobile: boolean; gestureState: GestureState; isDark?: boolean;
 }>(function GlowNode({
-  position, color, label, index, onNodeClick, hoveredNode, setHoveredNode, isPaused, isActive, isInteractive, isMobile, gestureState,
+  position, color, label, index, onNodeClick, hoveredNode, setHoveredNode, isPaused, isActive, isInteractive, isMobile, gestureState, isDark = true,
 }, ref) {
   const meshRef = useRef<THREE.Mesh>(null);
   const isHovered = hoveredNode === index;
