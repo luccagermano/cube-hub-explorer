@@ -337,8 +337,9 @@ function Particles() {
 }
 
 /* ── GLB Model ─────────────────────────────────────── */
-function GLBModel() {
+function GLBModel({ onLoaded }: { onLoaded?: () => void }) {
   const { scene } = useGLTF("/models/holoseat.glb");
+  useEffect(() => { onLoaded?.(); }, [onLoaded]);
   const clonedScene = useMemo(() => {
     const clone = scene.clone(true);
     clone.traverse((child) => {
@@ -369,7 +370,7 @@ useGLTF.preload("/models/holoseat.glb");
 
 /* ── Scene ─────────────────────────────────────── */
 function InteractiveCubeScene({
-  onNodeClick, isPaused, activeNode, isMobile, gyroscope, gestureState, mobileDragDelta,
+  onNodeClick, isPaused, activeNode, isMobile, gyroscope, gestureState, mobileDragDelta, onLoaded,
 }: {
   onNodeClick: (index: number) => void;
   isPaused: boolean;
@@ -378,6 +379,7 @@ function InteractiveCubeScene({
   gyroscope: { x: number; y: number; available: boolean };
   gestureState: GestureState;
   mobileDragDelta: React.MutableRefObject<{ x: number; y: number }>;
+  onLoaded?: () => void;
 }) {
   const groupRef = useRef<THREE.Group>(null);
   const targetRotation = useRef({ x: 0, y: 0 });
@@ -464,7 +466,7 @@ function InteractiveCubeScene({
         <CubeEdge key={i} start={scaledVertices[a]} end={scaledVertices[b]} />
       ))}
 
-      <GLBModel />
+      <GLBModel onLoaded={onLoaded} />
 
       <mesh>
         <boxGeometry args={[1.8, 1.8, 1.8]} />
@@ -496,11 +498,12 @@ function InteractiveCubeScene({
 
 /* ── Main Component ─────────────────────────────────────── */
 export default function InteractiveCube({
-  onNodeClick, isPaused, activeNode,
+  onNodeClick, isPaused, activeNode, onLoaded,
 }: {
   onNodeClick: (index: number) => void;
   isPaused: boolean;
   activeNode: number | null;
+  onLoaded?: () => void;
 }) {
   const bloomIntensity = activeNode !== null ? 1.8 : 1.0;
   const isMobile = useIsMobile();
@@ -671,6 +674,7 @@ export default function InteractiveCube({
               gyroscope={gyroscope}
               gestureState={gestureState}
               mobileDragDelta={mobileDragDelta}
+              onLoaded={onLoaded}
             />
           </Float>
 

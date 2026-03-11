@@ -92,3 +92,8 @@
       inset 0 1px 0 hsl(0 0% 92% / 0.04);
   }
 }
+
+@keyframes loaderSpin {
+  0% { transform: rotateX(0deg) rotateY(0deg); }
+  100% { transform: rotateX(360deg) rotateY(360deg); }
+}
