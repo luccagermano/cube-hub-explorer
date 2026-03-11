@@ -473,9 +473,9 @@ function IntroContent({ onClose }: { onClose: () => void }) {
             transition={{ delay: 0.3 + i * 0.08 }}
             className="flex items-center justify-center gap-2.5 px-6 py-3 rounded-xl text-xs font-display font-semibold tracking-widest uppercase transition-all duration-300 hover:translate-y-[-1px] hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             style={{
-              background: "rgba(255,255,255,0.05)",
-              color: "#e8e8ea",
-              border: "1px solid rgba(255,255,255,0.08)",
+              background: `hsl(var(--glass-card-bg))`,
+              color: "hsl(var(--glass-text))",
+              border: `1px solid hsl(var(--glass-card-border))`,
             }}
             aria-label={`Visite a DDC no ${link.label}`}
           >
