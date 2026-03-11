@@ -506,15 +506,15 @@ function AboutContent({ onClose }: { onClose: () => void }) {
       <div
         className="rounded-2xl p-6 sm:p-7"
         style={{
-          background: "rgba(255,255,255,0.04)",
-          border: "1px solid rgba(255,255,255,0.07)",
+          background: `hsl(var(--glass-card-bg))`,
+          border: `1px solid hsl(var(--glass-card-border))`,
           boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
         }}
       >
-        <p className="text-sm sm:text-[15px] leading-relaxed mb-4" style={{ color: "rgba(255,255,255,0.7)" }}>
+        <p className="text-sm sm:text-[15px] leading-relaxed mb-4" style={{ color: "hsl(var(--glass-text-sub))" }}>
           Com a missão de impulsionar o mercado, usamos tecnologia como ferramenta principal para alcançar novos patamares. A DDC é mais do que um booster — somos o parceiro estratégico que acelera sua transformação digital.
         </p>
-        <p className="text-[13px] sm:text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.45)" }}>
+        <p className="text-[13px] sm:text-sm leading-relaxed" style={{ color: "hsl(var(--glass-text-muted))" }}>
           Nossa equipe qualificada, movida por inovação e execução, cria soluções seguras, escaláveis e de alta performance para que sua empresa cresça com confiança. Venha descobrir o novo patamar construído para levar você ao topo.
         </p>
       </div>
