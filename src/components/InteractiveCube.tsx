@@ -399,50 +399,63 @@ function InteractiveCubeScene({
 
     if (!isPaused) {
       if (isMobile) {
-        // Accumulate drag rotation when dragging (reduced sensitivity)
+        // Accumulate drag rotation (no clamping — full 360°)
         if (gestureState === "dragging") {
-          dragRotation.current.y += mobileDragDelta.current.x * 0.008;
-          dragRotation.current.x += mobileDragDelta.current.y * 0.008;
-          dragRotation.current.y = Math.max(-Math.PI * 0.4, Math.min(Math.PI * 0.4, dragRotation.current.y));
-          dragRotation.current.x = Math.max(-Math.PI * 0.25, Math.min(Math.PI * 0.25, dragRotation.current.x));
+          userRotation.current.y += mobileDragDelta.current.x * 0.008;
+          userRotation.current.x += mobileDragDelta.current.y * 0.008;
         }
         mobileDragDelta.current.x = 0;
         mobileDragDelta.current.y = 0;
 
-        // Primary: gentle idle animation (always runs)
+        // Decay user rotation back to zero when not dragging
+        if (gestureState !== "dragging") {
+          userRotation.current.y *= 0.97;
+          userRotation.current.x *= 0.97;
+        }
+
+        // Idle animation (always runs)
         const idleY = Math.sin(state.clock.elapsedTime * 0.3) * 0.2;
         const idleX = Math.cos(state.clock.elapsedTime * 0.2) * 0.1;
 
-        // Optional: subtle gyroscope parallax (very limited range)
+        // Subtle gyroscope parallax
         let gyroY = 0, gyroX = 0;
         if (gyroscope.available) {
-          gyroY = gyroscope.x * Math.PI * 0.06; // very subtle
+          gyroY = gyroscope.x * Math.PI * 0.06;
           gyroX = -gyroscope.y * Math.PI * 0.04;
         }
 
-        // Decay drag rotation when not dragging
-        if (gestureState !== "dragging") {
-          dragRotation.current.y *= 0.97;
-          dragRotation.current.x *= 0.97;
-        }
-
-        targetRotation.current.y = idleY + gyroY + dragRotation.current.y;
-        targetRotation.current.x = idleX + gyroX + dragRotation.current.x;
+        targetRotation.current.y = idleY + gyroY + userRotation.current.y;
+        targetRotation.current.x = idleX + gyroX + userRotation.current.x;
       } else {
-        // Desktop: mouse-based rotation
+        // Desktop: accumulate mouse delta for full 360° rotation
         const { x, y } = state.pointer;
-        const moved = Math.abs(x - lastPointer.current.x) + Math.abs(y - lastPointer.current.y) > 0.001;
+        const dx = x - lastPointer.current.x;
+        const dy = y - lastPointer.current.y;
+        const moved = Math.abs(dx) + Math.abs(dy) > 0.001;
         lastPointer.current = { x, y };
-        if (moved) { idleTime.current = 0; } else { idleTime.current += delta; }
 
-        const mouseInfluence = Math.max(0, 1 - idleTime.current * 0.5);
-        targetRotation.current.y = x * Math.PI * 0.5 * mouseInfluence;
-        targetRotation.current.x = -y * Math.PI * 0.35 * mouseInfluence;
-        if (idleTime.current > 1) {
-          const idleFactor = Math.min((idleTime.current - 1) * 0.3, 1);
-          targetRotation.current.y += Math.sin(state.clock.elapsedTime * 0.3) * 0.3 * idleFactor;
-          targetRotation.current.x += Math.cos(state.clock.elapsedTime * 0.2) * 0.15 * idleFactor;
+        if (moved) {
+          idleTime.current = 0;
+          userRotation.current.y += dx * 1.5;
+          userRotation.current.x -= dy * 1.0;
+        } else {
+          idleTime.current += delta;
         }
+
+        // Decay user rotation back to zero when idle
+        if (idleTime.current > 0.5) {
+          const decayRate = Math.min((idleTime.current - 0.5) * 0.3, 1) * 0.02;
+          userRotation.current.y *= (1 - decayRate);
+          userRotation.current.x *= (1 - decayRate);
+        }
+
+        // Idle animation blends in after mouse stops
+        const idleFactor = Math.min(Math.max(idleTime.current - 1, 0) * 0.3, 1);
+        const idleY = Math.sin(state.clock.elapsedTime * 0.3) * 0.3 * idleFactor;
+        const idleX = Math.cos(state.clock.elapsedTime * 0.2) * 0.15 * idleFactor;
+
+        targetRotation.current.y = userRotation.current.y + idleY;
+        targetRotation.current.x = userRotation.current.x + idleX;
       }
     }
 
