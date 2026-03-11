@@ -499,6 +499,7 @@ function InteractiveCubeScene({
           index={i} onNodeClick={handleNodeClick} hoveredNode={hoveredNode}
           setHoveredNode={setHoveredNode} isPaused={isPaused} isActive={activeNode === i}
           isInteractive={VERTEX_DATA[i].active} isMobile={isMobile} gestureState={gestureState}
+          isDark={isDark}
         />
       ))}
 
