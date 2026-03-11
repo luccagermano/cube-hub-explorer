@@ -265,8 +265,8 @@ function ContactContent({ onClose }: { onClose: () => void }) {
                 {item.icon}
               </div>
               <div>
-                <p className="text-[10px] sm:text-[11px] font-display tracking-widest uppercase mb-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>{item.label}</p>
-                <p className={`text-sm font-medium ${item.breakAll ? "break-all" : ""}`} style={{ color: "#e8e8ea" }}>{item.value}</p>
+                <p className="text-[10px] sm:text-[11px] font-display tracking-widest uppercase mb-0.5 text-muted-foreground">{item.label}</p>
+                <p className={`text-sm font-medium ${item.breakAll ? "break-all" : ""}`} style={{ color: "hsl(var(--glass-text))" }}>{item.value}</p>
               </div>
             </div>
           ))}
