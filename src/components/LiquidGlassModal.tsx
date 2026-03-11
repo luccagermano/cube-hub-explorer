@@ -118,7 +118,7 @@ function ModalHeader({ title, subtitle, onClose }: { title: string; subtitle?: s
           {title}
         </h2>
         {subtitle && (
-          <p className="text-sm sm:text-[15px] mt-2.5 max-w-xl leading-relaxed" style={{ color: "rgba(255,255,255,0.55)" }}>
+          <p className="text-sm sm:text-[15px] mt-2.5 max-w-xl leading-relaxed" style={{ color: "hsl(var(--glass-text-sub))" }}>
             {subtitle}
           </p>
         )}
