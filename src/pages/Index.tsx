@@ -3,6 +3,8 @@ import InteractiveCube, { VERTEX_DATA } from "@/components/InteractiveCube";
 import type { PopupCategory } from "@/components/InteractiveCube";
 import LiquidGlassModal, { AboutModal } from "@/components/LiquidGlassModal";
 import { motion, AnimatePresence } from "framer-motion";
+import { Sun, Moon } from "lucide-react";
+import { useTheme } from "@/hooks/use-theme";
 import ddcLogo from "@/assets/ddc-logo.svg";
 
 const MENU_ITEMS = [
@@ -15,6 +17,7 @@ const MENU_ITEMS = [
 ];
 
 const Index = () => {
+  const { theme, toggleTheme, isDark } = useTheme();
   const [selectedNode, setSelectedNode] = useState<number | null>(null);
   const [visibleCategory, setVisibleCategory] = useState<PopupCategory>(null);
   const [aboutOpen, setAboutOpen] = useState(false);
@@ -91,16 +94,26 @@ const Index = () => {
     >
       {/* Subtle grid */}
       <div
-        className="absolute inset-0 opacity-[0.015]"
+        className="absolute inset-0 transition-opacity duration-500"
         style={{
+          opacity: isDark ? 0.015 : 0.03,
           backgroundImage: `linear-gradient(hsl(var(--primary)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary)) 1px, transparent 1px)`,
           backgroundSize: "80px 80px",
         }}
       />
 
       {/* Radial glows — soft center warmth + vignette */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_hsl(350_40%_20%_/_0.04)_0%,_transparent_50%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_40%,_hsl(0_0%_4%_/_0.5)_100%)]" />
+      {isDark ? (
+        <>
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_hsl(350_40%_20%_/_0.04)_0%,_transparent_50%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_40%,_hsl(0_0%_4%_/_0.5)_100%)]" />
+        </>
+      ) : (
+        <>
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_hsl(40_30%_92%_/_0.5)_0%,_transparent_60%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_50%,_hsl(40_15%_88%_/_0.3)_100%)]" />
+        </>
+      )}
 
       {/* Navbar */}
       <motion.nav
@@ -125,11 +138,13 @@ const Index = () => {
           onClick={() => setMenuOpen((v) => !v)}
           className="relative z-30 flex flex-col items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-xl transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           style={{
-            background: "hsl(0 0% 12% / 0.6)",
+            background: `hsl(var(--menu-bg))`,
             backdropFilter: "blur(16px)",
             WebkitBackdropFilter: "blur(16px)",
-            border: "1px solid hsl(0 0% 100% / 0.08)",
-            boxShadow: "0 2px 12px hsl(0 0% 0% / 0.3), inset 0 1px 0 hsl(0 0% 100% / 0.04)",
+            border: `1px solid hsl(var(--menu-border))`,
+            boxShadow: isDark
+              ? "0 2px 12px hsl(0 0% 0% / 0.3), inset 0 1px 0 hsl(0 0% 100% / 0.04)"
+              : "0 2px 12px hsl(0 0% 0% / 0.06), inset 0 1px 0 hsl(0 0% 100% / 0.5)",
           }}
           aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
           aria-expanded={menuOpen}
@@ -173,6 +188,7 @@ const Index = () => {
           onNodeClick={handleNodeClick}
           isPaused={selectedNode !== null}
           activeNode={selectedNode}
+          isDark={isDark}
         />
       </motion.div>
 
@@ -200,11 +216,13 @@ const Index = () => {
               transition={{ type: "spring", damping: 30, stiffness: 300 }}
               className="absolute top-0 right-0 bottom-0 z-40 w-[280px] sm:w-[340px] flex flex-col"
               style={{
-                background: "hsl(0 0% 10% / 0.85)",
+                background: `hsl(var(--menu-panel-bg))`,
                 backdropFilter: "blur(32px)",
                 WebkitBackdropFilter: "blur(32px)",
-                borderLeft: "1px solid hsl(0 0% 100% / 0.06)",
-                boxShadow: "-8px 0 40px hsl(0 0% 0% / 0.4), inset 1px 0 0 hsl(0 0% 100% / 0.03)",
+                borderLeft: `1px solid hsl(var(--menu-border))`,
+                boxShadow: isDark
+                  ? "-8px 0 40px hsl(0 0% 0% / 0.4), inset 1px 0 0 hsl(0 0% 100% / 0.03)"
+                  : "-8px 0 40px hsl(0 0% 0% / 0.08), inset 1px 0 0 hsl(0 0% 100% / 0.3)",
               }}
               role="dialog"
               aria-label="Menu de navegação"
@@ -227,7 +245,50 @@ const Index = () => {
               </div>
 
               {/* Divider */}
-              <div className="mx-6 sm:mx-8 h-px bg-[hsl(0_0%_100%_/_0.06)]" />
+              <div className="mx-6 sm:mx-8 h-px" style={{ backgroundColor: `hsl(var(--menu-border))` }} />
+
+              {/* Theme toggle */}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.04, duration: 0.3 }}
+                className="px-6 sm:px-8 py-4"
+              >
+                <button
+                  onClick={toggleTheme}
+                  className="flex items-center justify-between w-full gap-3 px-4 py-3 rounded-xl transition-all duration-200 hover:bg-[hsl(0_0%_100%_/_0.04)] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  aria-label={isDark ? "Mudar para modo claro" : "Mudar para modo escuro"}
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors duration-300"
+                      style={{ background: `hsl(var(--primary) / 0.12)`, color: "hsl(var(--primary))" }}
+                    >
+                      {isDark ? <Moon size={15} /> : <Sun size={15} />}
+                    </div>
+                    <span className="text-xs font-display tracking-[0.1em] uppercase text-muted-foreground">
+                      {isDark ? "Modo Escuro" : "Modo Claro"}
+                    </span>
+                  </div>
+                  {/* Pill toggle indicator */}
+                  <div
+                    className="w-10 h-[22px] rounded-full flex items-center px-[3px] transition-all duration-300"
+                    style={{
+                      backgroundColor: isDark ? "hsl(var(--primary) / 0.25)" : "hsl(var(--primary))",
+                    }}
+                  >
+                    <motion.div
+                      className="w-4 h-4 rounded-full bg-primary-foreground"
+                      animate={{ x: isDark ? 0 : 14 }}
+                      transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                      style={{ boxShadow: "0 1px 4px hsl(0 0% 0% / 0.3)" }}
+                    />
+                  </div>
+                </button>
+              </motion.div>
+
+              {/* Divider */}
+              <div className="mx-6 sm:mx-8 h-px" style={{ backgroundColor: `hsl(var(--menu-border))` }} />
 
               {/* Menu items */}
               <nav className="flex-1 flex flex-col gap-1 px-4 sm:px-6 py-6">
@@ -254,7 +315,7 @@ const Index = () => {
 
               {/* Footer branding */}
               <div className="px-6 sm:px-8 pt-2" style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom))" }}>
-                <div className="h-px bg-[hsl(0_0%_100%_/_0.06)] mb-4" />
+                <div className="h-px mb-4" style={{ backgroundColor: `hsl(var(--menu-border))` }} />
                 <div className="flex items-center gap-2">
                   <img src={ddcLogo} alt="" className="h-4 w-auto opacity-40" />
                   <span className="text-[9px] font-display tracking-[0.2em] uppercase text-muted-foreground/40">
