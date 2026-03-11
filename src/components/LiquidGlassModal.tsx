@@ -249,8 +249,8 @@ function ContactContent({ onClose }: { onClose: () => void }) {
       <div
         className="rounded-2xl p-5 sm:p-7"
         style={{
-          background: "rgba(255,255,255,0.04)",
-          border: "1px solid rgba(255,255,255,0.07)",
+          background: `hsl(var(--glass-card-bg))`,
+          border: `1px solid hsl(var(--glass-card-border))`,
           boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
         }}
       >
