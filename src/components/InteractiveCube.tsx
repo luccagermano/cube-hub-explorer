@@ -674,6 +674,7 @@ export default function InteractiveCube({
               gyroscope={gyroscope}
               gestureState={gestureState}
               mobileDragDelta={mobileDragDelta}
+              onLoaded={onLoaded}
             />
           </Float>
 
