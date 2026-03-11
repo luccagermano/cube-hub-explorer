@@ -19,7 +19,12 @@ const Index = () => {
   const [visibleCategory, setVisibleCategory] = useState<PopupCategory>(null);
   const [aboutOpen, setAboutOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [modelLoaded, setModelLoaded] = useState(false);
   const delayTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleModelLoaded = useCallback(() => {
+    setModelLoaded(true);
+  }, []);
 
   const handleNodeClick = useCallback((index: number) => {
     if (delayTimer.current) clearTimeout(delayTimer.current);
