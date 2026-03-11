@@ -216,11 +216,13 @@ const Index = () => {
               transition={{ type: "spring", damping: 30, stiffness: 300 }}
               className="absolute top-0 right-0 bottom-0 z-40 w-[280px] sm:w-[340px] flex flex-col"
               style={{
-                background: "hsl(0 0% 10% / 0.85)",
+                background: `hsl(var(--menu-panel-bg))`,
                 backdropFilter: "blur(32px)",
                 WebkitBackdropFilter: "blur(32px)",
-                borderLeft: "1px solid hsl(0 0% 100% / 0.06)",
-                boxShadow: "-8px 0 40px hsl(0 0% 0% / 0.4), inset 1px 0 0 hsl(0 0% 100% / 0.03)",
+                borderLeft: `1px solid hsl(var(--menu-border))`,
+                boxShadow: isDark
+                  ? "-8px 0 40px hsl(0 0% 0% / 0.4), inset 1px 0 0 hsl(0 0% 100% / 0.03)"
+                  : "-8px 0 40px hsl(0 0% 0% / 0.08), inset 1px 0 0 hsl(0 0% 100% / 0.3)",
               }}
               role="dialog"
               aria-label="Menu de navegação"
