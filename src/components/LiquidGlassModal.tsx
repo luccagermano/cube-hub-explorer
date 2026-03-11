@@ -74,16 +74,16 @@ function GlassPanel({ children, onClose }: { children: React.ReactNode; onClose:
         ref={trapRef}
         className="relative w-[95%] sm:w-[88%] md:w-[62%] lg:w-[56%] xl:w-[50%] max-h-[88vh] sm:max-h-[82vh] md:max-h-[78vh] overflow-y-auto pointer-events-auto scrollbar-thin"
         style={{
-          background: "rgba(14, 14, 16, 0.88)",
+          background: `hsl(var(--glass-bg))`,
           backdropFilter: "blur(32px) saturate(160%)",
           WebkitBackdropFilter: "blur(32px) saturate(160%)",
-          border: "1px solid rgba(255, 255, 255, 0.1)",
+          border: `1px solid hsl(var(--glass-border))`,
           borderRadius: "20px",
           boxShadow: `
-            0 0 0 0.5px rgba(255, 255, 255, 0.05),
+            0 0 0 0.5px hsl(var(--glass-border)),
             0 0 60px rgba(196, 54, 74, 0.06),
-            0 24px 80px rgba(0, 0, 0, 0.6),
-            inset 0 1px 0 rgba(255, 255, 255, 0.07)
+            0 24px 80px rgba(0, 0, 0, 0.4),
+            inset 0 1px 0 hsl(var(--glass-border))
           `,
         }}
         onClick={(e) => e.stopPropagation()}
@@ -91,12 +91,12 @@ function GlassPanel({ children, onClose }: { children: React.ReactNode; onClose:
         {/* Top specular highlight */}
         <div
           className="absolute top-0 left-[10%] right-[10%] h-[1px] rounded-full"
-          style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent)" }}
+          style={{ background: "linear-gradient(90deg, transparent, hsl(var(--glass-border)), transparent)" }}
         />
         {/* Internal gradient overlay */}
         <div
           className="absolute inset-0 rounded-[20px] pointer-events-none"
-          style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.025) 0%, transparent 35%)" }}
+          style={{ background: "linear-gradient(180deg, hsl(var(--glass-card-bg)) 0%, transparent 35%)" }}
         />
         <div className="relative z-10 p-6 sm:p-8 md:p-10 lg:p-12">
           {children}
