@@ -253,14 +253,16 @@ const GlowNode = forwardRef<THREE.Group, {
 });
 
 /* ── Cube Edge ─────────────────────────────────────── */
-const CubeEdge = forwardRef<THREE.Group, { start: [number, number, number]; end: [number, number, number] }>(function CubeEdge({ start, end }, ref) {
+const CubeEdge = forwardRef<THREE.Group, { start: [number, number, number]; end: [number, number, number]; isDark?: boolean }>(function CubeEdge({ start, end, isDark = true }, ref) {
+  const lineRef = useRef<THREE.Line>(null);
   const lineObj = useMemo(() => {
     const points = [new THREE.Vector3(...start), new THREE.Vector3(...end)];
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
-    const material = new THREE.LineBasicMaterial({ color: "#3a1a1a", transparent: true, opacity: 0.5 });
-    return new THREE.Line(geometry, material);
-  }, [start, end]);
-  return <primitive object={lineObj} />;
+    const material = new THREE.LineBasicMaterial({ color: isDark ? "#3a1a1a" : "#d4c5c5", transparent: true, opacity: isDark ? 0.5 : 0.35 });
+    const line = new THREE.Line(geometry, material);
+    return line;
+  }, [start, end, isDark]);
+  return <primitive ref={lineRef} object={lineObj} />;
 });
 
 /* ── Square Star Particles ─────────────────────────── */
