@@ -64,13 +64,13 @@
 
   .light {
     --background: 40 20% 97%;
-    --foreground: 0 0% 12%;
+    --foreground: 350 55% 38%;
 
     --card: 40 15% 95%;
-    --card-foreground: 0 0% 12%;
+    --card-foreground: 350 55% 38%;
 
     --popover: 40 15% 95%;
-    --popover-foreground: 0 0% 12%;
+    --popover-foreground: 350 55% 38%;
 
     --primary: 350 65% 48%;
     --primary-foreground: 0 0% 98%;

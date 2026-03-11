@@ -607,13 +607,13 @@ function SceneThemeController({ isDark }: { isDark: boolean }) {
 
   return (
     <>
-      <ambientLight ref={ambientRef} intensity={isDark ? 1.2 : 1.8} />
-      <directionalLight ref={keyRef} position={[4, 5, 6]} intensity={isDark ? 3.5 : 4.0} color={isDark ? "#fff5ee" : "#fff3e0"} />
-      <directionalLight ref={fillRef} position={[-4, 2, 3]} intensity={isDark ? 1.8 : 2.2} color={isDark ? "#e0e4f0" : "#ffecd2"} />
-      <directionalLight ref={rimRef} position={[0, -2, -5]} intensity={isDark ? 2.0 : 1.2} color={isDark ? "#ffd4d4" : "#ffe8d6"} />
-      <pointLight ref={accentRef1} position={[3, 3, 3]} intensity={isDark ? 1.5 : 0.6} color={DDC_RED} distance={12} decay={2} />
-      <pointLight ref={accentRef2} position={[-3, -2, 4]} intensity={isDark ? 1.0 : 0.4} color="#e85d6f" distance={10} decay={2} />
-      <hemisphereLight ref={hemiRef} intensity={isDark ? 0.8 : 1.2} color={isDark ? "#f0f0ff" : "#fffbf5"} groundColor={isDark ? "#1a0808" : "#f0e6d8"} />
+      <ambientLight ref={ambientRef} intensity={isDark ? 1.2 : 1.0} />
+      <directionalLight ref={keyRef} position={[4, 5, 6]} intensity={isDark ? 3.5 : 2.0} color={isDark ? "#fff5ee" : "#f5f0eb"} />
+      <directionalLight ref={fillRef} position={[-4, 2, 3]} intensity={isDark ? 1.8 : 1.0} color={isDark ? "#e0e4f0" : "#ede8e2"} />
+      <directionalLight ref={rimRef} position={[0, -2, -5]} intensity={isDark ? 2.0 : 0.6} color={isDark ? "#ffd4d4" : "#e8e0dc"} />
+      <pointLight ref={accentRef1} position={[3, 3, 3]} intensity={isDark ? 1.5 : 0.3} color={DDC_RED} distance={12} decay={2} />
+      <pointLight ref={accentRef2} position={[-3, -2, 4]} intensity={isDark ? 1.0 : 0.2} color="#e85d6f" distance={10} decay={2} />
+      <hemisphereLight ref={hemiRef} intensity={isDark ? 0.8 : 0.6} color={isDark ? "#f0f0ff" : "#fffbf5"} groundColor={isDark ? "#1a0808" : "#f0e6d8"} />
     </>
   );
 }
