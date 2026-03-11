@@ -131,9 +131,9 @@ function ModalHeader({ title, subtitle, onClose }: { title: string; subtitle?: s
         onClick={onClose}
         aria-label="Fechar"
         className="p-2.5 rounded-xl transition-all duration-200 hover:scale-105 hover:bg-white/[0.08] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary flex-shrink-0 ml-6"
-        style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.07)" }}
+        style={{ background: "hsl(var(--glass-card-bg))", border: `1px solid hsl(var(--glass-card-border))` }}
       >
-        <X size={16} style={{ color: "rgba(255,255,255,0.5)" }} />
+        <X size={16} className="text-muted-foreground" />
       </button>
     </div>
   );
