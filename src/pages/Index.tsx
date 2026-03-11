@@ -245,7 +245,50 @@ const Index = () => {
               </div>
 
               {/* Divider */}
-              <div className="mx-6 sm:mx-8 h-px bg-[hsl(0_0%_100%_/_0.06)]" />
+              <div className="mx-6 sm:mx-8 h-px" style={{ backgroundColor: `hsl(var(--menu-border))` }} />
+
+              {/* Theme toggle */}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.04, duration: 0.3 }}
+                className="px-6 sm:px-8 py-4"
+              >
+                <button
+                  onClick={toggleTheme}
+                  className="flex items-center justify-between w-full gap-3 px-4 py-3 rounded-xl transition-all duration-200 hover:bg-[hsl(0_0%_100%_/_0.04)] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  aria-label={isDark ? "Mudar para modo claro" : "Mudar para modo escuro"}
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors duration-300"
+                      style={{ background: `hsl(var(--primary) / 0.12)`, color: "hsl(var(--primary))" }}
+                    >
+                      {isDark ? <Moon size={15} /> : <Sun size={15} />}
+                    </div>
+                    <span className="text-xs font-display tracking-[0.1em] uppercase text-muted-foreground">
+                      {isDark ? "Modo Escuro" : "Modo Claro"}
+                    </span>
+                  </div>
+                  {/* Pill toggle indicator */}
+                  <div
+                    className="w-10 h-[22px] rounded-full flex items-center px-[3px] transition-all duration-300"
+                    style={{
+                      backgroundColor: isDark ? "hsl(var(--primary) / 0.25)" : "hsl(var(--primary))",
+                    }}
+                  >
+                    <motion.div
+                      className="w-4 h-4 rounded-full bg-primary-foreground"
+                      animate={{ x: isDark ? 0 : 14 }}
+                      transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                      style={{ boxShadow: "0 1px 4px hsl(0 0% 0% / 0.3)" }}
+                    />
+                  </div>
+                </button>
+              </motion.div>
+
+              {/* Divider */}
+              <div className="mx-6 sm:mx-8 h-px" style={{ backgroundColor: `hsl(var(--menu-border))` }} />
 
               {/* Menu items */}
               <nav className="flex-1 flex flex-col gap-1 px-4 sm:px-6 py-6">
