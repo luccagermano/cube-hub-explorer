@@ -237,7 +237,7 @@ const GlowNode = forwardRef<THREE.Group, {
         <Text
           position={[0, isMobile ? 0.4 : 0.3, 0]}
           fontSize={isMobile ? 0.11 : 0.09}
-          color={isHovered || isActive ? color : isDark ? "#ffffff" : "#333333"}
+          color={isHovered || isActive ? color : DDC_RED}
           anchorX="center"
           anchorY="bottom"
           font="/fonts/Orbitron.ttf"
@@ -627,7 +627,7 @@ export default function InteractiveCube({
   activeNode: number | null;
   isDark?: boolean;
 }) {
-  const bloomIntensity = activeNode !== null ? 1.8 : 1.0;
+  const bloomIntensity = activeNode !== null ? 1.2 : 0.6;
   const isMobile = useIsMobile();
   const [gyroscope, setGyroscope] = useState({ x: 0, y: 0, available: false });
 
