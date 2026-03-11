@@ -281,8 +281,8 @@ const Index = () => {
         className="absolute left-0 right-0 z-10 flex justify-center pointer-events-none"
         style={{ bottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
       >
-        <span className="text-[10px] tracking-[0.15em]" style={{ color: "#2c2c2c" }}>
-          designed by L²
+        <span className="text-[10px] tracking-[0.15em]" style={{ color: "rgb(149, 139, 139)" }}>
+          ®DESIGNED BY L²
         </span>
       </div>
     </div>
