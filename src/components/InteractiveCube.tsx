@@ -337,8 +337,9 @@ function Particles() {
 }
 
 /* ── GLB Model ─────────────────────────────────────── */
-function GLBModel() {
+function GLBModel({ onLoaded }: { onLoaded?: () => void }) {
   const { scene } = useGLTF("/models/holoseat.glb");
+  useEffect(() => { onLoaded?.(); }, [onLoaded]);
   const clonedScene = useMemo(() => {
     const clone = scene.clone(true);
     clone.traverse((child) => {
