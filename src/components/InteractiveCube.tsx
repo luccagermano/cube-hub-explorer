@@ -465,7 +465,7 @@ function InteractiveCubeScene({
         <CubeEdge key={i} start={scaledVertices[a]} end={scaledVertices[b]} />
       ))}
 
-      <GLBModel />
+      <GLBModel onLoaded={onLoaded} />
 
       <mesh>
         <boxGeometry args={[1.8, 1.8, 1.8]} />
