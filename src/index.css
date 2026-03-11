@@ -105,9 +105,9 @@
 
     --glass-bg: 0 0% 100% / 0.82;
     --glass-border: 0 0% 0% / 0.08;
-    --glass-text: 0 0% 12%;
-    --glass-text-sub: 0 0% 0% / 0.6;
-    --glass-text-muted: 0 0% 0% / 0.45;
+    --glass-text: 350 55% 35%;
+    --glass-text-sub: 350 40% 40%;
+    --glass-text-muted: 350 25% 50%;
     --glass-card-bg: 0 0% 0% / 0.04;
     --glass-card-border: 0 0% 0% / 0.08;
 
