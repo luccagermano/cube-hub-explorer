@@ -561,44 +561,44 @@ function SceneThemeController({ isDark }: { isDark: boolean }) {
 
     // Ambient
     if (ambientRef.current) {
-      const targetI = isDark ? 1.2 : 1.8;
+      const targetI = isDark ? 1.2 : 1.0;
       ambientRef.current.intensity += (targetI - ambientRef.current.intensity) * t;
     }
 
-    // Key light
+    // Key light — softer in light mode
     if (keyRef.current) {
-      const targetI = isDark ? 3.5 : 4.0;
+      const targetI = isDark ? 3.5 : 2.0;
       keyRef.current.intensity += (targetI - keyRef.current.intensity) * t;
       keyRef.current.color.lerp(isDark ? darkKey : lightKey, t);
     }
 
-    // Fill light
+    // Fill light — softer in light mode
     if (fillRef.current) {
-      const targetI = isDark ? 1.8 : 2.2;
+      const targetI = isDark ? 1.8 : 1.0;
       fillRef.current.intensity += (targetI - fillRef.current.intensity) * t;
       fillRef.current.color.lerp(isDark ? darkFill : lightFill, t);
     }
 
-    // Rim light
+    // Rim light — subtle in light mode
     if (rimRef.current) {
-      const targetI = isDark ? 2.0 : 1.2;
+      const targetI = isDark ? 2.0 : 0.6;
       rimRef.current.intensity += (targetI - rimRef.current.intensity) * t;
       rimRef.current.color.lerp(isDark ? darkRim : lightRim, t);
     }
 
-    // Red accent points
+    // Red accent points — very subtle in light mode
     if (accentRef1.current) {
-      const targetI = isDark ? 1.5 : 0.6;
+      const targetI = isDark ? 1.5 : 0.3;
       accentRef1.current.intensity += (targetI - accentRef1.current.intensity) * t;
     }
     if (accentRef2.current) {
-      const targetI = isDark ? 1.0 : 0.4;
+      const targetI = isDark ? 1.0 : 0.2;
       accentRef2.current.intensity += (targetI - accentRef2.current.intensity) * t;
     }
 
-    // Hemisphere
+    // Hemisphere — softer in light mode
     if (hemiRef.current) {
-      const targetI = isDark ? 0.8 : 1.2;
+      const targetI = isDark ? 0.8 : 0.6;
       hemiRef.current.intensity += (targetI - hemiRef.current.intensity) * t;
       hemiRef.current.color.lerp(isDark ? darkHemiSky : lightHemiSky, t);
       hemiRef.current.groundColor.lerp(isDark ? darkHemiGround : lightHemiGround, t);
