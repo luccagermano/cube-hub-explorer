@@ -627,7 +627,7 @@ export default function InteractiveCube({
   activeNode: number | null;
   isDark?: boolean;
 }) {
-  const bloomIntensity = activeNode !== null ? 1.8 : 1.0;
+  const bloomIntensity = activeNode !== null ? 1.2 : 0.6;
   const isMobile = useIsMobile();
   const [gyroscope, setGyroscope] = useState({ x: 0, y: 0, available: false });
 
