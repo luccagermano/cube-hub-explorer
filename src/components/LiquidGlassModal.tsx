@@ -161,8 +161,8 @@ function InfoCard({ title, text, icon, tooltip, className = "" }: { title: strin
           {icon}
         </div>
       )}
-      <h4 className="font-display text-[13px] sm:text-sm font-semibold tracking-wide mb-1.5" style={{ color: "#e8e8ea" }}>{title}</h4>
-      <p className="text-[11px] sm:text-xs leading-relaxed" style={{ color: "rgba(255,255,255,0.45)" }}>{text}</p>
+      <h4 className="font-display text-[13px] sm:text-sm font-semibold tracking-wide mb-1.5" style={{ color: "hsl(var(--glass-text))" }}>{title}</h4>
+      <p className="text-[11px] sm:text-xs leading-relaxed" style={{ color: "hsl(var(--glass-text-muted))" }}>{text}</p>
     </motion.div>
   );
 
