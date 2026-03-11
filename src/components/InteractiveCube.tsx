@@ -650,7 +650,7 @@ export default function InteractiveCube({
           style={{ width: dims.w, height: dims.h }}
           resize={{ scroll: false, debounce: { scroll: 0, resize: 0 } }}
           gl={{ antialias: true, alpha: false }}
-          scene={{ background: new THREE.Color(isDark ? "#252222" : "#FAF9F6") }}
+          scene={{ background: new THREE.Color(isDark ? "#252222" : "#2a2626") }}
         >
           <ViewportResizeHandler />
 
