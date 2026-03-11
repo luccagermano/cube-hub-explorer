@@ -110,8 +110,8 @@ const Index = () => {
         </>
       ) : (
         <>
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_hsl(40_30%_92%_/_0.5)_0%,_transparent_60%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_50%,_hsl(40_15%_88%_/_0.3)_100%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_hsl(350_40%_20%_/_0.03)_0%,_transparent_50%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_40%,_hsl(0_0%_6%_/_0.4)_100%)]" />
         </>
       )}
 
