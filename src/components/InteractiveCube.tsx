@@ -535,11 +535,11 @@ function SceneThemeController({ isDark }: { isDark: boolean }) {
   const lightBg = useMemo(() => new THREE.Color("#FAF9F6"), []);
 
   const darkKey = useMemo(() => new THREE.Color("#fff5ee"), []);
-  const lightKey = useMemo(() => new THREE.Color("#fff3e0"), []);
+  const lightKey = useMemo(() => new THREE.Color("#f5f0eb"), []);
   const darkFill = useMemo(() => new THREE.Color("#e0e4f0"), []);
-  const lightFill = useMemo(() => new THREE.Color("#ffecd2"), []);
+  const lightFill = useMemo(() => new THREE.Color("#ede8e2"), []);
   const darkRim = useMemo(() => new THREE.Color("#ffd4d4"), []);
-  const lightRim = useMemo(() => new THREE.Color("#ffe8d6"), []);
+  const lightRim = useMemo(() => new THREE.Color("#e8e0dc"), []);
   const darkHemiSky = useMemo(() => new THREE.Color("#f0f0ff"), []);
   const lightHemiSky = useMemo(() => new THREE.Color("#fffbf5"), []);
   const darkHemiGround = useMemo(() => new THREE.Color("#1a0808"), []);
